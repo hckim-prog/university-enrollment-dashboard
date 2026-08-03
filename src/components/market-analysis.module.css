@@ -36,6 +36,7 @@
 .segmentName strong { overflow: hidden; color: #444755; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .segmentName > div { height: 4px; overflow: hidden; border-radius: 99px; background: #eef0f4; }
 .segmentName i { display: block; height: 100%; border-radius: inherit; background: #7777df; }
+.segmentName .periodContext { overflow: hidden; color: #858a97; font-size: 11px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
 .segmentMetric { display: grid; justify-items: end; }
 .segmentMetric b { color: #333645; font-size: 12px; }
 .segmentMetric small { color: #999da8; font-size: 10px; }
@@ -77,6 +78,8 @@
 .state p { margin: 0; font-size: 13px; }
 .state button { display: inline-flex; align-items: center; gap: 6px; margin-top: 5px; border: 0; border-radius: 10px; padding: 9px 13px; background: #5e5ec9; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .loader { width: 24px; height: 24px; border: 3px solid #dddff0; border-top-color: #5e5ec9; border-radius: 50%; animation: spin .8s linear infinite; }
+.chartTooltip { display: grid; gap: 4px; padding: 11px 13px; border: 1px solid #dfe2e9; border-radius: 10px; background: rgb(255 255 255 / 96%); box-shadow: 0 8px 22px rgb(45 48 70 / 12%); color: #505461; font-size: 12px; }
+.chartTooltip strong { margin-bottom: 2px; color: #292c3a; font-size: 13px; }
 .loading { opacity: .55; pointer-events: none; transition: opacity .15s ease; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -99,4 +102,43 @@
   .dualCharts > div { height: 230px; }
   .segmentRow { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
   .rateText { font-size: 10px; }
+  .segmentRow:nth-child(n+6) { display: none; }
+}
+
+.summaryKpi {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  padding: 18px;
+  border-top: 3px solid #6868d5;
+  background: #fff;
+}
+.summaryKpi span { color: #666b78; font-size: 13px; font-weight: 750; }
+.summaryKpi strong { color: #242735; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -.04em; }
+.summaryKpi small { color: #727785; font-size: 12px; line-height: 1.45; }
+.primaryCharts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.primaryCharts > .panel:only-child { grid-column: 1 / -1; }
+.panelHeader h3,
+.panelHeader p,
+.notes,
+.insight { word-break: keep-all; }
+.segmentName strong { font-size: 13px; }
+.segmentMetric b,
+.rateText { font-size: 12px; }
+.segmentMetric small,
+.insight small { font-size: 11px; }
+.insight p,
+.notes p { font-size: 12px; }
+
+@media (max-width: 900px) {
+  .primaryCharts { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .kpiGrid { grid-template-columns: 1fr; gap: 9px; }
+  .summaryKpi { padding: 15px; }
+  .summaryKpi strong { font-size: 22px; }
+  .chartLarge { height: 285px; }
+  .panelHeader { flex-direction: column; }
+  .panelHeader > small { white-space: normal; }
 }

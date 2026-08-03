@@ -108,4 +108,18 @@ describe("analytics", () => {
     expect(dashboard.schools[0].total).toBe(110);
     expect(detailTotal).toBe(110);
   });
+
+  it("uses the explicit window for trends and the end year for details", () => {
+    const dashboard = createDashboard(
+      records,
+      emptyFilters(),
+      1,
+      20,
+      { startYear: 2024, endYear: 2025 },
+    );
+    expect(dashboard.analysisWindow).toEqual({ startYear: 2024, endYear: 2025 });
+    expect(dashboard.annual.map((point) => point.year)).toEqual([2024, 2025]);
+    expect(dashboard.details.every((row) => row.year === 2025)).toBe(true);
+    expect(dashboard.metrics.total.change).toBe(70);
+  });
 });

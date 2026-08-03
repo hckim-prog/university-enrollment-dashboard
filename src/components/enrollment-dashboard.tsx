@@ -32,7 +32,6 @@ import {
   RefreshCw,
   Search,
   SlidersHorizontal,
-  TrendingUp,
   Users,
   X,
 } from "lucide-react";
@@ -45,13 +44,15 @@ import {
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
+import { isFlatChange } from "@/lib/analysis-window";
 import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "market" | "departments" | "schools" | "details";
+type View = "overview" | "departments" | "schools" | "details";
 type Filters = {
-  year: string;
+  startYear: string;
+  endYear: string;
   universityCategory: string;
   region: string;
   school: string;
@@ -85,6 +86,7 @@ type DashboardResponse = {
     departmentStatuses: string[];
   };
   currentYear: number;
+  analysisWindow: { startYear: number; endYear: number };
   previousYear: number | null;
   rowCount: number;
   schoolCount: number;
@@ -118,7 +120,8 @@ type DashboardResponse = {
 };
 
 const initialFilters: Filters = {
-  year: "",
+  startYear: "",
+  endYear: "",
   universityCategory: "",
   region: "",
   school: "",
@@ -137,26 +140,20 @@ const navigation: {
 }[] = [
   {
     id: "overview",
-    label: "전체 현황",
-    description: "핵심 지표와 변화",
+    label: "7년 시장 요약",
+    description: "장기 규모와 구조 변화",
     icon: LayoutDashboard,
   },
   {
-    id: "market",
-    label: "시장 분석",
-    description: "규모·성장·점유율·집중도",
-    icon: TrendingUp,
-  },
-  {
     id: "departments",
-    label: "학과 트렌드",
-    description: "선택 연도까지 추세",
+    label: "학과 변화",
+    description: "장기·최근 학과군 변화",
     icon: BookOpen,
   },
   {
     id: "schools",
-    label: "학교 비교",
-    description: "학교별 규모와 증감",
+    label: "지역·학교",
+    description: "지역과 학교의 장기 변화",
     icon: Building2,
   },
   {
@@ -179,7 +176,7 @@ const percent = new Intl.NumberFormat("ko-KR", {
 
 function formatChange(value: number | null) {
   if (value === null) return "비교 연도 없음";
-  return `${value >= 0 ? "+" : ""}${fullNumber.format(value)}명`;
+  return `${value > 0 ? "+" : ""}${fullNumber.format(value)}명`;
 }
 
 function useMediaQuery(query: string) {
@@ -229,6 +226,13 @@ function ChangeBadge({
 }) {
   if (metric.change === null) {
     return <span className={styles.mutedBadge}>비교값 없음</span>;
+  }
+  if (isFlatChange(metric.changeRate)) {
+    return (
+      <span className={`${styles.changeBadge} ${styles.flatChange}`}>
+        보합 · {formatChange(metric.change)}
+      </span>
+    );
   }
   const up = metric.change >= 0;
   const positive = inverse ? !up : up;
@@ -311,6 +315,67 @@ function SelectFilter({
         ))}
       </select>
     </label>
+  );
+}
+
+function AnalysisPeriodFilter({
+  years,
+  startYear,
+  endYear,
+  onChange,
+}: {
+  years: number[];
+  startYear: string;
+  endYear: string;
+  onChange: (startYear: string, endYear: string) => void;
+}) {
+  if (years.length === 0) return null;
+  const firstYear = years[0];
+  const lastYear = years.at(-1)!;
+  const selectedStart = Number(startYear) || firstYear;
+  const selectedEnd = Number(endYear) || lastYear;
+  const quickWindows = [
+    { label: "최근 1년", start: years[Math.max(0, years.length - 2)] },
+    { label: "최근 3년", start: years[Math.max(0, years.length - 3)] },
+    { label: "전체 기간", start: firstYear },
+  ];
+  return (
+    <fieldset className={styles.periodFilter}>
+      <legend>분석 기간</legend>
+      <div className={styles.periodQuick}>
+        {quickWindows.map((item) => (
+          <button
+            type="button"
+            key={item.label}
+            className={selectedStart === item.start && selectedEnd === lastYear ? styles.periodActive : ""}
+            onClick={() => onChange(String(item.start), String(lastYear))}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <div className={styles.periodSelects}>
+        <label>
+          시작연도
+          <select
+            value={selectedStart}
+            onChange={(event) => onChange(event.target.value, String(selectedEnd))}
+          >
+            {years.filter((year) => year <= selectedEnd).map((year) => <option key={year} value={year}>{year}년</option>)}
+          </select>
+        </label>
+        <span aria-hidden="true">–</span>
+        <label>
+          종료연도
+          <select
+            value={selectedEnd}
+            onChange={(event) => onChange(String(selectedStart), event.target.value)}
+          >
+            {years.filter((year) => year >= selectedStart).map((year) => <option key={year} value={year}>{year}년</option>)}
+          </select>
+        </label>
+      </div>
+    </fieldset>
   );
 }
 
@@ -432,7 +497,7 @@ function RankingTable({
   );
 }
 
-function Overview({ data }: { data: DashboardResponse }) {
+export function LegacyOverview({ data }: { data: DashboardResponse }) {
   const trendStart = data.annual.at(0)?.year;
   return (
     <>
@@ -611,6 +676,10 @@ function Overview({ data }: { data: DashboardResponse }) {
   );
 }
 
+function Overview({ baseQuery }: { baseQuery: string }) {
+  return <MarketAnalysis baseQuery={baseQuery} />;
+}
+
 function MobileSchoolTick({
   x = 0,
   y = 0,
@@ -633,9 +702,10 @@ function MobileSchoolTick({
   );
 }
 
-function Schools({ data }: { data: DashboardResponse }) {
+function Schools({ data, baseQuery }: { data: DashboardResponse; baseQuery: string }) {
   const mobile = useMediaQuery("(max-width: 620px)");
-  const mobileHeight = Math.max(430, data.schools.length * 54);
+  const visibleSchools = data.schools.slice(0, mobile ? 5 : 10);
+  const mobileHeight = Math.max(310, visibleSchools.length * 58);
   return (
     <section className={styles.viewStack}>
       <article className={styles.panel}>
@@ -644,7 +714,7 @@ function Schools({ data }: { data: DashboardResponse }) {
             <span className={styles.eyebrow}>학교 비교</span>
             <h2>{data.currentYear}년 학교별 재적학생</h2>
           </div>
-          <span className={styles.panelNote}>상위 12개교</span>
+          <span className={styles.panelNote}>상위 {visibleSchools.length}개교</span>
         </div>
         <div
           className={`${styles.largeChart} ${mobile ? styles.mobileSchoolChart : ""}`}
@@ -652,7 +722,7 @@ function Schools({ data }: { data: DashboardResponse }) {
         >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={data.schools}
+              data={visibleSchools}
               layout={mobile ? "vertical" : "horizontal"}
               margin={mobile ? { left: 0, right: 8 } : { left: 10, right: 12 }}
             >
@@ -734,8 +804,9 @@ function Schools({ data }: { data: DashboardResponse }) {
             상단 학교 필터로 한 학교를 자세히 볼 수 있습니다
           </span>
         </div>
-        <RankingTable rows={data.schools} label="명" />
+        <RankingTable rows={visibleSchools} label="명" />
       </article>
+      <MarketAnalysis baseQuery={baseQuery} initialTab="competition" compactToolbar />
     </section>
   );
 }
@@ -929,6 +1000,21 @@ function EmptyState({ onReset }: { onReset: () => void }) {
   );
 }
 
+function marketHeadline(data: DashboardResponse | null) {
+  if (!data || data.annual.length === 0) return "장기 시장 변화를 불러오고 있습니다.";
+  const start = data.annual[0];
+  const end = data.annual.at(-1)!;
+  const change = end.total - start.total;
+  const rate = start.total === 0 ? null : change / start.total;
+  const longChangeText = change === 0
+    ? "변화가 없었으며"
+    : `${fullNumber.format(Math.abs(change))}명 ${change < 0 ? "감소" : "증가"}했으며`;
+  const recent = isFlatChange(data.metrics.total.changeRate)
+    ? ` ${end.year}년은 전년 대비 보합이며 정확한 증감은 ${formatChange(data.metrics.total.change)}입니다.`
+    : ` ${end.year}년은 전년 대비 ${formatChange(data.metrics.total.change)} (${data.metrics.total.changeRate === null ? "비교 불가" : percent.format(data.metrics.total.changeRate)})입니다.`;
+  return `재적학생은 ${start.year}년 대비 ${longChangeText} 장기 변화율은 ${rate === null ? "비교 불가" : percent.format(rate)}입니다.${recent}`;
+}
+
 export function EnrollmentDashboard() {
   const [view, setView] = useState<View>("overview");
   const [filters, setFilters] = useState<Filters>(initialFilters);
@@ -953,7 +1039,8 @@ export function EnrollmentDashboard() {
   const baseQuery = useMemo(() => {
     const params = new URLSearchParams();
     Object.entries({
-      year: filters.year,
+      startYear: filters.startYear,
+      endYear: filters.endYear,
       universityCategory: filters.universityCategory,
       region: filters.region,
       school: filters.school,
@@ -1095,6 +1182,13 @@ export function EnrollmentDashboard() {
     setPage(1);
     setFilterVersion((version) => version + 1);
   };
+  const setAnalysisWindow = (startYear: string, endYear: string) => {
+    const start = Number(startYear);
+    const end = Number(endYear);
+    if (Number.isFinite(start) && Number.isFinite(end) && start > end) return;
+    setFilters((current) => ({ ...current, startYear, endYear }));
+    setPage(1);
+  };
   const schoolOptions = filters.region
     ? filters.universityCategory
       ? (data?.meta.schoolsByRegionAndCategory[filters.region]?.[
@@ -1118,7 +1212,32 @@ export function EnrollmentDashboard() {
           ),
         )].sort((left, right) => left.localeCompare(right, "ko-KR"))
       : (data?.meta.fieldSmalls ?? []);
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const dimensionFilterEntries = Object.entries(filters).filter(
+    ([key, value]) => key !== "startYear" && key !== "endYear" && Boolean(value),
+  );
+  const availableYears = data?.meta.years ?? [];
+  const defaultStartYear = availableYears[0];
+  const defaultEndYear = availableYears.at(-1);
+  const effectiveStartYear = Number(filters.startYear) || defaultStartYear;
+  const effectiveEndYear = Number(filters.endYear) || defaultEndYear;
+  const periodChanged = Boolean(
+    defaultStartYear &&
+      defaultEndYear &&
+      (effectiveStartYear !== defaultStartYear || effectiveEndYear !== defaultEndYear),
+  );
+  const activeFilterCount = dimensionFilterEntries.length + (periodChanged ? 1 : 0);
+  const basicFilterKeys = new Set(
+    view === "overview"
+      ? ["universityCategory", "region"]
+      : view === "departments"
+        ? ["universityCategory", "fieldMiddle", "department"]
+        : view === "schools"
+          ? ["region", "establishment", "school"]
+          : [],
+  );
+  const advancedFilterCount = dimensionFilterEntries.filter(
+    ([key]) => !basicFilterKeys.has(key),
+  ).length;
   const activeNav = navigation.find((item) => item.id === view)!;
 
   return (
@@ -1143,7 +1262,9 @@ export function EnrollmentDashboard() {
             <X size={20} />
           </button>
         </div>
-        <div className={styles.localBadge}>2019–2025 · 대학·전문대학</div>
+        <div className={styles.localBadge}>
+          {data?.dataset.dataYearRange?.replace("년", "") ?? "데이터 확인 중"} · 대학·전문대학
+        </div>
         <nav aria-label="주요 화면">
           <span className={styles.navLabel}>분석 메뉴</span>
           {navigation.map((item) => {
@@ -1156,6 +1277,7 @@ export function EnrollmentDashboard() {
                 onClick={() => {
                   setView(item.id);
                   setMobileNav(false);
+                  setFiltersOpen(false);
                 }}
               >
                 <Icon size={19} />
@@ -1221,35 +1343,33 @@ export function EnrollmentDashboard() {
           </div>
         </header>
         <div className={styles.content}>
-          <section className={styles.hero}>
+          <section className={`${styles.hero} ${view === "overview" ? styles.summaryHero : styles.pageHero}`}>
             <div>
               <span className={styles.heroEyebrow}>{activeNav.label}</span>
-              <h1>
-                대학 시장의 학생 흐름을
-                <br />
-                {" "}한눈에 살펴보세요.
-              </h1>
+              <h1>{view === "overview" ? marketHeadline(data) : activeNav.label}</h1>
               <p>
-                {data?.dataset.dataYearRange ?? "검산된 연도"} 재학생·휴학생·재적학생의 변화를
-                대학·전문대학과 대·중·소계열 단위로 탐색합니다.
+                {view === "overview"
+                  ? "공시 학생 수의 기술 통계이며 원인·수요·취업 전망을 단정하지 않습니다."
+                  : activeNav.description}
               </p>
             </div>
-            <div className={styles.heroSummary}>
-              {data?.rowCount === 0 ? (
-                <>
-                  <span>선택 현황</span>
-                  <strong className={styles.noResultSummary}>검색 결과 없음</strong>
-                  <small>필터를 조정해 주세요</small>
-                </>
-              ) : (
-                <>
-                  <span>{data?.currentYear ?? "—"}년 선택 현황</span>
-                  <strong>{data ? compactNumber.format(data.metrics.total.value) : "—"}</strong>
-                  <small>재적학생</small>
-                  {data && <ChangeBadge metric={data.metrics.total} />}
-                </>
-              )}
-            </div>
+            {view === "overview" && (
+              <div className={styles.heroSummary}>
+                {data?.rowCount === 0 ? (
+                  <>
+                    <span>선택 현황</span>
+                    <strong className={styles.noResultSummary}>검색 결과 없음</strong>
+                    <small>필터를 조정해 주세요</small>
+                  </>
+                ) : (
+                  <>
+                    <span>{data?.currentYear ?? "—"}년 재적학생</span>
+                    <strong>{data ? compactNumber.format(data.metrics.total.value) : "—"}</strong>
+                    {data && <ChangeBadge metric={data.metrics.total} />}
+                  </>
+                )}
+              </div>
+            )}
           </section>
           <section
             className={`${styles.filters} ${
@@ -1268,41 +1388,78 @@ export function EnrollmentDashboard() {
                 onClick={() => setFiltersOpen((open) => !open)}
               >
                 <Filter size={16} />
-                {filtersOpen ? "필터 접기" : "필터 열기"}
+                {filtersOpen
+                  ? "상세 조건 접기"
+                  : advancedFilterCount > 0
+                    ? `상세 조건 ${advancedFilterCount}개 적용`
+                    : "상세 조건"}
               </button>
             </div>
+            <div className={styles.basicFilterGrid}>
+              <AnalysisPeriodFilter
+                years={availableYears}
+                startYear={filters.startYear}
+                endYear={filters.endYear}
+                onChange={setAnalysisWindow}
+              />
+              {(view === "overview" || view === "departments") && (
+                <SelectFilter
+                  label="대학구분"
+                  value={filters.universityCategory}
+                  options={data?.meta.universityCategories ?? []}
+                  onChange={setUniversityCategory}
+                  helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
+                />
+              )}
+              {(view === "overview" || view === "schools") && (
+                <SelectFilter label="지역" value={filters.region} options={data?.meta.regions ?? []} onChange={setRegion} />
+              )}
+              {view === "departments" && (
+                <>
+                  <SelectFilter label="학과군" value={filters.fieldMiddle} options={middleFieldOptions} onChange={setFieldMiddle} />
+                  <label className={`${styles.filterField} ${styles.searchField}`}>
+                    <span>학과 검색</span>
+                    <div><Search size={16} /><input value={filters.department} onChange={(event) => setFilter("department", event.target.value)} placeholder="예: 간호, 컴퓨터" /></div>
+                  </label>
+                </>
+              )}
+              {view === "schools" && (
+                <>
+                  <SelectFilter label="설립구분" value={filters.establishment} options={data?.meta.establishments ?? []} onChange={(value) => setFilter("establishment", value)} />
+                  <SchoolCombobox key={`basic-${filterVersion}-${filters.region}-${filters.school}`} value={filters.school} options={schoolOptions} onChange={(value) => setFilter("school", value)} />
+                </>
+              )}
+            </div>
+            {(filtersOpen || view === "details") && (
             <div className={styles.filterGrid}>
-              <SelectFilter
-                label="연도"
-                value={filters.year}
-                options={data?.meta.years ?? [2019, 2020, 2021, 2022, 2023, 2024, 2025]}
-                onChange={(value) => setFilter("year", value)}
-              />
-              <SelectFilter
-                label="대학구분"
-                value={filters.universityCategory}
-                options={data?.meta.universityCategories ?? []}
-                onChange={setUniversityCategory}
-                helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
-              />
-              <SelectFilter
-                label="지역"
-                value={filters.region}
-                options={data?.meta.regions ?? []}
-                onChange={setRegion}
-              />
-              <SchoolCombobox
-                key={`${filterVersion}-${filters.region}`}
-                value={filters.school}
-                options={schoolOptions}
-                onChange={(value) => setFilter("school", value)}
-              />
-              <SelectFilter
-                label="설립구분"
-                value={filters.establishment}
-                options={data?.meta.establishments ?? []}
-                onChange={(value) => setFilter("establishment", value)}
-              />
+              {(view === "schools" || view === "details") && (
+                <SelectFilter
+                  label="대학구분"
+                  value={filters.universityCategory}
+                  options={data?.meta.universityCategories ?? []}
+                  onChange={setUniversityCategory}
+                  helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
+                />
+              )}
+              {(view === "departments" || view === "details") && (
+                <SelectFilter label="지역" value={filters.region} options={data?.meta.regions ?? []} onChange={setRegion} />
+              )}
+              {view !== "schools" && (
+                <SchoolCombobox
+                  key={`${filterVersion}-${filters.region}-${filters.school}`}
+                  value={filters.school}
+                  options={schoolOptions}
+                  onChange={(value) => setFilter("school", value)}
+                />
+              )}
+              {view !== "schools" && (
+                <SelectFilter
+                  label="설립구분"
+                  value={filters.establishment}
+                  options={data?.meta.establishments ?? []}
+                  onChange={(value) => setFilter("establishment", value)}
+                />
+              )}
               <SelectFilter
                 label="대계열"
                 value={filters.field}
@@ -1310,13 +1467,15 @@ export function EnrollmentDashboard() {
                 onChange={setField}
                 helpText="교육부 표준분류의 가장 큰 계열 구분입니다."
               />
-              <SelectFilter
-                label="중계열"
-                value={filters.fieldMiddle}
-                options={middleFieldOptions}
-                onChange={setFieldMiddle}
-                helpText="선택한 대계열 아래의 표준분류 중계열입니다."
-              />
+              {view !== "departments" && (
+                <SelectFilter
+                  label="중계열"
+                  value={filters.fieldMiddle}
+                  options={middleFieldOptions}
+                  onChange={setFieldMiddle}
+                  helpText="선택한 대계열 아래의 표준분류 중계열입니다."
+                />
+              )}
               <SelectFilter
                 label="소계열"
                 value={filters.fieldSmall}
@@ -1331,19 +1490,21 @@ export function EnrollmentDashboard() {
                 onChange={(value) => setFilter("schoolStatus", value)}
                 helpText="새 원본에는 학과상태가 없고 학교상태만 있습니다. 기존·폐교 등 원본 값을 그대로 사용합니다."
               />
-              <label className={`${styles.filterField} ${styles.searchField}`}>
-                <span>학과명</span>
-                <div>
-                  <Search size={16} />
-                  <input
-                    value={filters.department}
-                    onChange={(event) =>
-                      setFilter("department", event.target.value)
-                    }
-                    placeholder="예: 간호, 컴퓨터"
-                  />
-                </div>
-              </label>
+              {view !== "departments" && (
+                <label className={`${styles.filterField} ${styles.searchField}`}>
+                  <span>학과명</span>
+                  <div>
+                    <Search size={16} />
+                    <input
+                      value={filters.department}
+                      onChange={(event) =>
+                        setFilter("department", event.target.value)
+                      }
+                      placeholder="예: 간호, 컴퓨터"
+                    />
+                  </div>
+                </label>
+              )}
               <button
                 type="button"
                 className={styles.resetButton}
@@ -1354,6 +1515,28 @@ export function EnrollmentDashboard() {
                 초기화
               </button>
             </div>
+            )}
+            {activeFilterCount > 0 && (
+              <div className={styles.filterChips} aria-label="적용된 필터">
+                {periodChanged && (
+                  <button type="button" onClick={() => setAnalysisWindow(String(defaultStartYear), String(defaultEndYear))}>
+                    {effectiveStartYear}~{effectiveEndYear}년 <X size={13} />
+                  </button>
+                )}
+                {dimensionFilterEntries.map(([key, value]) => (
+                  <button key={key} type="button" onClick={() => {
+                    if (key === "region") setRegion("");
+                    else if (key === "universityCategory") setUniversityCategory("");
+                    else if (key === "field") setField("");
+                    else if (key === "fieldMiddle") setFieldMiddle("");
+                    else setFilter(key as keyof Filters, "");
+                  }}>
+                    {value} <X size={13} />
+                  </button>
+                ))}
+                <button type="button" className={styles.clearAllChip} onClick={resetFilters}>전체 초기화</button>
+              </div>
+            )}
           </section>
           {error ? (
             <div className={styles.errorState}>
@@ -1372,10 +1555,9 @@ export function EnrollmentDashboard() {
             <EmptyState onReset={resetFilters} />
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
-              {view === "overview" && <Overview data={data} />}
-              {view === "market" && <MarketAnalysis baseQuery={baseQuery} />}
+              {view === "overview" && <Overview baseQuery={baseQuery} />}
               {view === "departments" && <DepartmentTrends baseQuery={baseQuery} />}
-              {view === "schools" && <Schools data={data} />}
+              {view === "schools" && <Schools data={data} baseQuery={baseQuery} />}
               {view === "details" && (
                 <Details
                   data={data}

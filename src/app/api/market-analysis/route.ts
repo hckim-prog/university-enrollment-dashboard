@@ -5,6 +5,7 @@ import {
   type MarketMetric,
 } from "@/lib/market-analysis";
 import { getValidatedData } from "@/lib/data";
+import { parseAnalysisWindow } from "@/lib/analysis-window";
 
 export const dynamic = "force-dynamic";
 
@@ -24,16 +25,15 @@ function list(searchParams: URLSearchParams, key: string) {
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams;
   const dataset = await getValidatedData();
-  const cacheKey = `${dataset.revision}:${search.toString()}`;
+  const analysisWindow = parseAnalysisWindow(search, dataset.dataset.years);
+  const cacheKey = `${dataset.revision}:${analysisWindow.startYear}-${analysisWindow.endYear}:${search.toString()}`;
   const cached = responseCache.get(cacheKey);
   if (cached) return NextResponse.json(cached);
 
   const defaults = emptyFilters();
   const filters = {
     ...defaults,
-    years: list(search, "year")
-      .map(Number)
-      .filter((value) => Number.isInteger(value)),
+    years: [],
     universityCategories: list(search, "universityCategory"),
     regions: list(search, "region"),
     schools: list(search, "school"),
@@ -47,7 +47,12 @@ export async function GET(request: NextRequest) {
   };
   const metric: MarketMetric =
     search.get("marketMetric") === "enrolled" ? "enrolled" : "total";
-  const result = createMarketAnalysis(dataset.records, filters, metric);
+  const result = createMarketAnalysis(
+    dataset.records,
+    filters,
+    metric,
+    analysisWindow,
+  );
   responseCache.set(cacheKey, result);
   if (responseCache.size > 24) {
     const oldest = responseCache.keys().next().value;

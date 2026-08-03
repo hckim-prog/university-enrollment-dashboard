@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDashboard, emptyFilters } from "@/lib/analytics";
 import { getValidatedData } from "@/lib/data";
+import { parseAnalysisWindow } from "@/lib/analysis-window";
 
 export const dynamic = "force-dynamic";
 
@@ -30,9 +31,7 @@ export async function GET(request: NextRequest) {
   const defaults = emptyFilters();
   const filters = {
     ...defaults,
-    years: list(search, "year")
-      .map(Number)
-      .filter((value) => Number.isInteger(value)),
+    years: [],
     universityCategories: list(search, "universityCategory"),
     regions: list(search, "region"),
     schools: list(search, "school"),
@@ -50,12 +49,13 @@ export async function GET(request: NextRequest) {
     ? requestedPageSize
     : 20;
   const dataset = await getValidatedData();
-  const cacheKey = `${dataset.revision}:${search.toString()}`;
+  const analysisWindow = parseAnalysisWindow(search, dataset.dataset.years);
+  const cacheKey = `${dataset.revision}:${analysisWindow.startYear}-${analysisWindow.endYear}:${search.toString()}`;
   const cached = responseCache.get(cacheKey);
   if (cached) return NextResponse.json(cached);
   const { records, validation } = dataset;
   const result = {
-    ...createDashboard(records, filters, page, pageSize),
+    ...createDashboard(records, filters, page, pageSize, analysisWindow),
     validation: {
       valid: validation.valid,
       totalRows: validation.totalRows,

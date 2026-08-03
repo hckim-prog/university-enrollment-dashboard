@@ -5,6 +5,11 @@ import type {
   MetricKey,
   RankedPoint,
 } from "./types";
+import {
+  analysisYears,
+  resolveAnalysisWindow,
+  type AnalysisWindow,
+} from "./analysis-window";
 
 export type DashboardMetric = {
   value: number;
@@ -133,15 +138,6 @@ function rank(
     .slice(0, limit);
 }
 
-function uniqueSorted(
-  records: EnrollmentRecord[],
-  selector: (row: EnrollmentRecord) => string,
-) {
-  return [...new Set(records.map(selector).filter(Boolean))].sort((a, b) =>
-    a.localeCompare(b, "ko-KR"),
-  );
-}
-
 type DashboardMeta = {
   years: number[];
   universityCategories: string[];
@@ -259,21 +255,19 @@ export function createDashboard(
   filters: FilterState,
   page = 1,
   pageSize = 20,
+  requestedWindow?: AnalysisWindow,
 ) {
   const meta = createDashboardMeta(records);
   const contextRows = filterRecords(records, filters, false);
   const allYears = meta.years;
-  const availableYears = uniqueSorted(contextRows, (row) =>
-    String(row.year),
-  ).map(Number);
-  const currentYear =
-    filters.years.length > 0
-      ? Math.max(...filters.years)
-      : Math.max(...allYears);
+  const analysisWindow = requestedWindow ?? resolveAnalysisWindow(allYears, {
+    endYear: filters.years.length > 0 ? Math.max(...filters.years) : undefined,
+  });
+  const currentYear = analysisWindow.endYear;
   const previousYear = allYears.includes(currentYear - 1)
     ? currentYear - 1
     : null;
-  const trendYears = availableYears.filter((year) => year <= currentYear);
+  const trendYears = analysisYears(allYears, analysisWindow);
   const currentRows = contextRows.filter((row) => row.year === currentYear);
   const previousRows =
     previousYear === null
@@ -331,6 +325,7 @@ export function createDashboard(
 
   return {
     meta,
+    analysisWindow,
     currentYear,
     previousYear,
     rowCount: currentRows.length,
@@ -370,9 +365,15 @@ export function createDashboard(
     schools: rank(
       currentRows,
       previousRows,
-      (row) => row.school,
+      (row) => `${row.schoolCode}\u001e${row.campus}\u001e${row.school}`,
       12,
-    ),
+    ).map((row) => {
+      const [, campus, school] = row.name.split("\u001e");
+      return {
+        ...row,
+        name: campus && campus !== "본교" ? `${school} (${campus})` : school,
+      };
+    }),
     details,
     pagination: {
       page: safePage,

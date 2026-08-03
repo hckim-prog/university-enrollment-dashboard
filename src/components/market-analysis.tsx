@@ -4,7 +4,11 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
+  LabelList,
   Legend,
+  Line,
+  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Scatter,
@@ -18,14 +22,10 @@ import {
   Activity,
   ArrowDownRight,
   ArrowUpRight,
-  Building2,
   CircleAlert,
-  Gauge,
   Layers3,
   RefreshCw,
-  School,
   SearchX,
-  Target,
   Users,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -61,7 +61,23 @@ const palette = {
 };
 
 function formatRate(value: number | null) {
-  return value === null ? "비교 불가" : percent.format(value);
+  if (value === null) return "비교 불가";
+  return Math.abs(value) < 0.0005 ? "보합" : percent.format(value);
+}
+
+function signedNumber(value: number | null) {
+  if (value === null) return "비교 불가";
+  return `${value > 0 ? "+" : ""}${number.format(value)}명`;
+}
+
+function SummaryKpi({ label, value, note }: { label: string; value: string; note: string }) {
+  return (
+    <article className={styles.summaryKpi}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{note}</small>
+    </article>
+  );
 }
 
 function Delta({
@@ -74,6 +90,9 @@ function Delta({
   format?: "number" | "percent" | "index";
 }) {
   if (value.change === null) return <span className={styles.neutralDelta}>비교값 없음</span>;
+  if (format !== "percent" && value.changeRate !== null && Math.abs(value.changeRate) < 0.0005) {
+    return <span className={styles.neutralDelta}>보합 · {signedNumber(value.change)}</span>;
+  }
   const up = value.change >= 0;
   const positive = inverse ? !up : up;
   const Icon = up ? ArrowUpRight : ArrowDownRight;
@@ -89,7 +108,7 @@ function Delta({
   );
 }
 
-function KpiCard({
+export function KpiCard({
   label,
   description,
   value,
@@ -136,10 +155,12 @@ function SegmentRows({
   rows,
   limit = 8,
   showAbsoluteChange = false,
+  changeMode = "recent",
 }: {
   rows: MarketSegment[];
   limit?: number;
   showAbsoluteChange?: boolean;
+  changeMode?: "recent" | "long";
 }) {
   const max = Math.max(...rows.slice(0, limit).map((row) => row.value), 1);
   return (
@@ -150,6 +171,13 @@ function SegmentRows({
           <div className={styles.segmentName}>
             <strong title={row.name}>{row.name}</strong>
             <div><i style={{ width: `${(row.value / max) * 100}%` }} /></div>
+            {changeMode === "long" && (
+              <small className={styles.periodContext}>
+                {row.startValue === null
+                  ? "시작연도 값 없음"
+                  : `${compact.format(row.startValue)} → ${compact.format(row.value)} · 최근 1년 ${signedNumber(row.change)}`}
+              </small>
+            )}
           </div>
           <div className={styles.segmentMetric}>
             <b>{compact.format(row.value)}</b>
@@ -158,9 +186,9 @@ function SegmentRows({
           <span
             className={`${styles.rateText} ${(row.changeRate ?? 0) >= 0 ? styles.rateUp : styles.rateDown}`}
           >
-            {showAbsoluteChange && row.change !== null
-              ? `${row.change >= 0 ? "+" : ""}${number.format(row.change)}명`
-              : formatRate(row.changeRate)}
+            {showAbsoluteChange && (changeMode === "long" ? row.changeFromStart : row.change) !== null
+              ? signedNumber(changeMode === "long" ? row.changeFromStart : row.change)
+              : formatRate(changeMode === "long" ? row.changeRateFromStart : row.changeRate)}
           </span>
         </div>
       ))}
@@ -169,51 +197,112 @@ function SegmentRows({
 }
 
 function SummaryView({ data }: { data: MarketAnalysisResponse }) {
+  const market = data.kpis.marketSize;
+  const latest = data.annual.at(-1);
+  const enrolledShare = latest && latest.total > 0 ? latest.enrolled / latest.total : null;
+  const leaveShare = latest && latest.total > 0 ? latest.leave / latest.total : null;
+  const annualChanges = data.annual.map((row, index) => ({
+    ...row,
+    annualChange: index === 0 ? null : row.total - data.annual[index - 1].total,
+  }));
+  const longTrend = data.annual.map((row, index) => ({
+    ...row,
+    endpointLabel:
+      index === 0 || index === data.annual.length - 1
+        ? number.format(row.total)
+        : "",
+  }));
+  const indexedCategories = data.meta.years.map((year, yearIndex) => {
+    const row: Record<string, string | number | null> = { year };
+    for (const series of data.universityCategoryAnnual) {
+      const point = series.annual.find((item) => item.year === year);
+      row[series.name] = point?.index ?? null;
+      row[`${series.name}Actual`] = point?.value ?? null;
+      row[`${series.name}Label`] = yearIndex === data.meta.years.length - 1 ? series.name : "";
+    }
+    return row;
+  });
   return (
     <div className={styles.stack}>
       <section className={styles.kpiGrid} aria-label="시장 핵심 지표">
-        <KpiCard
-          label={`${data.meta.metricLabel} 시장 규모`}
-          description={`${data.meta.selectedYear}년 전체 합계`}
-          value={data.kpis.marketSize}
-          icon={Users}
-        />
-        <KpiCard
-          label="재학생"
-          description="실제 재학 중인 학생"
-          value={data.kpis.enrolled}
-          icon={School}
-        />
-        <KpiCard
-          label="휴학생 비중"
-          description="휴학생 ÷ 재적학생"
-          value={data.kpis.leaveRate}
-          icon={Activity}
-          format="percent"
-          inverse
-        />
-        <KpiCard
-          label="정원 대비 재학생"
-          description="정원외 포함·공식 충원율 아님"
-          value={data.kpis.capacityRatio}
-          icon={Target}
-          format="percent"
-          unavailable={!data.kpis.capacityRatio.available}
-        />
-        <KpiCard
-          label="활동 학교"
-          description="재적학생 1명 이상 본·분교"
-          value={data.kpis.schoolCount}
-          icon={Building2}
-          format="index"
-        />
-        <KpiCard
-          label="상위 10개교 점유율"
-          description="학교 시장 집중도 보조지표"
-          value={data.kpis.top10Share}
-          icon={Gauge}
-          format="percent"
-        />
+        <SummaryKpi label={`${data.meta.endYear}년 재적학생`} value={`${number.format(market.value)}명`} note="종료연도 전체 합계" />
+        <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
+        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년 CAGR`} />
+        <SummaryKpi label="최근 1년 변화" value={isFinite(market.change ?? NaN) ? signedNumber(market.change) : "비교 불가"} note={formatRate(market.changeRate)} />
+        <SummaryKpi label="학생 구성" value={`재학생 ${formatRate(enrolledShare)}`} note={`휴학생 ${formatRate(leaveShare)} · 유예 ${number.format(latest?.deferment ?? 0)}명`} />
+      </section>
+
+      <section className={styles.primaryCharts}>
+        <article className={styles.panel}>
+          <header className={styles.panelHeader}><div><span>장기 추세</span><h3>재적학생 장기 추세</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 단위: 명 · 변화 확인을 위해 축 범위를 확대함</p></div><small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명 · {signedNumber(market.changeFromStart)}</small></header>
+          <div className={styles.chartLarge}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={longTrend} margin={{left:8,right:18,top:24,bottom:4}}>
+                <CartesianGrid stroke="#e9ebf1" vertical={false} />
+                <XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} />
+                <YAxis domain={["dataMin - 50000", "dataMax + 50000"]} tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    const point = payload?.[0]?.payload as (typeof longTrend)[number] | undefined;
+                    if (!active || !point) return null;
+                    return (
+                      <div className={styles.chartTooltip}>
+                        <strong>{label}년</strong>
+                        <span>재적학생 {number.format(point.total)}명</span>
+                        <span>재학생 {number.format(point.enrolled)}명</span>
+                        <span>휴학생 {number.format(point.leave)}명</span>
+                        <span>학위취득유예학생 {number.format(point.deferment)}명</span>
+                      </div>
+                    );
+                  }}
+                />
+                <Line type="monotone" dataKey="total" stroke={palette.purple} strokeWidth={3} dot={{r:4}}>
+                  <LabelList dataKey="endpointLabel" position="top" />
+                </Line>
+                <Line type="monotone" dataKey="enrolled" stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </article>
+        <article className={styles.panel}>
+          <header className={styles.panelHeader}><div><span>연도별 이동</span><h3>전년 대비 재적학생 증감</h3><p>첫 연도는 비교값 없음 · 단위: 명</p></div></header>
+          <div className={styles.chartLarge}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={annualChanges} margin={{left:8,right:12,top:24,bottom:4}}>
+                <CartesianGrid stroke="#eceef3" vertical={false} />
+                <XAxis dataKey="year" tickFormatter={(value) => `${String(value).slice(2)}년`} axisLine={false} tickLine={false} />
+                <YAxis tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
+                <ReferenceLine y={0} stroke={palette.ink} />
+                <Tooltip formatter={(value) => signedNumber(Number(value))} labelFormatter={(label) => `${label}년`} />
+                <Bar dataKey="annualChange" fill={palette.purpleLight} radius={[4,4,0,0]}>
+                  {annualChanges.map((row) => (
+                    <Cell key={row.year} fill={(row.annualChange ?? 0) >= 0 ? palette.teal : palette.orange} />
+                  ))}
+                  <LabelList dataKey="annualChange" position="top" formatter={(value) => value === null ? "" : signedNumber(Number(value))} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </article>
+      </section>
+
+      <section className={styles.primaryCharts}>
+        <article className={styles.panel}>
+          <header className={styles.panelHeader}><div><span>상대 변화</span><h3>대학·전문대학 지수</h3><p>{data.meta.startYear}년=100 · 실제 학생 수는 툴팁에서 확인</p></div></header>
+          <div className={styles.chartLarge}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={indexedCategories} margin={{left:8,right:44,top:16,bottom:4}}>
+                <CartesianGrid stroke="#eceef3" vertical={false} />
+                <XAxis dataKey="year" tickFormatter={(value) => `${String(value).slice(2)}년`} axisLine={false} tickLine={false} />
+                <YAxis domain={["auto","auto"]} tickFormatter={(value) => Number(value).toFixed(0)} axisLine={false} tickLine={false} width={44} />
+                <ReferenceLine y={100} stroke={palette.ink} strokeDasharray="4 4" />
+                <Tooltip formatter={(value, name, item) => [`지수 ${Number(value).toFixed(1)} · ${number.format(Number(item.payload[`${String(name)}Actual`]))}명`, String(name)]} labelFormatter={(label) => `${label}년`} />
+                <Line type="monotone" dataKey="대학" stroke={palette.purple} strokeWidth={3} dot={{r:3}} connectNulls={false}><LabelList dataKey="대학Label" position="right" /></Line>
+                <Line type="monotone" dataKey="전문대학" stroke={palette.teal} strokeWidth={3} strokeDasharray="6 4" dot={{r:3}} connectNulls={false}><LabelList dataKey="전문대학Label" position="right" /></Line>
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </article>
       </section>
 
       <section className={styles.twoColumns}>
@@ -391,27 +480,35 @@ function CompetitionView({ data }: { data: MarketAnalysisResponse }) {
         </article>
 
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>지역 시장</span><h3>재적학생 상위 지역</h3><p>현재 점유율과 전년 변화율</p></div></header>
-          <SegmentRows rows={data.regions} limit={10} />
+          <header className={styles.panelHeader}><div><span>지역 시장</span><h3>지역별 재적학생과 장기 변화</h3><p>{data.meta.startYear}년 대비 증감 · 현재 점유율</p></div></header>
+          <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" />
         </article>
       </section>
 
       <section className={styles.moversGrid}>
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>학교 이동</span><h3>전년 대비 증가 학교</h3><p>선택 조건 내 절대 증감 상위</p></div></header>
-          <SegmentRows rows={data.schoolMovers.increases} limit={10} showAbsoluteChange />
+          <header className={styles.panelHeader}><div><span>학교 이동</span><h3>장기 증가 학교</h3><p>{data.meta.startYear}년 시작 규모 {number.format(data.meta.schoolMinimumStartValue)}명 이상 · 절대 증감</p></div></header>
+          <SegmentRows rows={data.schoolMovers.increases} limit={10} showAbsoluteChange changeMode="long" />
         </article>
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>학교 이동</span><h3>전년 대비 감소 학교</h3><p>선택 조건 내 절대 감소 상위</p></div></header>
-          <SegmentRows rows={data.schoolMovers.decreases} limit={10} showAbsoluteChange />
+          <header className={styles.panelHeader}><div><span>학교 이동</span><h3>장기 감소 학교</h3><p>{data.meta.startYear}년 시작 규모 {number.format(data.meta.schoolMinimumStartValue)}명 이상 · 절대 증감</p></div></header>
+          <SegmentRows rows={data.schoolMovers.decreases} limit={10} showAbsoluteChange changeMode="long" />
         </article>
       </section>
     </div>
   );
 }
 
-export function MarketAnalysis({ baseQuery }: { baseQuery: string }) {
-  const [tab, setTab] = useState<Tab>("summary");
+export function MarketAnalysis({
+  baseQuery,
+  initialTab = "summary",
+  compactToolbar = false,
+}: {
+  baseQuery: string;
+  initialTab?: Tab;
+  compactToolbar?: boolean;
+}) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [metric, setMetric] = useState<MarketMetric>("total");
   const [data, setData] = useState<MarketAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -449,7 +546,7 @@ export function MarketAnalysis({ baseQuery }: { baseQuery: string }) {
 
   return (
     <section className={styles.marketView}>
-      <div className={styles.toolbar}>
+      {!compactToolbar && <div className={styles.toolbar}>
         <div className={styles.tabs} role="tablist" aria-label="시장 분석 보기">
           {([
             ["summary", "시장 요약"],
@@ -466,7 +563,7 @@ export function MarketAnalysis({ baseQuery }: { baseQuery: string }) {
             <option value="enrolled">재학생</option>
           </select>
         </label>
-      </div>
+      </div>}
 
       {error ? (
         <div className={styles.state}><CircleAlert size={28} /><strong>시장 분석을 불러오지 못했습니다.</strong><p>{error}</p><button type="button" onClick={() => load()}><RefreshCw size={15} /> 다시 시도</button></div>

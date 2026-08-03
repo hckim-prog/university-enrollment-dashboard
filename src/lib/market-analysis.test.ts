@@ -35,9 +35,9 @@ function record(
     fieldMiddle: `${field} 중계열`,
     fieldSmall: `${field} 소계열`,
     capacity: year >= 2023 ? 100 : null,
-    enrolled: total - 10,
-    leave: 8,
-    deferment: 2,
+    enrolled: total === 0 ? 0 : total - 10,
+    leave: total === 0 ? 0 : 8,
+    deferment: total === 0 ? 0 : 2,
     total,
     sourceRow: year,
   };
@@ -89,5 +89,82 @@ describe("market analysis", () => {
       "전문대학",
     ]);
     expect(result.fields.map((row) => row.name)).toEqual(["인문사회계열"]);
+  });
+
+  it("calculates long-term change, CAGR, and category indexes from the selected start", () => {
+    const result = createMarketAnalysis(
+      records,
+      emptyFilters(),
+      "total",
+      { startYear: 2019, endYear: 2025 },
+    );
+    expect(result.kpis.marketSize.startValue).toBe(200);
+    expect(result.kpis.marketSize.changeFromStart).toBe(-10);
+    expect(result.kpis.marketSize.changeRateFromStart).toBeCloseTo(-0.05);
+    expect(result.kpis.marketSize.cagr).toBeCloseTo((190 / 200) ** (1 / 6) - 1);
+    expect(result.universityCategoryAnnual.every((series) => series.annual[0].index === 100)).toBe(true);
+  });
+
+  it("limits every market series to a recent three-year window", () => {
+    const result = createMarketAnalysis(
+      records,
+      emptyFilters(),
+      "total",
+      { startYear: 2023, endYear: 2025 },
+    );
+    expect(result.meta.startYear).toBe(2023);
+    expect(result.meta.endYear).toBe(2025);
+    expect(result.annual.every((point) => point.year >= 2023 && point.year <= 2025)).toBe(true);
+  });
+
+  it("uses the end-year previous calendar year and excludes later records", () => {
+    const result = createMarketAnalysis(
+      records,
+      emptyFilters(),
+      "total",
+      { startYear: 2019, endYear: 2024 },
+    );
+    expect(result.meta.previousYear).toBeNull();
+    expect(result.kpis.marketSize.value).toBe(190);
+    expect(result.kpis.marketSize.change).toBeNull();
+    expect(result.annual.some((point) => point.year > 2024)).toBe(false);
+  });
+
+  it("keeps regional, category, and student-component totals aligned", () => {
+    const result = createMarketAnalysis(records, emptyFilters());
+    const latest = result.annual.at(-1)!;
+    expect(result.regions.reduce((sum, row) => sum + row.value, 0)).toBe(
+      result.kpis.marketSize.value,
+    );
+    expect(result.universityCategories.reduce((sum, row) => sum + row.value, 0)).toBe(
+      result.kpis.marketSize.value,
+    );
+    expect(latest.enrolled + latest.leave + latest.deferment).toBe(latest.total);
+  });
+
+  it("does not calculate CAGR or a category index from a zero start", () => {
+    const zeroStart = [
+      record(2019, "대학", "공학계열", "영대", 0, "D0"),
+      record(2025, "대학", "공학계열", "영대", 30, "D0"),
+    ];
+    const result = createMarketAnalysis(
+      zeroStart,
+      emptyFilters(),
+      "total",
+      { startYear: 2019, endYear: 2025 },
+    );
+    expect(result.kpis.marketSize.cagr).toBeNull();
+    expect(result.universityCategoryAnnual[0].annual.every((point) => point.index === null)).toBe(true);
+  });
+
+  it("returns a reconciled empty result for unmatched filters", () => {
+    const result = createMarketAnalysis(records, {
+      ...emptyFilters(),
+      regions: ["없는 지역"],
+    });
+    expect(result.kpis.marketSize.value).toBe(0);
+    expect(result.regions).toEqual([]);
+    expect(result.validation.fieldTotalMatches).toBe(true);
+    expect(result.validation.universityCategoryTotalMatches).toBe(true);
   });
 });

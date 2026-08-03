@@ -368,7 +368,7 @@
 }
 
 .filterToggle {
-  display: none;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
   border: 0;
@@ -665,7 +665,7 @@
 
 .metricFooter > span:last-child {
   color: #a4a7b2;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .changeBadge,
@@ -676,7 +676,7 @@
   gap: 3px;
   padding: 4px 6px;
   border-radius: 7px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
   white-space: nowrap;
 }
@@ -732,7 +732,7 @@
 
 .panelNote {
   color: #a0a3ae;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.4;
   text-align: right;
 }
@@ -842,7 +842,7 @@
 .rankingValue span {
   margin-left: 2px;
   color: #9da0ac;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .insightPanel {
@@ -881,7 +881,7 @@
 
 .statTiles span {
   color: #969ab6;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .statTiles strong {
@@ -893,7 +893,7 @@
 .statTiles small {
   margin-left: 3px;
   color: #7a7e9b;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .formulaNote {
@@ -902,7 +902,7 @@
   gap: 8px;
   margin-top: 14px;
   color: #8edbc8;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .mobileDetails {
@@ -968,7 +968,7 @@
   border-radius: 999px;
   color: #23826d;
   background: #eaf7f3;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1120,7 +1120,7 @@
   gap: 20px;
   padding: 24px 3px 0;
   color: #9a9da8;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .spinning {
@@ -1315,7 +1315,7 @@
     display: block;
     margin-bottom: 3px;
     color: #9295a2;
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .detailCardHeader strong {
@@ -1358,7 +1358,7 @@
 
   .detailMetrics dt {
     color: #9295a2;
-    font-size: 8px;
+    font-size: 11px;
     word-break: keep-all;
   }
 
@@ -1376,7 +1376,7 @@
     justify-content: space-between;
     margin-top: 10px;
     color: #888c9a;
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .pagination {
@@ -1408,4 +1408,147 @@
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+/* 2019–2025 장기 분석 화면의 읽기 흐름 */
+.summaryHero {
+  min-height: 132px;
+  align-items: center;
+  padding: 24px 30px;
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+.summaryHero h1 {
+  max-width: 920px;
+  font-size: clamp(21px, 2.2vw, 30px);
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.summaryHero p { margin-top: 8px; font-size: 14px; }
+.summaryHero .heroSummary { min-width: 205px; padding: 15px 17px; }
+.summaryHero .heroSummary > strong { font-size: 27px; }
+
+.pageHero {
+  min-height: 0;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 22px;
+  border: 1px solid #e1e3ec;
+  border-radius: 13px;
+  color: #2e3140;
+  background: #f7f7fb;
+  box-shadow: none;
+}
+
+.pageHero .heroEyebrow { margin-bottom: 4px; color: #6262c4; }
+.pageHero h1 { font-size: 22px; letter-spacing: -0.03em; }
+.pageHero p { margin-top: 4px; color: #707482; font-size: 14px; }
+
+.basicFilterGrid {
+  display: grid;
+  grid-template-columns: minmax(310px, 1.4fr) repeat(3, minmax(145px, .8fr));
+  align-items: end;
+  gap: 12px;
+}
+
+.filterGrid {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #ececf2;
+}
+
+.periodFilter {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.periodFilter legend,
+.periodSelects label {
+  color: #686d7c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.periodQuick { display: flex; gap: 5px; margin: 6px 0 8px; }
+.periodQuick button {
+  min-height: 34px;
+  border: 1px solid #dedfe8;
+  border-radius: 8px;
+  padding: 0 10px;
+  color: #656978;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.periodQuick button.periodActive { border-color: #7373d6; color: #4f4fb2; background: #eeeeff; }
+.periodSelects { display: flex; align-items: end; gap: 7px; }
+.periodSelects label { display: grid; flex: 1; gap: 5px; }
+.periodSelects select {
+  width: 100%;
+  height: 39px;
+  border: 1px solid #dfe1e8;
+  border-radius: 9px;
+  padding: 0 9px;
+  color: #303341;
+  background: #fafbfc;
+  font: inherit;
+  font-size: 13px;
+}
+
+.filterChips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+.filterChips button {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #dcddea;
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: #5559a9;
+  background: #f7f7ff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.filterChips .clearAllChip { color: #6e7280; background: #fff; }
+.flatChange { color: #616675; background: #eef0f4; }
+
+.filterField > span,
+.helpTip p { font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .basicFilterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .periodFilter { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .summaryHero { gap: 10px; padding: 14px; }
+  .summaryHero h1 { font-size: 18px; line-height: 1.32; }
+  .summaryHero p { margin-top: 5px; font-size: 12px; line-height: 1.45; }
+  .summaryHero .heroSummary {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 11px;
+    border-radius: 12px;
+  }
+  .summaryHero .heroSummary > strong { margin-top: 0; font-size: 22px; }
+  .pageHero { padding: 13px 15px; }
+  .pageHero h1 { font-size: 19px; }
+  .basicFilterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .periodFilter { grid-column: 1 / -1; }
+  .periodQuick { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .periodQuick button { padding-inline: 5px; word-break: keep-all; }
+  .filterChips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; }
+  .filterChips button { flex: 0 0 auto; }
 }

@@ -1,4 +1,10 @@
 import { filterRecords } from "./analytics";
+import {
+  analysisYears,
+  indexedValue,
+  resolveAnalysisWindow,
+  type AnalysisWindow,
+} from "./analysis-window";
 import type { EnrollmentRecord, FilterState } from "./types";
 
 export type MarketMetric = "total" | "enrolled";
@@ -24,12 +30,14 @@ export type MarketSegment = MarketValue & {
 export type MarketAnalysisResponse = {
   meta: {
     selectedYear: number;
+    endYear: number;
     previousYear: number | null;
     startYear: number;
     years: number[];
     metric: MarketMetric;
     metricLabel: string;
     capacityStartYear: number;
+    schoolMinimumStartValue: number;
   };
   kpis: {
     marketSize: MarketValue;
@@ -57,6 +65,10 @@ export type MarketAnalysisResponse = {
     hhi: number;
   }>;
   universityCategories: MarketSegment[];
+  universityCategoryAnnual: Array<{
+    name: string;
+    annual: Array<{ year: number; value: number; index: number | null }>;
+  }>;
   fields: MarketSegment[];
   fieldMiddles: MarketSegment[];
   fieldSmalls: MarketSegment[];
@@ -252,7 +264,8 @@ function activeCounts(rows: EnrollmentRecord[]) {
 }
 
 function formatPercent(value: number | null) {
-  return value === null ? "비교 불가" : `${(value * 100).toFixed(1)}%`;
+  if (value === null) return "비교 불가";
+  return Math.abs(value) < 0.0005 ? "보합" : `${(value * 100).toFixed(1)}%`;
 }
 
 function createInsights(
@@ -329,16 +342,16 @@ export function createMarketAnalysis(
   records: EnrollmentRecord[],
   filters: FilterState,
   metric: MarketMetric = "total",
+  requestedWindow?: AnalysisWindow,
 ): MarketAnalysisResponse {
   const contextRows = filterRecords(records, filters, false);
   const allYears = [...new Set(records.map((row) => row.year))].sort();
-  const selectedYear = filters.years.length
-    ? Math.max(...filters.years)
-    : (allYears.at(-1) ?? 0);
-  const relevantYears = [
-    ...new Set(contextRows.map((row) => row.year).filter((year) => year <= selectedYear)),
-  ].sort();
-  const startYear = relevantYears[0] ?? selectedYear;
+  const window = requestedWindow ?? resolveAnalysisWindow(allYears, {
+    endYear: filters.years.length ? Math.max(...filters.years) : undefined,
+  });
+  const selectedYear = window.endYear;
+  const relevantYears = analysisYears(allYears, window);
+  const startYear = window.startYear;
   const previousYear = allYears.includes(selectedYear - 1)
     ? selectedYear - 1
     : null;
@@ -446,6 +459,25 @@ export function createMarketAnalysis(
     metric,
     yearSpan,
   );
+  const universityCategoryAnnual = ["대학", "전문대학"]
+    .map((name) => {
+      const startRowsForCategory = startRows.filter(
+        (row) => row.universityCategory === name,
+      );
+      const startValue = aggregate(startRowsForCategory)[metric];
+      return {
+        name,
+        annual: relevantYears.map((year) => {
+          const value = aggregate(
+            contextRows.filter(
+              (row) => row.year === year && row.universityCategory === name,
+            ),
+          )[metric];
+          return { year, value, index: indexedValue(value, startValue) };
+        }),
+      };
+    })
+    .filter((series) => series.annual.some((point) => point.value > 0));
   const fields = segmentRows(
     currentRows,
     previousRows,
@@ -482,10 +514,17 @@ export function createMarketAnalysis(
     currentRows,
     previousRows,
     startRows,
-    (row) => row.school,
+    (row) => `${schoolKey(row)}\u001e${row.school}`,
     metric,
     yearSpan,
-  );
+  ).map((row) => {
+    const [key, school] = row.name.split("\u001e");
+    const campus = key.split("\u001f")[1];
+    return {
+      ...row,
+      name: campus && campus !== "본교" ? `${school} (${campus})` : school,
+    };
+  });
   const grossFieldChange = fields.reduce(
     (sum, row) => sum + Math.abs(row.change ?? 0),
     0,
@@ -526,16 +565,19 @@ export function createMarketAnalysis(
   const base = {
     meta: {
       selectedYear,
+      endYear: selectedYear,
       previousYear,
       startYear,
       years: relevantYears,
       metric,
       metricLabel: metric === "total" ? "재적학생" : "재학생",
       capacityStartYear: 2023,
+      schoolMinimumStartValue: 500,
     },
     kpis,
     annual,
     universityCategories,
+    universityCategoryAnnual,
     fields,
     fieldMiddles,
     fieldSmalls,
@@ -544,13 +586,25 @@ export function createMarketAnalysis(
     portfolio,
     schoolMovers: {
       increases: schools
-        .filter((row) => (row.change ?? 0) > 0)
-        .toSorted((left, right) => (right.change ?? 0) - (left.change ?? 0))
+        .filter(
+          (row) =>
+            (row.startValue ?? 0) >= 500 && (row.changeFromStart ?? 0) > 0,
+        )
+        .toSorted(
+          (left, right) =>
+            (right.changeFromStart ?? 0) - (left.changeFromStart ?? 0),
+        )
         .slice(0, 12)
         .map((row, index) => ({ ...row, rank: index + 1 })),
       decreases: schools
-        .filter((row) => (row.change ?? 0) < 0)
-        .toSorted((left, right) => (left.change ?? 0) - (right.change ?? 0))
+        .filter(
+          (row) =>
+            (row.startValue ?? 0) >= 500 && (row.changeFromStart ?? 0) < 0,
+        )
+        .toSorted(
+          (left, right) =>
+            (left.changeFromStart ?? 0) - (right.changeFromStart ?? 0),
+        )
         .slice(0, 12)
         .map((row, index) => ({ ...row, rank: index + 1 })),
     },

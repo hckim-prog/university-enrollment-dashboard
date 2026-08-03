@@ -1,5 +1,10 @@
 import { filterRecords } from "./analytics";
 import {
+  analysisYears,
+  resolveAnalysisWindow,
+  type AnalysisWindow,
+} from "./analysis-window";
+import {
   classifyDepartment,
   DEPARTMENT_GROUPS,
   normalizeDepartmentText,
@@ -24,6 +29,7 @@ export type TrendCriteria = {
   minimumPrevious: number;
   minimumChange: number;
   minimumRate: number;
+  minimumStartValue: number;
   metric: TrendMetric;
   period: ComparisonPeriod;
   includeClosed: boolean;
@@ -35,6 +41,7 @@ type Observation = {
   groupId: string;
   groupName: string;
   school: string;
+  schoolKey: string;
   college: string;
   department: string;
   dayNight: string;
@@ -60,10 +67,13 @@ export type GroupTrend = {
   selectedValue: number;
   change: number | null;
   changeRate: number | null;
-  changeFrom2023: number | null;
-  changeRateFrom2023: number | null;
+  startValue: number | null;
+  changeFromStart: number | null;
+  changeRateFromStart: number | null;
+  cagr: number | null;
   schoolCount: number;
   schoolChange: number | null;
+  schoolChangeFromStart: number | null;
   observationCount: number;
   observationChange: number | null;
   averagePerObservation: number;
@@ -73,7 +83,7 @@ export type GroupTrend = {
   disclosedNewCount: number;
   annual: Array<{
     year: number;
-    value: number;
+    value: number | null;
     schoolCount: number;
     observationCount: number;
   }>;
@@ -112,8 +122,8 @@ export type IndividualTrend = {
   total: number;
   recentChange: number | null;
   recentRate: number | null;
-  changeFrom2023: number | null;
-  rateFrom2023: number | null;
+  changeFromStart: number | null;
+  changeRateFromStart: number | null;
   displayChange: number | null;
   displayRate: number | null;
   trendType: TrendType;
@@ -152,6 +162,8 @@ export type LifecycleEvent = {
 export type DepartmentTrendResponse = {
   meta: {
     selectedYear: number;
+    startYear: number;
+    endYear: number;
     previousYear: number | null;
     years: number[];
     metricLabel: string;
@@ -236,8 +248,9 @@ export const DEFAULT_TREND_CRITERIA: TrendCriteria = {
   minimumPrevious: 30,
   minimumChange: 20,
   minimumRate: 0.1,
+  minimumStartValue: 5_000,
   metric: "total",
-  period: "recent",
+  period: "sinceStart",
   includeClosed: false,
 };
 
@@ -303,7 +316,7 @@ function aggregateObservations(
     total += observation.total;
     leave += observation.leave;
     selectedValue += metricValue(observation, metric);
-    schools.add(observation.school);
+    schools.add(observation.schoolKey);
   }
   return {
     enrolled,
@@ -335,6 +348,7 @@ function buildObservations(rows: EnrollmentRecord[]) {
       groupId: group.id,
       groupName: group.name,
       school: row.school,
+      schoolKey: `${row.schoolCode || row.school}\u001f${row.campus || "본교"}`,
       college: row.college,
       department: row.department,
       dayNight: row.dayNight,
@@ -486,16 +500,18 @@ export function createDepartmentTrends(
     page?: number;
     pageSize?: number;
   } = {},
+  requestedWindow?: AnalysisWindow,
 ): DepartmentTrendResponse {
   const allYears = [...new Set(records.map((row) => row.year))].toSorted();
-  const selectedYear = filters.years.length
-    ? Math.max(...filters.years)
-    : Math.max(...allYears);
+  const window = requestedWindow ?? resolveAnalysisWindow(allYears, {
+    endYear: filters.years.length ? Math.max(...filters.years) : undefined,
+  });
+  const selectedYear = window.endYear;
   const previousYear = allYears.includes(selectedYear - 1) ? selectedYear - 1 : null;
-  const relevantYears = allYears.filter((year) => year <= selectedYear);
-  const startYear = relevantYears[0] ?? selectedYear;
+  const relevantYears = analysisYears(allYears, window);
+  const startYear = window.startYear;
   const contextRows = filterRecords(records, filters, false).filter(
-    (row) => row.year <= selectedYear,
+    (row) => row.year >= startYear && row.year <= selectedYear,
   );
   const observations = buildObservations(contextRows);
   const byYear = new Map<number, Observation[]>();
@@ -533,18 +549,20 @@ export function createDepartmentTrends(
     const cumulative = change(now.selectedValue, first?.selectedValue ?? null);
     const currentSchools = new Map<string, number>();
     const previousSchools = new Map<string, number>();
+    const baselineSchools = new Set<string>();
     for (const row of currentGroup) {
       currentSchools.set(
-        row.school,
-        (currentSchools.get(row.school) ?? 0) + metricValue(row, criteria.metric),
+        row.schoolKey,
+        (currentSchools.get(row.schoolKey) ?? 0) + metricValue(row, criteria.metric),
       );
     }
     for (const row of previousGroup) {
       previousSchools.set(
-        row.school,
-        (previousSchools.get(row.school) ?? 0) + metricValue(row, criteria.metric),
+        row.schoolKey,
+        (previousSchools.get(row.schoolKey) ?? 0) + metricValue(row, criteria.metric),
       );
     }
+    for (const row of baselineGroup) baselineSchools.add(row.schoolKey);
     let comparableSchools = 0;
     let increasedSchools = 0;
     for (const [school, value] of currentSchools) {
@@ -594,6 +612,8 @@ export function createDepartmentTrends(
       }
     }
     const schoolChange = prior === null ? null : now.schoolCount - prior.schoolCount;
+    const schoolChangeFromStart = now.schoolCount - baselineSchools.size;
+    const yearSpan = selectedYear - startYear;
     groupTrends.push({
       id: group.id,
       name: group.name,
@@ -604,10 +624,16 @@ export function createDepartmentTrends(
       selectedValue: now.selectedValue,
       change: recent.value,
       changeRate: recent.rate,
-      changeFrom2023: cumulative.value,
-      changeRateFrom2023: cumulative.rate,
+      startValue: first.selectedValue,
+      changeFromStart: cumulative.value,
+      changeRateFromStart: cumulative.rate,
+      cagr:
+        first.selectedValue > 0 && yearSpan > 0
+          ? (now.selectedValue / first.selectedValue) ** (1 / yearSpan) - 1
+          : null,
       schoolCount: now.schoolCount,
       schoolChange,
+      schoolChangeFromStart,
       observationCount: now.observationCount,
       observationChange:
         prior === null ? null : now.observationCount - prior.observationCount,
@@ -621,13 +647,16 @@ export function createDepartmentTrends(
         (row) => row.departmentStatus.includes("신설") && !previousIndex.has(row.key),
       ).length,
       annual: relevantYears.map((year) => {
+        const groupRows = (byYear.get(year) ?? []).filter(
+          (row) => row.groupId === group.id,
+        );
         const value = aggregateObservations(
-          (byYear.get(year) ?? []).filter((row) => row.groupId === group.id),
+          groupRows,
           criteria.metric,
         );
         return {
           year,
-          value: value.selectedValue,
+          value: groupRows.length === 0 ? null : value.selectedValue,
           schoolCount: value.schoolCount,
           observationCount: value.observationCount,
         };
@@ -731,8 +760,8 @@ export function createDepartmentTrends(
       total: currentObservation?.total ?? 0,
       recentChange: recent.value,
       recentRate: recent.rate,
-      changeFrom2023: cumulative.value,
-      rateFrom2023: cumulative.rate,
+      changeFromStart: cumulative.value,
+      changeRateFromStart: cumulative.rate,
       displayChange: display.value,
       displayRate: display.rate,
       trendType,
@@ -881,7 +910,11 @@ export function createDepartmentTrends(
   const focusGroupId =
     options.focusGroupId ??
     options.groupId ??
-    groupTrends.toSorted((a, b) => (b.change ?? 0) - (a.change ?? 0))[0]?.id ??
+    groupTrends.toSorted((a, b) =>
+      criteria.period === "sinceStart"
+        ? (b.changeFromStart ?? 0) - (a.changeFromStart ?? 0)
+        : (b.change ?? 0) - (a.change ?? 0),
+    )[0]?.id ??
     null;
   const focusGroup = groupTrends.find((group) => group.id === focusGroupId) ?? null;
   const focusIndividuals = allIndividuals.filter(
@@ -945,13 +978,24 @@ export function createDepartmentTrends(
       (row.values[previousYear] ?? 0) === 0,
   ).length;
 
+  const summaryChange = (group: GroupTrend) =>
+    criteria.period === "sinceStart" ? group.changeFromStart : group.change;
+  const summaryGroups = groupTrends.filter(
+    (group) =>
+      group.id !== "other" &&
+      (criteria.period !== "sinceStart" ||
+        (group.startValue ?? 0) >= criteria.minimumStartValue),
+  );
   const topIncrease =
-    groupTrends.toSorted((a, b) => (b.change ?? 0) - (a.change ?? 0))[0] ?? null;
+    summaryGroups.toSorted((a, b) => (summaryChange(b) ?? 0) - (summaryChange(a) ?? 0))[0] ?? null;
   const topDecrease =
-    groupTrends.toSorted((a, b) => (a.change ?? 0) - (b.change ?? 0))[0] ?? null;
+    summaryGroups.toSorted((a, b) => (summaryChange(a) ?? 0) - (summaryChange(b) ?? 0))[0] ?? null;
   const topSchoolExpansion =
     groupTrends.toSorted(
-      (a, b) => (b.schoolChange ?? -Infinity) - (a.schoolChange ?? -Infinity),
+      (a, b) =>
+        criteria.period === "sinceStart"
+          ? (b.schoolChangeFromStart ?? -Infinity) - (a.schoolChangeFromStart ?? -Infinity)
+          : (b.schoolChange ?? -Infinity) - (a.schoolChange ?? -Infinity),
     )[0] ?? null;
   const topDisclosedNewCandidate =
     groupTrends.toSorted((a, b) => b.disclosedNewCount - a.disclosedNewCount)[0] ?? null;
@@ -963,6 +1007,8 @@ export function createDepartmentTrends(
   return {
     meta: {
       selectedYear,
+      startYear,
+      endYear: selectedYear,
       previousYear,
       years: relevantYears,
       metricLabel: criteria.metric === "total" ? "재적학생" : "재학생",

@@ -125,4 +125,39 @@ describe("department trend analysis", () => {
     expect(department?.trendType).toBe("persistent_up");
     expect(department?.values).toEqual({ 2024: 100, 2025: 125, 2026: 155 });
   });
+
+  it("uses start-year field names and preserves missing years as null", () => {
+    const result = createDepartmentTrends(
+      records,
+      emptyFilters(),
+      DEFAULT_TREND_CRITERIA,
+      {},
+      { startYear: 2023, endYear: 2025 },
+    );
+    const language = result.groups.find((group) => group.name === "인문·언어·문화");
+    expect(result.meta.startYear).toBe(2023);
+    expect(result.meta.endYear).toBe(2025);
+    expect(language?.annual.find((point) => point.year === 2023)?.value).toBeNull();
+    expect(result.groups.every((group) => "changeFromStart" in group)).toBe(true);
+    expect(result.individuals.every((row) => "changeRateFromStart" in row)).toBe(true);
+    expect(result.criteria.period).toBe("sinceStart");
+    expect(result.criteria.minimumStartValue).toBe(5_000);
+  });
+
+  it("keeps other groups in reconciliation but excludes them from long-term highlights", () => {
+    const otherRows = [
+      row(2023, "근거가불분명한학과", 10),
+      row(2025, "근거가불분명한학과", 100),
+    ];
+    const result = createDepartmentTrends(
+      otherRows,
+      emptyFilters(),
+      { ...DEFAULT_TREND_CRITERIA, minimumStartValue: 5 },
+      {},
+      { startYear: 2023, endYear: 2025 },
+    );
+    expect(result.validation.groupTotalMatches).toBe(true);
+    expect(result.groups.find((group) => group.id === "other")?.selectedValue).toBe(100);
+    expect(result.summaries.topIncrease?.id).not.toBe("other");
+  });
 });
