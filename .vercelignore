@@ -1,0 +1,13 @@
+# Local-only source and historical data
+origin_data/
+data/local-store/
+data/raw/
+*.xlsx
+
+# Local build, dependencies, logs, and secrets
+.git/
+.next/
+node_modules/
+output/
+.env*
+*.log
