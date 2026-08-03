@@ -1127,7 +1127,11 @@
   font-weight: 700;
   cursor: pointer;
 }
-.directSeriesLabels i { width: 18px; height: 3px; border-radius: 99px; }
+.directSeriesLabels svg { flex: 0 0 auto; }
+.seriesUp,
+.seriesDown { font-size: 13px; font-weight: 900; line-height: 1; }
+.seriesUp { color: #08745f; }
+.seriesDown { color: #a23b32; }
 .groupRankMeta {
   grid-column: 2 / -1;
   color: #747987;

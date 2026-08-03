@@ -59,13 +59,13 @@ const percent = new Intl.NumberFormat("ko-KR", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-const colors = [
-  "#5b5bd6",
-  "#7c7ce2",
-  "#a6a6eb",
-  "#b76b35",
-  "#d18b58",
-  "#e4b48f",
+const trendSeriesStyles = [
+  { color: "#1769aa", dash: undefined },
+  { color: "#00876c", dash: "10 5" },
+  { color: "#7446a1", dash: "3 5" },
+  { color: "#c44e00", dash: undefined },
+  { color: "#bd3f6f", dash: "10 5" },
+  { color: "#8a6a00", dash: "3 5" },
 ];
 
 function formatChange(value: number | null) {
@@ -408,9 +408,9 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
             <p><CircleHelp size={14} /> 분류 근거가 불충분한 {number.format(data.coverage.totalRows - data.coverage.classifiedRows)}개 관측은 ‘기타·미분류’로 보존했습니다.</p>
           </article>
           <article className={styles.panel}>
-            <div className={styles.panelHeading}><div><span>{data.meta.comparisonLabel}</span><h3>변화 폭이 큰 학과군의 학생 수 추세</h3></div><small>선택 연도 이후 데이터 제외 · 단위: 명</small></div>
-            <div className={styles.largeChart}><ResponsiveContainer width="100%" height="100%"><LineChart data={lineData} margin={{ left: 8, right: 16 }}><CartesianGrid stroke="#e8eaf0" vertical={false} /><XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} /><YAxis tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={62} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, name]} labelFormatter={(label) => `${label}년`} />{lineGroups.map((group, index) => <Line key={group.id} type="monotone" dataKey={group.name} stroke={colors[index]} strokeWidth={2.4} dot={{ r: 3 }} connectNulls={false} />)}</LineChart></ResponsiveContainer></div>
-            <div className={styles.directSeriesLabels}>{lineGroups.map((group, index) => <button type="button" key={group.id} onClick={() => focus(group.id)}><i style={{ background: colors[index] }} />{group.name}</button>)}</div>
+            <div className={styles.panelHeading}><div><span>{data.meta.comparisonLabel}</span><h3>변화 폭이 큰 학과군의 학생 수 추세</h3></div><small>선택 연도 이후 데이터 제외 · 단위: 명 · 색과 선 모양으로 구분</small></div>
+            <div className={styles.largeChart}><ResponsiveContainer width="100%" height="100%"><LineChart data={lineData} margin={{ left: 8, right: 16 }}><CartesianGrid stroke="#dfe2e9" vertical={false} /><XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={{ stroke: "#aeb3bf" }} tickLine={false} /><YAxis tickFormatter={(value) => compact.format(value)} axisLine={{ stroke: "#aeb3bf" }} tickLine={false} width={62} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, name]} labelFormatter={(label) => `${label}년`} />{lineGroups.map((group, index) => { const series = trendSeriesStyles[index]; return <Line key={group.id} type="monotone" dataKey={group.name} stroke={series.color} strokeDasharray={series.dash} strokeLinecap="round" strokeWidth={3} dot={{ r: 3.5, fill: "#fff", stroke: series.color, strokeWidth: 2 }} activeDot={{ r: 5, fill: series.color, stroke: "#fff", strokeWidth: 2 }} connectNulls={false} isAnimationActive={false} />; })}</LineChart></ResponsiveContainer></div>
+            <div className={styles.directSeriesLabels}>{lineGroups.map((group, index) => { const series = trendSeriesStyles[index]; const change = period === "sinceStart" ? group.changeFromStart : group.change; return <button type="button" key={group.id} onClick={() => focus(group.id)}><svg aria-hidden="true" width="25" height="8" viewBox="0 0 25 8"><line x1="1" y1="4" x2="24" y2="4" stroke={series.color} strokeWidth="3" strokeDasharray={series.dash} strokeLinecap="round" /></svg><span className={change !== null && change < 0 ? styles.seriesDown : styles.seriesUp} aria-hidden="true">{change !== null && change < 0 ? "↓" : "↑"}</span>{group.name}</button>; })}</div>
           </article>
           <div className={styles.twoColumns}><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 증가 학과군`} rows={increaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 감소 학과군`} rows={decreaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /></div>
           <article className={styles.panel}>
