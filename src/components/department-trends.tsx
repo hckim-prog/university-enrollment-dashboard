@@ -165,7 +165,7 @@ function GroupRanking({
             <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
             <span className={styles.groupRankName} title={row.name}>{row.name}</span>
             <small className={styles.groupRankMeta}>
-              시작 {number.format(row.startValue ?? 0)}명 · 현재 {number.format(row.selectedValue)}명 · CAGR {formatRate(row.cagr)} · 학교 {row.schoolChangeFromStart && row.schoolChangeFromStart > 0 ? "+" : ""}{row.schoolChangeFromStart ?? 0}개
+              시작 {number.format(row.startValue ?? 0)}명 · 현재 {number.format(row.selectedValue)}명 · 연평균 변화율 {formatRate(row.cagr)} · 학교 {row.schoolChangeFromStart && row.schoolChangeFromStart > 0 ? "+" : ""}{row.schoolChangeFromStart ?? 0}개
             </small>
             <span className={styles.rankBar}>
               <i style={{ width: `${(Math.abs(selectedChange(row) ?? 0) / maximum) * 100}%` }} />
@@ -362,8 +362,6 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
     id: group.id,
     quadrant: group.quadrant,
   }));
-  const focusedGroup = data.groups.find((group) => group.id === data.drilldown.groupId) ?? data.summaries.topIncrease;
-  const componentData = focusedGroup ? [{ name: focusedGroup.name, ...focusedGroup.components }] : [];
   const breakdownRows = data.lifecycle.breakdowns[breakdown];
   const breakdownHeight = Math.max(320, breakdownRows.slice(0, 12).length * 38);
 
@@ -414,18 +412,20 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
           </article>
           <div className={styles.twoColumns}><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 증가 학과군`} rows={increaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 감소 학과군`} rows={decreaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /></div>
           <article className={styles.panel}>
-            <div className={styles.panelHeading}><div><span>확산도 사분면</span><h3>학생 변화와 운영 학교 수 변화를 함께 보기</h3></div><small>원 크기: {data.meta.selectedYear}년 {data.meta.metricLabel}</small></div>
+            <div className={styles.panelHeading}><div><span>확산도 사분면</span><h3>학생 변화와 운영 학교 수 변화를 함께 보기</h3></div><small>오른쪽 = 학교 증가 · 위쪽 = 학생 증가</small></div>
+            <div className={styles.quadrantHowTo}>
+              <strong>이렇게 읽으세요</strong>
+              <span><b>원 하나</b>는 학과군 하나입니다.</span>
+              <span><b>가로 위치</b>는 {data.meta.comparisonLabel} 운영 학교 수 증감입니다.</span>
+              <span><b>세로 위치</b>는 {data.meta.comparisonLabel} 학생 수 증감률입니다.</span>
+              <span><b>원 크기</b>는 {data.meta.selectedYear}년 {data.meta.metricLabel} 규모입니다.</span>
+            </div>
             <div className={styles.quadrantLayout}>
-              <div className={styles.quadrantChart}><ResponsiveContainer width="100%" height="100%"><ScatterChart margin={{ top: 18, right: 20, bottom: 18, left: 8 }}><CartesianGrid stroke="#e8eaf0" /><XAxis type="number" dataKey="x" name="운영 학교 수 증감" unit="개교" axisLine={false} tickLine={false} /><YAxis type="number" dataKey="y" name="학생 수 증감률" unit="%" axisLine={false} tickLine={false} width={56} /><ZAxis type="number" dataKey="z" range={[70, 650]} /><ReferenceLine x={0} stroke="#9195a4" /><ReferenceLine y={0} stroke="#9195a4" /><Tooltip cursor={{ strokeDasharray: "3 3" }} formatter={(value, name) => [name === "학생 수 증감률" ? `${Number(value).toFixed(1)}%` : name === "운영 학교 수 증감" ? `${value}개교` : `${number.format(Number(value))}명`, name]} /><Scatter data={quadrantData}>{quadrantData.map((point) => <Cell key={point.id} cursor="pointer" onClick={() => focus(point.id)} fill={point.x > 0 && point.y > 0 ? "#0f9f83" : point.x < 0 && point.y < 0 ? "#d05f78" : "#7777e7"} />)}</Scatter></ScatterChart></ResponsiveContainer></div>
+              <div className={styles.quadrantChart}><ResponsiveContainer width="100%" height="100%"><ScatterChart margin={{ top: 18, right: 20, bottom: 38, left: 18 }}><CartesianGrid stroke="#e8eaf0" /><XAxis type="number" dataKey="x" name="운영 학교 수 증감" unit="개교" axisLine={false} tickLine={false} label={{ value: "운영 학교 수 증감 (오른쪽일수록 증가)", position: "insideBottom", offset: -22, fill: "#737785", fontSize: 11 }} /><YAxis type="number" dataKey="y" name="학생 수 증감률" unit="%" axisLine={false} tickLine={false} width={56} label={{ value: "학생 수 증감률", angle: -90, position: "insideLeft", fill: "#737785", fontSize: 11 }} /><ZAxis type="number" dataKey="z" range={[70, 650]} name={`${data.meta.selectedYear}년 ${data.meta.metricLabel}`} /><ReferenceLine x={0} stroke="#9195a4" /><ReferenceLine y={0} stroke="#9195a4" /><Tooltip cursor={{ strokeDasharray: "3 3" }} formatter={(value, name) => [name === "학생 수 증감률" ? `${Number(value).toFixed(1)}%` : name === "운영 학교 수 증감" ? `${value}개교` : `${number.format(Number(value))}명`, name]} /><Scatter data={quadrantData}>{quadrantData.map((point) => <Cell key={point.id} cursor="pointer" onClick={() => focus(point.id)} fill={point.x > 0 && point.y > 0 ? "#0f9f83" : point.x <= 0 && point.y > 0 ? "#7777e7" : point.x > 0 && point.y <= 0 ? "#e78b42" : "#d05f78"} />)}</Scatter></ScatterChart></ResponsiveContainer></div>
               <ul className={styles.quadrantGuide}><li><i className={styles.green} /><strong>확산 성장</strong><span>학생과 운영 학교가 함께 증가</span></li><li><i className={styles.purple} /><strong>기존 학과 집중 성장</strong><span>학생은 증가, 학교 수는 정체·감소</span></li><li><i className={styles.orange} /><strong>공급 확산·규모 확인 필요</strong><span>학교는 증가하지만 평균 규모 확인 필요</span></li><li><i className={styles.red} /><strong>축소 관측</strong><span>학생과 운영 학교가 함께 감소</span></li></ul>
             </div>
           </article>
-          <div className={styles.twoColumns} id="group-drilldown">
-            <article className={styles.panel}>
-              <div className={styles.panelHeading}><div><span>변화 구성</span><h3>{focusedGroup?.name ?? "학과군"} 증감 분해</h3></div><small>구성 합계 = 학과군 순증감</small></div>
-              <div className={styles.compositionChart}><ResponsiveContainer width="100%" height="100%"><BarChart data={componentData} layout="vertical" margin={{ left: 8, right: 15 }}><CartesianGrid stroke="#e8eaf0" horizontal={false} /><XAxis type="number" tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} /><YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, { comparableIncrease: "기존 학과 증가", comparableDecrease: "기존 학과 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈" }[String(name) as "comparableIncrease" | "comparableDecrease" | "observedNew" | "observedExit"]]} /><Legend formatter={(value) => ({ comparableIncrease: "기존 증가", comparableDecrease: "기존 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈" }[value as "comparableIncrease" | "comparableDecrease" | "observedNew" | "observedExit"])} /><Bar dataKey="comparableIncrease" stackId="change" fill="#0f9f83" /><Bar dataKey="observedNew" stackId="change" fill="#68bda9" /><Bar dataKey="comparableDecrease" stackId="change" fill="#d05f78" /><Bar dataKey="observedExit" stackId="change" fill="#9ca0ad" /></BarChart></ResponsiveContainer></div>
-              <p className={styles.explain}>새 원본에는 학과상태가 없으므로 동일 비교키의 전년 대비 신규·이탈 관측만 분리합니다.</p>
-            </article>
+          <div id="group-drilldown" className={styles.drilldownAnchor}>
             <article className={styles.panel}>
               <div className={styles.panelHeading}><div><span>드릴다운</span><h3>{data.drilldown.groupName ?? "학과군"} 기여 학교·학과</h3></div><small>정확 연결 가능한 키 기준</small></div>
               <div className={styles.drillGrid}><div><strong>증가 기여 학교</strong>{data.drilldown.topIncreaseSchools.slice(0, 5).map((row) => <p key={row.name}><span title={row.name}>{row.name}</span><b>+{number.format(row.change)}명</b></p>)}</div><div><strong>감소 기여 학교</strong>{data.drilldown.topDecreaseSchools.slice(0, 5).map((row) => <p key={row.name}><span title={row.name}>{row.name}</span><b>{number.format(row.change)}명</b></p>)}</div></div>

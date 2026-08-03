@@ -737,6 +737,15 @@
   text-align: right;
 }
 
+.panelDescription {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: #7c808d;
+  font-size: 12px;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
 .chartArea {
   height: 280px;
 }
@@ -744,6 +753,23 @@
 .largeChart {
   height: 410px;
 }
+
+.schoolComparison { display: grid; }
+.schoolComparisonHeader,
+.schoolComparisonRow { display: grid; grid-template-columns: 42px minmax(220px, 1fr) 145px 155px; align-items: center; gap: 16px; }
+.schoolComparisonHeader { min-height: 34px; padding: 0 6px 7px; border-bottom: 1px solid #e6e8ee; color: #8d919e; font-size: 10px; font-weight: 750; }
+.schoolComparisonHeader span:nth-child(3),
+.schoolComparisonHeader span:nth-child(4) { text-align: right; }
+.schoolComparisonRow { min-height: 61px; padding: 9px 6px; border-bottom: 1px solid #eff0f4; }
+.schoolComparisonRow:last-child { border-bottom: 0; }
+.schoolComparisonName { min-width: 0; }
+.schoolScale { height: 5px; margin-top: 8px; overflow: hidden; border-radius: 99px; background: #eceef4; }
+.schoolScale i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #5b5bd6, #9595eb); }
+.schoolCurrentValue { display: grid; justify-items: end; gap: 3px; text-align: right; }
+.schoolCurrentValue strong { color: #303340; font-size: 13px; }
+.schoolCurrentValue small { color: #9296a2; font-size: 10px; }
+.schoolComparisonRow > .changeBadge,
+.schoolComparisonRow > .mutedBadge { justify-self: end; }
 
 .viewStack {
   display: grid;
@@ -1270,9 +1296,12 @@
     height: 330px;
   }
 
-  .mobileSchoolChart {
-    margin-left: -8px;
-  }
+  .schoolComparisonHeader { display: none; }
+  .schoolComparisonRow { grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; min-height: 84px; padding: 10px 0; }
+  .schoolComparisonName { align-self: start; }
+  .schoolCurrentValue { grid-column: 2; grid-row: 2; justify-items: start; text-align: left; }
+  .schoolComparisonRow > .changeBadge,
+  .schoolComparisonRow > .mutedBadge { grid-column: 3; grid-row: 1 / span 2; display: inline-flex; align-self: center; }
 
   .rankingRow {
     grid-template-columns: 24px minmax(100px, 1fr) 62px;

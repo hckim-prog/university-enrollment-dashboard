@@ -156,15 +156,27 @@ function SegmentRows({
   limit = 8,
   showAbsoluteChange = false,
   changeMode = "recent",
+  startYear,
+  endYear,
 }: {
   rows: MarketSegment[];
   limit?: number;
   showAbsoluteChange?: boolean;
   changeMode?: "recent" | "long";
+  startYear?: number;
+  endYear?: number;
 }) {
   const max = Math.max(...rows.slice(0, limit).map((row) => row.value), 1);
   return (
     <div className={styles.segmentRows}>
+      {changeMode === "long" && startYear !== undefined && endYear !== undefined ? (
+        <div className={styles.segmentRowHeader} aria-hidden="true">
+          <span />
+          <span>지역 · {startYear}→{endYear} 규모</span>
+          <span>현재 규모·점유율</span>
+          <span>{startYear}년 대비 증감</span>
+        </div>
+      ) : null}
       {rows.slice(0, limit).map((row) => (
         <div className={styles.segmentRow} key={row.name}>
           <span className={styles.rank}>{String(row.rank).padStart(2, "0")}</span>
@@ -175,7 +187,9 @@ function SegmentRows({
               <small className={styles.periodContext}>
                 {row.startValue === null
                   ? "시작연도 값 없음"
-                  : `${compact.format(row.startValue)} → ${compact.format(row.value)} · 최근 1년 ${signedNumber(row.change)}`}
+                  : startYear !== undefined && endYear !== undefined
+                    ? `${compact.format(row.startValue)} → ${compact.format(row.value)}`
+                    : `${compact.format(row.startValue)} → ${compact.format(row.value)}`}
               </small>
             )}
           </div>
@@ -205,13 +219,7 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
     ...row,
     annualChange: index === 0 ? null : row.total - data.annual[index - 1].total,
   }));
-  const longTrend = data.annual.map((row, index) => ({
-    ...row,
-    endpointLabel:
-      index === 0 || index === data.annual.length - 1
-        ? number.format(row.total)
-        : "",
-  }));
+  const longTrend = data.annual;
   const indexedCategories = data.meta.years.map((year, yearIndex) => {
     const row: Record<string, string | number | null> = { year };
     for (const series of data.universityCategoryAnnual) {
@@ -227,7 +235,7 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
       <section className={styles.kpiGrid} aria-label="시장 핵심 지표">
         <SummaryKpi label={`${data.meta.endYear}년 재적학생`} value={`${number.format(market.value)}명`} note="종료연도 전체 합계" />
         <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
-        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년 CAGR`} />
+        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년 연평균`} />
         <SummaryKpi label="최근 1년 변화" value={isFinite(market.change ?? NaN) ? signedNumber(market.change) : "비교 불가"} note={formatRate(market.changeRate)} />
         <SummaryKpi label="학생 구성" value={`재학생 ${formatRate(enrolledShare)}`} note={`휴학생 ${formatRate(leaveShare)} · 유예 ${number.format(latest?.deferment ?? 0)}명`} />
       </section>
@@ -235,6 +243,10 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
       <section className={styles.primaryCharts}>
         <article className={styles.panel}>
           <header className={styles.panelHeader}><div><span>장기 추세</span><h3>재적학생 장기 추세</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 단위: 명 · 변화 확인을 위해 축 범위를 확대함</p></div><small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명 · {signedNumber(market.changeFromStart)}</small></header>
+          <div className={styles.trendKey} aria-label="장기 추세 범례">
+            <span><i className={styles.totalLine} />재적학생</span>
+            <span><i className={styles.enrolledLine} />재학생</span>
+          </div>
           <div className={styles.chartLarge}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={longTrend} margin={{left:8,right:18,top:24,bottom:4}}>
@@ -256,10 +268,8 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
                     );
                   }}
                 />
-                <Line type="monotone" dataKey="total" stroke={palette.purple} strokeWidth={3} dot={{r:4}}>
-                  <LabelList dataKey="endpointLabel" position="top" />
-                </Line>
-                <Line type="monotone" dataKey="enrolled" stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
+                <Line name="재적학생" type="monotone" dataKey="total" stroke={palette.purple} strokeWidth={3} dot={{r:4}} />
+                <Line name="재학생" type="monotone" dataKey="enrolled" stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -291,14 +301,15 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
           <header className={styles.panelHeader}><div><span>상대 변화</span><h3>대학·전문대학 지수</h3><p>{data.meta.startYear}년=100 · 실제 학생 수는 툴팁에서 확인</p></div></header>
           <div className={styles.chartLarge}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={indexedCategories} margin={{left:8,right:44,top:16,bottom:4}}>
+              <LineChart data={indexedCategories} margin={{left:8,right:18,top:16,bottom:4}}>
                 <CartesianGrid stroke="#eceef3" vertical={false} />
                 <XAxis dataKey="year" tickFormatter={(value) => `${String(value).slice(2)}년`} axisLine={false} tickLine={false} />
                 <YAxis domain={["auto","auto"]} tickFormatter={(value) => Number(value).toFixed(0)} axisLine={false} tickLine={false} width={44} />
                 <ReferenceLine y={100} stroke={palette.ink} strokeDasharray="4 4" />
                 <Tooltip formatter={(value, name, item) => [`지수 ${Number(value).toFixed(1)} · ${number.format(Number(item.payload[`${String(name)}Actual`]))}명`, String(name)]} labelFormatter={(label) => `${label}년`} />
-                <Line type="monotone" dataKey="대학" stroke={palette.purple} strokeWidth={3} dot={{r:3}} connectNulls={false}><LabelList dataKey="대학Label" position="right" /></Line>
-                <Line type="monotone" dataKey="전문대학" stroke={palette.teal} strokeWidth={3} strokeDasharray="6 4" dot={{r:3}} connectNulls={false}><LabelList dataKey="전문대학Label" position="right" /></Line>
+                <Legend formatter={(value) => String(value)} />
+                <Line type="monotone" dataKey="대학" stroke={palette.purple} strokeWidth={3} dot={{r:3}} connectNulls={false} />
+                <Line type="monotone" dataKey="전문대학" stroke={palette.teal} strokeWidth={3} strokeDasharray="6 4" dot={{r:3}} connectNulls={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -480,8 +491,8 @@ function CompetitionView({ data }: { data: MarketAnalysisResponse }) {
         </article>
 
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>지역 시장</span><h3>지역별 재적학생과 장기 변화</h3><p>{data.meta.startYear}년 대비 증감 · 현재 점유율</p></div></header>
-          <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" />
+          <header className={styles.panelHeader}><div><span>지역 시장</span><h3>지역별 재적학생과 장기 변화</h3><p>현재 규모·점유율과 {data.meta.startYear}년 대비 증감을 비교합니다.</p></div></header>
+          <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} />
         </article>
       </section>
 

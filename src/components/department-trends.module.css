@@ -465,6 +465,30 @@
   gap: 20px;
 }
 
+.quadrantHowTo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: -5px 0 13px;
+  padding: 12px 14px;
+  border: 1px solid #e6e7ef;
+  border-radius: 11px;
+  color: #747887;
+  background: #f8f9fc;
+  font-size: 11px;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.quadrantHowTo > strong {
+  width: 100%;
+  color: #464a59;
+}
+
+.quadrantHowTo b {
+  color: #5559b8;
+}
+
 .quadrantChart {
   height: 440px;
 }
@@ -509,17 +533,7 @@
 .orange { background: #e78b42; }
 .red { background: #d05f78; }
 
-.compositionChart {
-  height: 280px;
-}
-
-.explain {
-  margin-top: 8px;
-  color: #8a8e9b;
-  font-size: 12px;
-  line-height: 1.5;
-  word-break: keep-all;
-}
+.drilldownAnchor { scroll-margin-top: 80px; }
 
 .drillGrid {
   display: grid;
@@ -1082,7 +1096,6 @@
   .rankBar { display: none; }
   .quadrantChart { height: 340px; }
   .quadrantGuide { grid-template-columns: 1fr; }
-  .compositionChart { height: 320px; }
   .drillGrid { grid-template-columns: 1fr; }
   .typeFilters { display: grid; grid-template-columns: repeat(2, 1fr); }
   .typeFilters button { justify-content: space-between; }

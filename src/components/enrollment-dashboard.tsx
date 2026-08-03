@@ -40,7 +40,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  useSyncExternalStore,
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
@@ -177,18 +176,6 @@ const percent = new Intl.NumberFormat("ko-KR", {
 function formatChange(value: number | null) {
   if (value === null) return "비교 연도 없음";
   return `${value > 0 ? "+" : ""}${fullNumber.format(value)}명`;
-}
-
-function useMediaQuery(query: string) {
-  return useSyncExternalStore(
-    (listener) => {
-      const media = window.matchMedia(query);
-      media.addEventListener("change", listener);
-      return () => media.removeEventListener("change", listener);
-    },
-    () => window.matchMedia(query).matches,
-    () => false,
-  );
 }
 
 function HelpTip({ label, children }: { label: string; children: string }) {
@@ -680,131 +667,39 @@ function Overview({ baseQuery }: { baseQuery: string }) {
   return <MarketAnalysis baseQuery={baseQuery} />;
 }
 
-function MobileSchoolTick({
-  x = 0,
-  y = 0,
-  payload,
-}: {
-  x?: number;
-  y?: number;
-  payload?: { value: string };
-}) {
-  const name = payload?.value ?? "";
-  const lines = name.length > 7 ? [name.slice(0, 7), name.slice(7)] : [name];
-  return (
-    <text x={x} y={y} textAnchor="end" fill="#686c79" fontSize={10}>
-      {lines.map((line, index) => (
-        <tspan key={line} x={x - 4} dy={index === 0 ? (lines.length > 1 ? -2 : 3) : 12}>
-          {line}
-        </tspan>
-      ))}
-    </text>
-  );
-}
-
 function Schools({ data, baseQuery }: { data: DashboardResponse; baseQuery: string }) {
-  const mobile = useMediaQuery("(max-width: 620px)");
-  const visibleSchools = data.schools.slice(0, mobile ? 5 : 10);
-  const mobileHeight = Math.max(310, visibleSchools.length * 58);
+  const visibleSchools = data.schools.slice(0, 10);
+  const maxSchoolTotal = Math.max(...visibleSchools.map((school) => school.total), 1);
   return (
     <section className={styles.viewStack}>
       <article className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <span className={styles.eyebrow}>학교 비교</span>
-            <h2>{data.currentYear}년 학교별 재적학생</h2>
+            <span className={styles.eyebrow}>학교 시장 포지션</span>
+            <h2>{data.currentYear}년 규모와 전년 변화를 함께 보는 상위 학교</h2>
+            <p className={styles.panelDescription}>막대는 현재 재적학생 규모, 오른쪽 값은 전년 대비 증감입니다. 큰 학교가 성장 중인지 축소 중인지 한 번에 비교할 수 있습니다.</p>
           </div>
-          <span className={styles.panelNote}>상위 {visibleSchools.length}개교</span>
+          <span className={styles.panelNote}>현재 재적학생 규모순 · 상위 {visibleSchools.length}개교</span>
         </div>
-        <div
-          className={`${styles.largeChart} ${mobile ? styles.mobileSchoolChart : ""}`}
-          style={mobile ? { height: mobileHeight } : undefined}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={visibleSchools}
-              layout={mobile ? "vertical" : "horizontal"}
-              margin={mobile ? { left: 0, right: 8 } : { left: 10, right: 12 }}
-            >
-              <CartesianGrid
-                stroke="#e8eaf0"
-                vertical={!mobile}
-                horizontal={mobile}
-              />
-              {mobile ? (
-                <>
-                  <XAxis
-                    type="number"
-                    tickFormatter={(value) => compactNumber.format(value)}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    interval={0}
-                    width={128}
-                    tick={<MobileSchoolTick />}
-                  />
-                </>
-              ) : (
-                <>
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    interval={0}
-                    angle={-24}
-                    textAnchor="end"
-                    height={88}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <YAxis
-                    tickFormatter={(value) => compactNumber.format(value)}
-                    axisLine={false}
-                    tickLine={false}
-                    width={62}
-                  />
-                </>
-              )}
-              <Tooltip
-                formatter={(value, name) => [
-                  `${fullNumber.format(Number(value))}명`,
-                  name === "total" ? "재적학생" : "재학생",
-                ]}
-              />
-              <Legend
-                formatter={(value) =>
-                  value === "total" ? "재적학생" : "재학생"
-                }
-              />
-              <Bar
-                dataKey="total"
-                fill="#7777e7"
-                radius={mobile ? [0, 6, 6, 0] : [6, 6, 0, 0]}
-              />
-              <Bar
-                dataKey="enrolled"
-                fill="#5ec6ac"
-                radius={mobile ? [0, 6, 6, 0] : [6, 6, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </article>
-      <article className={styles.panel}>
-        <div className={styles.panelHeader}>
-          <div>
-            <span className={styles.eyebrow}>전년 대비</span>
-            <h2>학교별 증감 비교</h2>
+        <div className={styles.schoolComparison}>
+          <div className={styles.schoolComparisonHeader} aria-hidden="true">
+            <span>순위</span><span>학교·현재 규모</span><span>재적학생·전체 비중</span><span>전년 대비</span>
           </div>
-          <span className={styles.panelNote}>
-            상단 학교 필터로 한 학교를 자세히 볼 수 있습니다
-          </span>
+          {visibleSchools.map((school, index) => (
+            <div className={styles.schoolComparisonRow} key={school.name}>
+              <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
+              <div className={styles.schoolComparisonName}>
+                <LongName name={school.name} />
+                <div className={styles.schoolScale}><i style={{ width: `${(school.total / maxSchoolTotal) * 100}%` }} /></div>
+              </div>
+              <div className={styles.schoolCurrentValue}>
+                <strong>{fullNumber.format(school.total)}명</strong>
+                <small>전체의 {percent.format(data.metrics.total.value > 0 ? school.total / data.metrics.total.value : 0)}</small>
+              </div>
+              <ChangeBadge metric={school} />
+            </div>
+          ))}
         </div>
-        <RankingTable rows={visibleSchools} label="명" />
       </article>
       <MarketAnalysis baseQuery={baseQuery} initialTab="competition" compactToolbar />
     </section>

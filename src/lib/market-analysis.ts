@@ -283,7 +283,7 @@ function createInsights(
           : "neutral",
     title: `${response.meta.startYear}년 이후 시장 규모`,
     body: `${response.meta.metricLabel} 기준 장기 변화와 연평균 변화율입니다.`,
-    value: `${formatPercent(market.changeRateFromStart)} · CAGR ${formatPercent(market.cagr)}`,
+    value: `${formatPercent(market.changeRateFromStart)} · 연평균 변화율 ${formatPercent(market.cagr)}`,
   });
 
   const categoryGap = response.universityCategories.toSorted(
@@ -314,7 +314,7 @@ function createInsights(
       tone: (fastest.cagr ?? 0) >= 0 ? "positive" : "neutral",
       title: `장기 상대 강세 중계열: ${fastest.name}`,
       body: "초기 규모 5천 명 이상 중계열 중 장기 연평균 변화율이 가장 높습니다.",
-      value: `CAGR ${formatPercent(fastest.cagr)} · 점유율 ${formatPercent(fastest.share)}`,
+      value: `연평균 변화율 ${formatPercent(fastest.cagr)} · 점유율 ${formatPercent(fastest.share)}`,
     });
   }
   if (weakest && weakest.name !== fastest?.name) {
@@ -323,7 +323,7 @@ function createInsights(
       tone: "negative",
       title: `장기 축소 중계열: ${weakest.name}`,
       body: "규모만이 아니라 장기 속도와 현재 점유율을 함께 봐야 합니다.",
-      value: `CAGR ${formatPercent(weakest.cagr)} · ${response.meta.startYear}년 대비 ${formatPercent(weakest.changeRateFromStart)}`,
+      value: `연평균 변화율 ${formatPercent(weakest.cagr)} · ${response.meta.startYear}년 대비 ${formatPercent(weakest.changeRateFromStart)}`,
     });
   }
 

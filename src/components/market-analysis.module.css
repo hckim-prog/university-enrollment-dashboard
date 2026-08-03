@@ -29,7 +29,15 @@
 .panelHeader p { margin: 0; color: #898d99; font-size: 12px; line-height: 1.55; }
 .panelHeader > small { color: #8b8f9b; font-size: 11px; white-space: nowrap; }
 .chartLarge { height: 330px; }
+.trendKey { display: flex; flex-wrap: wrap; gap: 14px; margin: -7px 0 7px; color: #5f6472; font-size: 12px; font-weight: 750; }
+.trendKey span { display: inline-flex; align-items: center; gap: 6px; }
+.trendKey i { width: 25px; height: 0; border-top: 3px solid; }
+.trendKey .totalLine { border-color: #6464d8; }
+.trendKey .enrolledLine { border-color: #158f7a; border-top-style: dashed; }
 .segmentRows { display: grid; gap: 12px; }
+.segmentRowHeader { display: grid; grid-template-columns: 26px minmax(80px, 1fr) 60px 70px; align-items: end; gap: 8px; padding-bottom: 7px; border-bottom: 1px solid #e8eaf0; color: #8d919e; font-size: 9px; font-weight: 750; line-height: 1.35; }
+.segmentRowHeader span:nth-child(3),
+.segmentRowHeader span:nth-child(4) { text-align: right; }
 .segmentRow { display: grid; grid-template-columns: 26px minmax(80px, 1fr) 60px 70px; align-items: center; gap: 8px; min-width: 0; }
 .rank { color: #a1a5b0; font-size: 11px; font-weight: 800; }
 .segmentName { display: grid; gap: 6px; min-width: 0; }
@@ -101,6 +109,7 @@
   .dualCharts { grid-template-columns: 1fr; height: auto; }
   .dualCharts > div { height: 230px; }
   .segmentRow { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
+  .segmentRowHeader { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
   .rateText { font-size: 10px; }
   .segmentRow:nth-child(n+6) { display: none; }
 }
