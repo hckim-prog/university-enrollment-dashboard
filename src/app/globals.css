@@ -1,0 +1,45 @@
+:root {
+  --background: #f4f5f8;
+  --foreground: #171a24;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--foreground);
+  background: var(--background);
+  font-family:
+    var(--font-geist-sans), "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo",
+    "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  color: #fff;
+  background: #5b5bd6;
+}

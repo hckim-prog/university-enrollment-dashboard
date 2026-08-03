@@ -1,0 +1,41 @@
+{
+  "title": "대학 재적학생 트렌드 데이터 변환 명세",
+  "generatedAt": "2026-07-31T07:39:08.390Z",
+  "sourceDirectory": "C:\\Users\\user\\Downloads\\data_20260731153427",
+  "sourceFiles": [
+    {
+      "year": 2023,
+      "sourceFile": "2023년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "81ae1f20e8e9f978891a3dd4734f0c2b5785fea4fe45bf64e772a2571df01805",
+      "normalizedRows": 14480
+    },
+    {
+      "year": 2024,
+      "sourceFile": "2024년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "94235dc30c69b007a2c2e3f35f4fe60c7e3ffd5e09c3900583d577a74c191e33",
+      "normalizedRows": 15056
+    },
+    {
+      "year": 2025,
+      "sourceFile": "2025년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "76d0d09d18be46f931cc414451a17814130d63bd5aa62a10ef6943774462754f",
+      "normalizedRows": 15706
+    }
+  ],
+  "nonStandardFormat": "세 원본의 worksheet dimension이 실제 범위가 아닌 A1로 기록되어 있어, ZIP 내부 sharedStrings.xml과 Sheet1.xml을 SAX 방식으로 직접 읽는다.",
+  "mergedCellRule": "mergeCell 범위의 좌상단 값을 실제 병합 범위에만 복원한다. 임의의 단순 채우기(fill-down)는 사용하지 않는다.",
+  "schema": {
+    "2025": "41열(A:AO). 재학생=N, 휴학생=U, 유예학생=AB, 재적학생=AI의 소계 열을 사용하고 각 소계와 정원내·외 합을 교차 검산.",
+    "dimensions": "기준연도, 학교종류, 설립구분, 지역, 학교상태, 학교, 단과대학, 학과, 주야, 학과특성, 학과상태, 계열",
+    "metrics": "학생정원, 재학생, 휴학생, 학사학위취득유예학생, 재적학생",
+    "2023-2024": "37열(A:AK). 재학생=N+O, 휴학생=T+U, 유예학생=Z+AA, 재적학생=AF+AG."
+  },
+  "validationRules": [
+    "재적학생 = 재학생 + 휴학생 + 학사학위취득유예학생",
+    "정원내·외 합계와 남녀 합계의 일치",
+    "동일 연도·학교·단과대학·학과·주야·상태·계열 차원의 중복 행",
+    "학생정원·재학생·휴학생·유예학생·재적학생의 음수값",
+    "학교·단과대학·학과·주야 필수 차원 누락",
+    "연도별 실제 열 수 37/37/41"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-07-31T07:39:08.390Z",
+  "valid": true,
+  "totalRows": 45242,
+  "issueCount": 0,
+  "issueSample": [],
+  "years": [
+    {
+      "year": 2023,
+      "sourceFile": "2023년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "81ae1f20e8e9f978891a3dd4734f0c2b5785fea4fe45bf64e772a2571df01805",
+      "sourceRows": 14481,
+      "normalizedRows": 14480,
+      "sourceColumnCount": 37,
+      "expectedColumnCount": 37,
+      "nonStandardDimensionRef": "A1",
+      "restoredMergedCells": {
+        "school": 14235,
+        "college": 5463,
+        "department": 303,
+        "dayNight": 22
+      },
+      "duplicateRows": 0,
+      "negativeValues": 0,
+      "subtotalErrors": 0,
+      "enrollmentEquationErrors": 0,
+      "missingDimensions": 0
+    },
+    {
+      "year": 2024,
+      "sourceFile": "2024년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "94235dc30c69b007a2c2e3f35f4fe60c7e3ffd5e09c3900583d577a74c191e33",
+      "sourceRows": 15057,
+      "normalizedRows": 15056,
+      "sourceColumnCount": 37,
+      "expectedColumnCount": 37,
+      "nonStandardDimensionRef": "A1",
+      "restoredMergedCells": {
+        "school": 14810,
+        "college": 5561,
+        "department": 278,
+        "dayNight": 22
+      },
+      "duplicateRows": 0,
+      "negativeValues": 0,
+      "subtotalErrors": 0,
+      "enrollmentEquationErrors": 0,
+      "missingDimensions": 0
+    },
+    {
+      "year": 2025,
+      "sourceFile": "2025년 _대학_4-마. 재적 학생 현황_학과별자료.xlsx",
+      "sha256": "76d0d09d18be46f931cc414451a17814130d63bd5aa62a10ef6943774462754f",
+      "sourceRows": 15707,
+      "normalizedRows": 15706,
+      "sourceColumnCount": 41,
+      "expectedColumnCount": 41,
+      "nonStandardDimensionRef": "A1",
+      "restoredMergedCells": {
+        "school": 15460,
+        "college": 13853,
+        "department": 190,
+        "dayNight": 20
+      },
+      "duplicateRows": 0,
+      "negativeValues": 0,
+      "subtotalErrors": 0,
+      "enrollmentEquationErrors": 0,
+      "missingDimensions": 0
+    }
+  ]
+}
