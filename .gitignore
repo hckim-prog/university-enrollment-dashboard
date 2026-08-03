@@ -13,6 +13,7 @@
 # testing
 /coverage
 /output/playwright
+/output/*.log
 /.playwright-cli
 
 # next.js
@@ -32,12 +33,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# environment files
 .env*
-!.env.example
 
 # source spreadsheets must stay outside the web project
 /data/raw/
+# 과거 관리자 게시 스냅샷 보관용이며 앱에서는 읽지 않음
 /data/local-store/
 *.xlsx
 

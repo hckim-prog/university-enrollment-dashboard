@@ -7,7 +7,7 @@ import {
 import type { EnrollmentRecord, FilterState } from "./types";
 
 export type TrendMetric = "enrolled" | "total";
-export type ComparisonPeriod = "recent" | "since2023";
+export type ComparisonPeriod = "recent" | "sinceStart";
 export type TrendType =
   | "persistent_up"
   | "recent_up"
@@ -256,9 +256,9 @@ const TREND_LABELS: Record<TrendType, string> = {
 
 function observationKey(row: EnrollmentRecord) {
   return [
-    row.school,
-    row.college,
-    normalizeDepartmentText(row.department),
+    row.schoolCode || row.school,
+    row.campus || row.college,
+    row.departmentCode || normalizeDepartmentText(row.department),
     normalizeDepartmentText(row.dayNight),
     normalizeDepartmentText(row.departmentFeature),
   ].join("\u001f");
@@ -493,6 +493,7 @@ export function createDepartmentTrends(
     : Math.max(...allYears);
   const previousYear = allYears.includes(selectedYear - 1) ? selectedYear - 1 : null;
   const relevantYears = allYears.filter((year) => year <= selectedYear);
+  const startYear = relevantYears[0] ?? selectedYear;
   const contextRows = filterRecords(records, filters, false).filter(
     (row) => row.year <= selectedYear,
   );
@@ -509,7 +510,7 @@ export function createDepartmentTrends(
   }
   const current = byYear.get(selectedYear) ?? [];
   const previous = previousYear === null ? [] : (byYear.get(previousYear) ?? []);
-  const baseline = byYear.get(2023) ?? [];
+  const baseline = byYear.get(startYear) ?? [];
   const currentIndex = indexByYear.get(selectedYear) ?? new Map();
   const previousIndex =
     previousYear === null ? new Map<string, Observation>() : (indexByYear.get(previousYear) ?? new Map());
@@ -527,9 +528,7 @@ export function createDepartmentTrends(
     const prior = previousYear === null
       ? null
       : aggregateObservations(previousGroup, criteria.metric);
-    const first = relevantYears.includes(2023)
-      ? aggregateObservations(baselineGroup, criteria.metric)
-      : null;
+    const first = aggregateObservations(baselineGroup, criteria.metric);
     const recent = change(now.selectedValue, prior?.selectedValue ?? null);
     const cumulative = change(now.selectedValue, first?.selectedValue ?? null);
     const currentSchools = new Map<string, number>();
@@ -680,7 +679,7 @@ export function createDepartmentTrends(
     }
     const currentValue = values[selectedYear] ?? 0;
     const previousValue = previousYear === null ? null : (values[previousYear] ?? null);
-    const baselineValue = values[2023] ?? null;
+    const baselineValue = values[startYear] ?? null;
     const recent = change(currentValue, previousValue);
     const cumulative = change(currentValue, baselineValue);
     let comparisonStatus: IndividualTrend["comparisonStatus"] = "정확 비교";
@@ -954,8 +953,12 @@ export function createDepartmentTrends(
     groupTrends.toSorted(
       (a, b) => (b.schoolChange ?? -Infinity) - (a.schoolChange ?? -Infinity),
     )[0] ?? null;
-  const topDisclosedNew =
+  const topDisclosedNewCandidate =
     groupTrends.toSorted((a, b) => b.disclosedNewCount - a.disclosedNewCount)[0] ?? null;
+  const topDisclosedNew =
+    (topDisclosedNewCandidate?.disclosedNewCount ?? 0) > 0
+      ? topDisclosedNewCandidate
+      : null;
 
   return {
     meta: {
@@ -966,13 +969,13 @@ export function createDepartmentTrends(
       comparisonLabel:
         criteria.period === "recent"
           ? `${previousYear ?? "비교 연도"}→${selectedYear}년`
-          : `2023→${selectedYear}년`,
+          : `${startYear}→${selectedYear}년`,
       groups: DEPARTMENT_GROUPS.map(({ id, name }) => ({ id, name })),
       trendTypes: (Object.entries(TREND_LABELS) as Array<[TrendType, string]>).map(
         ([id, label]) => ({ id, label, count: trendCounts.get(id) ?? 0 }),
       ),
       methodologyNote:
-        "대학알리미 재적학생 자료에서 관측된 학생 규모 변화이며, 인과관계·취업 전망·미래 유망성을 뜻하지 않습니다.",
+        "대학·전문대학의 대학알리미 자료에서 관측된 학생 규모 변화입니다. 새 원본에는 학과상태가 없어 신설·폐과를 단정하지 않고 연도 간 신규·이탈 관측으로만 표시합니다.",
     },
     criteria,
     totals: {

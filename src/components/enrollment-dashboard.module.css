@@ -1330,9 +1330,17 @@
   }
 
   .detailCard > .longName {
-    margin-bottom: 12px;
+    margin-bottom: 5px;
     color: #4c4cbd;
     font-size: 13px;
+  }
+
+  .detailFieldPath {
+    margin: 0 0 12px;
+    color: #858995;
+    font-size: 10px;
+    line-height: 1.5;
+    word-break: keep-all;
   }
 
   .detailMetrics {

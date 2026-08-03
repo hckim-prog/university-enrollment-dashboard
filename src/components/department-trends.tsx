@@ -33,7 +33,6 @@ import {
   SearchX,
   SlidersHorizontal,
   Sparkles,
-  TrendingDown,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -198,7 +197,7 @@ function IndividualRows({
       <div className={styles.trendTableWrap}>
         <table className={styles.trendTable}>
           <thead><tr>
-            <th>학교·학과</th><th>지역·계열</th><th>학과상태</th>
+            <th>학교·학과</th><th>지역·계열</th><th>비교상태</th>
             {data.meta.years.map((year) => <th key={year}>{year}년</th>)}
             <th>{data.meta.comparisonLabel} 증감</th><th>추세 유형</th><th>비교 신뢰</th>
           </tr></thead>
@@ -212,7 +211,7 @@ function IndividualRows({
                   {expanded === row.key ? <DepartmentDetail row={row} /> : null}
                 </td>
                 <td>{row.region}<br /><small>{row.field}</small></td>
-                <td><span className={styles.status}>{row.departmentStatus}</span></td>
+                <td><span className={styles.status}>{row.comparisonStatus}</span></td>
                 {data.meta.years.map((year) => <td className={styles.numeric} key={year}>{row.values[year] === null ? "—" : number.format(row.values[year] ?? 0)}</td>)}
                 <td><ChangeValue value={row.displayChange} rate={row.displayRate} /></td>
                 <td><span className={styles.trendType}>{row.trendLabel}</span></td>
@@ -269,12 +268,12 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
   const [error, setError] = useState("");
   const selectedYear = useMemo(() => {
     const year = Number(new URLSearchParams(baseQuery).get("year"));
-    return year >= 2023 && year <= 2025 ? year : 2025;
+    return year >= 2019 && year <= 2025 ? year : 2025;
   }, [baseQuery]);
 
   const effectiveTrendType =
-    trendType === "persistent_up" && selectedYear < 2025
-      ? selectedYear === 2024
+    trendType === "persistent_up" && selectedYear < 2021
+      ? selectedYear === 2020
         ? "recent_up"
         : "new_unavailable"
       : trendType;
@@ -331,7 +330,7 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
     return <div className={styles.state}><AlertTriangle size={26} /><strong>분석 결과를 불러오지 못했습니다.</strong><p>{error}</p><button type="button" onClick={() => load()}><RefreshCw size={15} /> 다시 시도</button></div>;
   }
   if (!data) {
-    return <div className={styles.state}><span className={styles.loader} /><strong>45,242행을 서버에서 분석하고 있습니다.</strong><p>학과군 분류와 연도별 연결을 계산합니다.</p></div>;
+    return <div className={styles.state}><span className={styles.loader} /><strong>18만여 행을 서버에서 분석하고 있습니다.</strong><p>대학·전문대학 학과군 분류와 장기 연도 연결을 계산합니다.</p></div>;
   }
 
   const lineGroups = data.groups
@@ -364,7 +363,7 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
         {([
           ["groups", "학과군 트렌드", Network],
           ["individuals", "개별 학과 변화", GitCompareArrows],
-          ["lifecycle", "신설·폐과 동향", Sparkles],
+          ["lifecycle", "학과 관측 이동", Sparkles],
         ] as const).map(([id, label, Icon]) => <button type="button" role="tab" aria-selected={tab === id} key={id} onClick={() => setTab(id)}><Icon size={16} />{label}</button>)}
       </div>
 
@@ -373,11 +372,11 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
         <div className={styles.criteriaGrid}>
           <label><span>목록 학과군</span><select value={groupId} onChange={(event) => setAnalysisFilter(setGroupId, event.target.value)}><option value="">전체 학과군</option>{data.meta.groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
           <label><span>분석 지표</span><select value={metric} onChange={(event) => setAnalysisFilter(setMetric, event.target.value)}><option value="total">재적학생</option><option value="enrolled">재학생</option></select></label>
-          <label><span>비교 기간</span><select value={period} onChange={(event) => setAnalysisFilter(setPeriod, event.target.value)}><option value="recent">최근 1년</option><option value="since2023">2023년 대비</option></select></label>
+          <label><span>비교 기간</span><select value={period} onChange={(event) => setAnalysisFilter(setPeriod, event.target.value)}><option value="recent">최근 1년</option><option value="sinceStart">장기 시작연도 대비</option></select></label>
           <label><span>최소 전년도 학생 수</span><input type="number" min="0" value={minimumPrevious} onChange={(event) => { setMinimumPrevious(Number(event.target.value)); setPage(1); }} /></label>
           <label><span>최소 증감 인원</span><input type="number" min="0" value={minimumChange} onChange={(event) => { setMinimumChange(Number(event.target.value)); setPage(1); }} /></label>
           <label><span>최소 증감률</span><div className={styles.inputUnit}><input type="number" min="0" step="1" value={minimumRate} onChange={(event) => { setMinimumRate(Number(event.target.value)); setPage(1); }} /><span>%</span></div></label>
-          <label className={styles.checkLabel}><input type="checkbox" checked={includeClosed} onChange={(event) => { setIncludeClosed(event.target.checked); setPage(1); }} /><span>공시 폐과 포함</span></label>
+          <label className={styles.checkLabel}><input type="checkbox" checked={includeClosed} onChange={(event) => { setIncludeClosed(event.target.checked); setPage(1); }} /><span>비교상 이탈 포함</span></label>
           <div className={styles.criteriaHelp}><Help label="분석 기준">기본값은 전년도 30명 이상, 절대 증감 20명 이상, 증감률 10% 이상입니다. 절대 증감 10명 미만은 큰 변화로 강조하지 않으며 전년도 0명은 증감률 순위에서 제외합니다.</Help><span>기준값과 목록 학과군은 개별 학과·생애주기 목록에 적용되며, 학과군 차트는 전체 시장 흐름을 유지합니다.</span></div>
         </div>
       </details>
@@ -390,7 +389,6 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
             <SummaryCard eyebrow="학생 증가 인원 1위" group={data.summaries.topIncrease} kind="change" />
             <SummaryCard eyebrow="학생 감소 인원 1위" group={data.summaries.topDecrease} kind="change" />
             <SummaryCard eyebrow="운영 학교 확산 1위" group={data.summaries.topSchoolExpansion} kind="schools" />
-            <SummaryCard eyebrow="공시 신설 관측 1위" group={data.summaries.topDisclosedNew} kind="new" />
           </div>
           <article className={styles.coverageStrip}>
             <div><strong>{percent.format(data.coverage.valueRate)}</strong><span>학생 규모 분류</span></div>
@@ -412,8 +410,8 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
           <div className={styles.twoColumns} id="group-drilldown">
             <article className={styles.panel}>
               <div className={styles.panelHeading}><div><span>변화 구성</span><h3>{focusedGroup?.name ?? "학과군"} 증감 분해</h3></div><small>구성 합계 = 학과군 순증감</small></div>
-              <div className={styles.compositionChart}><ResponsiveContainer width="100%" height="100%"><BarChart data={componentData} layout="vertical" margin={{ left: 8, right: 15 }}><CartesianGrid stroke="#e8eaf0" horizontal={false} /><XAxis type="number" tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} /><YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, { comparableIncrease: "기존 학과 증가", comparableDecrease: "기존 학과 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈", disclosedNew: "공시 신설", disclosedClosed: "공시 폐과" }[String(name) as keyof GroupTrend["components"]]]} /><Legend formatter={(value) => ({ comparableIncrease: "기존 증가", comparableDecrease: "기존 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈", disclosedNew: "공시 신설", disclosedClosed: "공시 폐과" }[value as keyof GroupTrend["components"]])} /><Bar dataKey="comparableIncrease" stackId="change" fill="#0f9f83" /><Bar dataKey="observedNew" stackId="change" fill="#68bda9" /><Bar dataKey="disclosedNew" stackId="change" fill="#5b5bd6" /><Bar dataKey="comparableDecrease" stackId="change" fill="#d05f78" /><Bar dataKey="observedExit" stackId="change" fill="#9ca0ad" /><Bar dataKey="disclosedClosed" stackId="change" fill="#8f3e50" /></BarChart></ResponsiveContainer></div>
-              <p className={styles.explain}>공시 신설·폐과와 단순 비교상 신규·이탈은 서로 다른 근거로 분리합니다.</p>
+              <div className={styles.compositionChart}><ResponsiveContainer width="100%" height="100%"><BarChart data={componentData} layout="vertical" margin={{ left: 8, right: 15 }}><CartesianGrid stroke="#e8eaf0" horizontal={false} /><XAxis type="number" tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} /><YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, { comparableIncrease: "기존 학과 증가", comparableDecrease: "기존 학과 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈" }[String(name) as "comparableIncrease" | "comparableDecrease" | "observedNew" | "observedExit"]]} /><Legend formatter={(value) => ({ comparableIncrease: "기존 증가", comparableDecrease: "기존 감소", observedNew: "비교상 신규", observedExit: "비교상 이탈" }[value as "comparableIncrease" | "comparableDecrease" | "observedNew" | "observedExit"])} /><Bar dataKey="comparableIncrease" stackId="change" fill="#0f9f83" /><Bar dataKey="observedNew" stackId="change" fill="#68bda9" /><Bar dataKey="comparableDecrease" stackId="change" fill="#d05f78" /><Bar dataKey="observedExit" stackId="change" fill="#9ca0ad" /></BarChart></ResponsiveContainer></div>
+              <p className={styles.explain}>새 원본에는 학과상태가 없으므로 동일 비교키의 전년 대비 신규·이탈 관측만 분리합니다.</p>
             </article>
             <article className={styles.panel}>
               <div className={styles.panelHeading}><div><span>드릴다운</span><h3>{data.drilldown.groupName ?? "학과군"} 기여 학교·학과</h3></div><small>정확 연결 가능한 키 기준</small></div>
@@ -436,15 +434,15 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
       ) : (
         <div className={styles.stack}>
           <div className={styles.lifecycleCards}>{([
-            ["disclosed_new", "원본 공시 신설", Sparkles], ["disclosed_closed", "원본 공시 폐과", TrendingDown], ["restructured", "변경·통합·분리", GitCompareArrows], ["observed_new", "비교상 신규 관측", TrendingUp], ["observed_exit", "비교상 이탈 관측", ArrowDownRight],
+            ["observed_new", "비교상 신규 관측", TrendingUp], ["observed_exit", "비교상 이탈 관측", ArrowDownRight],
           ] as const).map(([id, label, Icon]) => <article key={id}><Icon size={18} /><span>{label}</span><strong>{number.format(data.lifecycle.counts[id])}</strong><small>학과 관측</small></article>)}</div>
           <article className={styles.panel}>
-            <div className={styles.panelHeading}><div><span>구조 변화 비교</span><h3>지역·설립·계열·학과군별 관측</h3></div><select aria-label="신설 폐과 분석 차원" value={breakdown} onChange={(event) => setBreakdown(event.target.value as BreakdownDimension)}><option value="group">학과군</option><option value="region">지역</option><option value="establishment">설립구분</option><option value="field">계열</option></select></div>
-            <div className={styles.lifecycleChart} style={{ height: breakdownHeight }}><ResponsiveContainer width="100%" height="100%"><BarChart data={breakdownRows.slice(0, 12)} layout="vertical" margin={{ left: 8, right: 10 }}><CartesianGrid stroke="#e8eaf0" horizontal={false} /><XAxis type="number" allowDecimals={false} axisLine={false} tickLine={false} /><YAxis type="category" dataKey="name" width={115} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip /><Legend /><Bar dataKey="disclosedNew" name="공시 신설" stackId="events" fill={lifecycleColors.disclosed_new} /><Bar dataKey="disclosedClosed" name="공시 폐과" stackId="events" fill={lifecycleColors.disclosed_closed} /><Bar dataKey="restructured" name="변경·통합·분리" stackId="events" fill={lifecycleColors.restructured} /><Bar dataKey="observedNew" name="비교상 신규" stackId="events" fill={lifecycleColors.observed_new} /><Bar dataKey="observedExit" name="비교상 이탈" stackId="events" fill={lifecycleColors.observed_exit} /></BarChart></ResponsiveContainer></div>
+            <div className={styles.panelHeading}><div><span>구조 변화 비교</span><h3>지역·설립·계열·학과군별 관측 이동</h3></div><select aria-label="학과 관측 이동 분석 차원" value={breakdown} onChange={(event) => setBreakdown(event.target.value as BreakdownDimension)}><option value="group">학과군</option><option value="region">지역</option><option value="establishment">설립구분</option><option value="field">계열</option></select></div>
+            <div className={styles.lifecycleChart} style={{ height: breakdownHeight }}><ResponsiveContainer width="100%" height="100%"><BarChart data={breakdownRows.slice(0, 12)} layout="vertical" margin={{ left: 8, right: 10 }}><CartesianGrid stroke="#e8eaf0" horizontal={false} /><XAxis type="number" allowDecimals={false} axisLine={false} tickLine={false} /><YAxis type="category" dataKey="name" width={115} tick={{ fontSize: 10 }} axisLine={false} tickLine={false} /><Tooltip /><Legend /><Bar dataKey="observedNew" name="비교상 신규" stackId="events" fill={lifecycleColors.observed_new} /><Bar dataKey="observedExit" name="비교상 이탈" stackId="events" fill={lifecycleColors.observed_exit} /></BarChart></ResponsiveContainer></div>
           </article>
           <article className={styles.panel}>
-            <div className={styles.panelHeading}><div><span>{data.meta.comparisonLabel}</span><h3>신설·폐과·변경과 비교상 신규·이탈 사례</h3></div><small>학생 규모 상위 60건</small></div>
-            <div className={styles.lifecycleExplanation}><p><strong>공시 신설·폐과</strong> 원본 학과상태에 명시된 항목</p><p><strong>비교상 신규·이탈</strong> 같은 비교 키가 전년 또는 선택 연도에 없다는 뜻이며 신설·폐과로 단정하지 않음</p></div>
+            <div className={styles.panelHeading}><div><span>{data.meta.comparisonLabel}</span><h3>비교상 신규·이탈 학과 사례</h3></div><small>학생 규모 상위 60건</small></div>
+            <div className={styles.lifecycleExplanation}><p><strong>비교상 신규·이탈</strong> 같은 학교코드·본분교·학과코드·주야·학과특성 키가 전년 또는 선택 연도에 없다는 뜻입니다.</p><p><strong>해석 주의</strong> 명칭·코드·분류 변경일 수 있으므로 실제 신설·폐과로 단정하지 않습니다.</p></div>
             <div className={styles.eventList}>{data.lifecycle.events.map((event, index) => <article key={`${event.type}-${event.school}-${event.department}-${index}`}><i style={{ background: lifecycleColors[event.type] }} /><div><span>{event.label} · {event.groupName}</span><strong title={event.department}>{event.department}</strong><small>{event.school} · {event.region} · {event.field}</small></div><b>{number.format(event.studentValue)}명</b></article>)}</div>
           </article>
         </div>

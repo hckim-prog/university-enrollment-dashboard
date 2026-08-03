@@ -7,7 +7,7 @@ import {
   type TrendMetric,
   type TrendType,
 } from "@/lib/department-trends";
-import { getPublishedData } from "@/lib/data";
+import { getValidatedData } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -35,8 +35,8 @@ function boundedNumber(
 
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams;
-  const published = await getPublishedData();
-  const cacheKey = `${published.revision}:${search.toString()}`;
+  const dataset = await getValidatedData();
+  const cacheKey = `${dataset.revision}:${search.toString()}`;
   const cached = responseCache.get(cacheKey);
   if (cached) return NextResponse.json(cached);
   const defaults = emptyFilters();
@@ -45,17 +45,21 @@ export async function GET(request: NextRequest) {
     years: list(search, "year")
       .map(Number)
       .filter((value) => Number.isInteger(value)),
+    universityCategories: list(search, "universityCategory"),
     regions: list(search, "region"),
     schools: list(search, "school"),
     establishments: list(search, "establishment"),
     fields: list(search, "field"),
+    fieldMiddles: list(search, "fieldMiddle"),
+    fieldSmalls: list(search, "fieldSmall"),
+    schoolStatuses: list(search, "schoolStatus"),
     departmentStatuses: list(search, "departmentStatus"),
     departmentQuery: search.get("department") ?? "",
   };
   const metric: TrendMetric =
     search.get("trendMetric") === "enrolled" ? "enrolled" : "total";
   const period: ComparisonPeriod =
-    search.get("comparison") === "since2023" ? "since2023" : "recent";
+    search.get("comparison") === "sinceStart" ? "sinceStart" : "recent";
   const criteria = {
     ...DEFAULT_TREND_CRITERIA,
     minimumPrevious: boundedNumber(
@@ -80,7 +84,7 @@ export async function GET(request: NextRequest) {
     period,
     includeClosed: search.get("includeClosed") === "true",
   };
-  const records = published.records;
+  const records = dataset.records;
   const result = createDepartmentTrends(records, filters, criteria, {
     groupId: search.get("departmentGroup") || undefined,
     focusGroupId: search.get("focusGroup") || undefined,

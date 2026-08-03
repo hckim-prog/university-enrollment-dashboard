@@ -1,17 +1,27 @@
 export type EnrollmentRecord = {
   year: number;
+  disclosureYear: number;
+  schoolCode: string;
+  campus: string;
+  universityCategory: string;
   schoolType: string;
   establishment: string;
+  establishmentType: string;
+  locationType: string;
   region: string;
   schoolStatus: string;
   school: string;
   college: string;
+  departmentCode: string;
   department: string;
   dayNight: string;
   departmentFeature: string;
   departmentStatus: string;
+  institutionField: string;
   field: string;
-  capacity: number;
+  fieldMiddle: string;
+  fieldSmall: string;
+  capacity: number | null;
   enrolled: number;
   leave: number;
   deferment: number;
@@ -36,10 +46,12 @@ export type ValidationIssue = {
 
 export type YearValidation = {
   year: number;
+  universityCategory: string;
   sourceFile: string;
   sha256: string;
   sourceRows: number;
   normalizedRows: number;
+  nonZeroRows: number;
   sourceColumnCount: number;
   expectedColumnCount: number;
   nonStandardDimensionRef: string;
@@ -62,10 +74,14 @@ export type ValidationReport = {
 
 export type FilterState = {
   years: number[];
+  universityCategories: string[];
   regions: string[];
   schools: string[];
   establishments: string[];
   fields: string[];
+  fieldMiddles: string[];
+  fieldSmalls: string[];
+  schoolStatuses: string[];
   departmentStatuses: string[];
   departmentQuery: string;
 };

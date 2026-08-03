@@ -3,16 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 127.0.0.1",
+    "prebuild": "tsx scripts/prepare-build.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit -p tsconfig.check.json",
     "test": "vitest run",
     "data:convert": "tsx scripts/convert-enrollment.ts",
-    "data:migrate": "tsx scripts/migrate-local-data.ts",
-    "data:store:validate": "tsx scripts/validate-local-store.ts",
     "data:validate": "tsx scripts/validate-enrollment.ts",
-    "check": "pnpm lint && pnpm test && pnpm build"
+    "data:refresh": "pnpm data:convert && pnpm data:validate && pnpm check",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
     "fflate": "^0.8.3",

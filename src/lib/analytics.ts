@@ -29,10 +29,14 @@ const EMPTY_AGGREGATE: Aggregate = {
 export function emptyFilters(): FilterState {
   return {
     years: [],
+    universityCategories: [],
     regions: [],
     schools: [],
     establishments: [],
     fields: [],
+    fieldMiddles: [],
+    fieldSmalls: [],
+    schoolStatuses: [],
     departmentStatuses: [],
     departmentQuery: "",
   };
@@ -53,10 +57,14 @@ export function filterRecords(
       (!includeYear ||
         filters.years.length === 0 ||
         filters.years.includes(row.year)) &&
+      includes(filters.universityCategories, row.universityCategory) &&
       includes(filters.regions, row.region) &&
       includes(filters.schools, row.school) &&
       includes(filters.establishments, row.establishment) &&
       includes(filters.fields, row.field) &&
+      includes(filters.fieldMiddles, row.fieldMiddle) &&
+      includes(filters.fieldSmalls, row.fieldSmall) &&
+      includes(filters.schoolStatuses, row.schoolStatus) &&
       includes(filters.departmentStatuses, row.departmentStatus) &&
       (!query ||
         row.department.toLocaleLowerCase("ko-KR").includes(query)),
@@ -134,8 +142,116 @@ function uniqueSorted(
   );
 }
 
+type DashboardMeta = {
+  years: number[];
+  universityCategories: string[];
+  regions: string[];
+  schools: string[];
+  schoolsByRegion: Record<string, string[]>;
+  schoolsByUniversityCategory: Record<string, string[]>;
+  schoolsByRegionAndCategory: Record<string, Record<string, string[]>>;
+  establishments: string[];
+  fields: string[];
+  fieldMiddles: string[];
+  fieldSmalls: string[];
+  fieldMiddlesByField: Record<string, string[]>;
+  fieldSmallsByMiddle: Record<string, string[]>;
+  schoolStatuses: string[];
+  departmentStatuses: string[];
+};
+
+const dashboardMetaCache = new WeakMap<EnrollmentRecord[], DashboardMeta>();
+
+function createDashboardMeta(records: EnrollmentRecord[]): DashboardMeta {
+  const cached = dashboardMetaCache.get(records);
+  if (cached) return cached;
+  const sets = {
+    years: new Set<number>(),
+    universityCategories: new Set<string>(),
+    regions: new Set<string>(),
+    schools: new Set<string>(),
+    establishments: new Set<string>(),
+    fields: new Set<string>(),
+    fieldMiddles: new Set<string>(),
+    fieldSmalls: new Set<string>(),
+    schoolStatuses: new Set<string>(),
+    departmentStatuses: new Set<string>(),
+  };
+  const schoolsByRegion = new Map<string, Set<string>>();
+  const schoolsByUniversityCategory = new Map<string, Set<string>>();
+  const schoolsByRegionAndCategory = new Map<string, Map<string, Set<string>>>();
+  const fieldMiddlesByField = new Map<string, Set<string>>();
+  const fieldSmallsByMiddle = new Map<string, Set<string>>();
+  const add = (map: Map<string, Set<string>>, key: string, value: string) => {
+    if (!key || !value) return;
+    const values = map.get(key);
+    if (values) values.add(value);
+    else map.set(key, new Set([value]));
+  };
+  for (const row of records) {
+    sets.years.add(row.year);
+    if (row.universityCategory) sets.universityCategories.add(row.universityCategory);
+    if (row.region) sets.regions.add(row.region);
+    if (row.school) sets.schools.add(row.school);
+    if (row.establishment) sets.establishments.add(row.establishment);
+    if (row.field) sets.fields.add(row.field);
+    if (row.fieldMiddle) sets.fieldMiddles.add(row.fieldMiddle);
+    if (row.fieldSmall) sets.fieldSmalls.add(row.fieldSmall);
+    if (row.schoolStatus) sets.schoolStatuses.add(row.schoolStatus);
+    if (row.departmentStatus) sets.departmentStatuses.add(row.departmentStatus);
+    add(schoolsByRegion, row.region, row.school);
+    add(schoolsByUniversityCategory, row.universityCategory, row.school);
+    add(fieldMiddlesByField, row.field, row.fieldMiddle);
+    add(fieldSmallsByMiddle, row.fieldMiddle, row.fieldSmall);
+    if (row.region && row.universityCategory && row.school) {
+      let categories = schoolsByRegionAndCategory.get(row.region);
+      if (!categories) {
+        categories = new Map();
+        schoolsByRegionAndCategory.set(row.region, categories);
+      }
+      add(categories, row.universityCategory, row.school);
+    }
+  }
+  const sortStrings = (values: Iterable<string>) =>
+    [...values].sort((left, right) => left.localeCompare(right, "ko-KR"));
+  const mapSets = (map: Map<string, Set<string>>) =>
+    Object.fromEntries(
+      [...map].map(([key, values]) => [key, sortStrings(values)]),
+    );
+  const meta: DashboardMeta = {
+    years: [...sets.years].sort((left, right) => left - right),
+    universityCategories: sortStrings(sets.universityCategories),
+    regions: sortStrings(sets.regions),
+    schools: sortStrings(sets.schools),
+    schoolsByRegion: mapSets(schoolsByRegion),
+    schoolsByUniversityCategory: mapSets(schoolsByUniversityCategory),
+    schoolsByRegionAndCategory: Object.fromEntries(
+      [...schoolsByRegionAndCategory].map(([region, categories]) => [
+        region,
+        mapSets(categories),
+      ]),
+    ),
+    establishments: sortStrings(sets.establishments),
+    fields: sortStrings(sets.fields),
+    fieldMiddles: sortStrings(sets.fieldMiddles),
+    fieldSmalls: sortStrings(sets.fieldSmalls),
+    fieldMiddlesByField: mapSets(fieldMiddlesByField),
+    fieldSmallsByMiddle: mapSets(fieldSmallsByMiddle),
+    schoolStatuses: sortStrings(sets.schoolStatuses),
+    departmentStatuses: sortStrings(sets.departmentStatuses),
+  };
+  dashboardMetaCache.set(records, meta);
+  return meta;
+}
+
 function rowComparisonKey(row: EnrollmentRecord) {
-  return [row.school, row.college, row.department, row.dayNight].join("\u001f");
+  return [
+    row.schoolCode,
+    row.campus,
+    row.departmentCode,
+    row.dayNight,
+    row.departmentFeature,
+  ].join("\u001f");
 }
 
 export function createDashboard(
@@ -144,8 +260,9 @@ export function createDashboard(
   page = 1,
   pageSize = 20,
 ) {
+  const meta = createDashboardMeta(records);
   const contextRows = filterRecords(records, filters, false);
-  const allYears = uniqueSorted(records, (row) => String(row.year)).map(Number);
+  const allYears = meta.years;
   const availableYears = uniqueSorted(contextRows, (row) =>
     String(row.year),
   ).map(Number);
@@ -210,34 +327,26 @@ export function createDashboard(
       ),
     })),
   }));
+  const activeRows = currentRows.filter((row) => row.total > 0);
 
   return {
-    meta: {
-      years: allYears,
-      regions: uniqueSorted(records, (row) => row.region),
-      schools: uniqueSorted(records, (row) => row.school),
-      schoolsByRegion: Object.fromEntries(
-        uniqueSorted(records, (row) => row.region).map((region) => [
-          region,
-          uniqueSorted(
-            records.filter((row) => row.region === region),
-            (row) => row.school,
-          ),
-        ]),
-      ),
-      establishments: uniqueSorted(records, (row) => row.establishment),
-      fields: uniqueSorted(records, (row) => row.field),
-      departmentStatuses: uniqueSorted(
-        records,
-        (row) => row.departmentStatus,
-      ),
-    },
+    meta,
     currentYear,
     previousYear,
     rowCount: currentRows.length,
-    schoolCount: new Set(currentRows.map((row) => row.school)).size,
+    schoolCount: new Set(
+      activeRows.map((row) => `${row.schoolCode}\u001f${row.campus}`),
+    ).size,
     departmentCount: new Set(
-      currentRows.map((row) => `${row.school}\u001f${row.department}`),
+      activeRows.map((row) =>
+        [
+          row.schoolCode,
+          row.campus,
+          row.departmentCode,
+          row.dayNight,
+          row.departmentFeature,
+        ].join("\u001f"),
+      ),
     ).size,
     metrics: {
       enrolled: metric("enrolled"),

@@ -25,7 +25,6 @@ import {
   ChevronsRight,
   CircleHelp,
   Database,
-  FolderCog,
   Filter,
   GraduationCap,
   LayoutDashboard,
@@ -33,6 +32,7 @@ import {
   RefreshCw,
   Search,
   SlidersHorizontal,
+  TrendingUp,
   Users,
   X,
 } from "lucide-react";
@@ -45,19 +45,21 @@ import {
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
-import type { DataPublicationStatus } from "@/lib/data-management-types";
-import { DataManagement } from "./data-management";
 import { DepartmentTrends } from "./department-trends";
+import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "departments" | "schools" | "details" | "admin";
+type View = "overview" | "market" | "departments" | "schools" | "details";
 type Filters = {
   year: string;
+  universityCategory: string;
   region: string;
   school: string;
   establishment: string;
   field: string;
-  departmentStatus: string;
+  fieldMiddle: string;
+  fieldSmall: string;
+  schoolStatus: string;
   department: string;
 };
 type DetailRow = EnrollmentRecord & {
@@ -67,11 +69,19 @@ type DetailRow = EnrollmentRecord & {
 type DashboardResponse = {
   meta: {
     years: number[];
+    universityCategories: string[];
     regions: string[];
     schools: string[];
     schoolsByRegion: Record<string, string[]>;
+    schoolsByUniversityCategory: Record<string, string[]>;
+    schoolsByRegionAndCategory: Record<string, Record<string, string[]>>;
     establishments: string[];
     fields: string[];
+    fieldMiddles: string[];
+    fieldSmalls: string[];
+    fieldMiddlesByField: Record<string, string[]>;
+    fieldSmallsByMiddle: Record<string, string[]>;
+    schoolStatuses: string[];
     departmentStatuses: string[];
   };
   currentYear: number;
@@ -99,16 +109,24 @@ type DashboardResponse = {
     issueCount: number;
     generatedAt: string;
   };
-  publication: DataPublicationStatus;
+  dataset: {
+    years: number[];
+    dataYearRange: string;
+    totalRows: number;
+    generatedAt: string;
+  };
 };
 
 const initialFilters: Filters = {
   year: "",
+  universityCategory: "",
   region: "",
   school: "",
   establishment: "",
   field: "",
-  departmentStatus: "",
+  fieldMiddle: "",
+  fieldSmall: "",
+  schoolStatus: "",
   department: "",
 };
 const navigation: {
@@ -122,6 +140,12 @@ const navigation: {
     label: "전체 현황",
     description: "핵심 지표와 변화",
     icon: LayoutDashboard,
+  },
+  {
+    id: "market",
+    label: "시장 분석",
+    description: "규모·성장·점유율·집중도",
+    icon: TrendingUp,
   },
   {
     id: "departments",
@@ -140,12 +164,6 @@ const navigation: {
     label: "상세 데이터",
     description: "원자료 단위 탐색",
     icon: Database,
-  },
-  {
-    id: "admin",
-    label: "데이터 관리",
-    description: "업로드·게시·복구",
-    icon: FolderCog,
   },
 ];
 const compactNumber = new Intl.NumberFormat("ko-KR", {
@@ -543,8 +561,8 @@ function Overview({ data }: { data: DashboardResponse }) {
         <article className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.eyebrow}>계열별 규모</span>
-              <h2>재적학생 상위 계열</h2>
+              <span className={styles.eyebrow}>대계열별 규모</span>
+              <h2>재적학생 상위 대계열</h2>
             </div>
           </div>
           <RankingTable rows={data.fields.slice(0, 6)} label="명" />
@@ -558,14 +576,14 @@ function Overview({ data }: { data: DashboardResponse }) {
           </div>
           <div className={styles.statTiles}>
             <div>
-              <span>학교</span>
+              <span>활동 본·분교</span>
               <strong>{fullNumber.format(data.schoolCount)}</strong>
-              <small>개교</small>
+              <small>재적학생 1명 이상</small>
             </div>
             <div>
-              <span>학과</span>
+              <span>활동 학과</span>
               <strong>{fullNumber.format(data.departmentCount)}</strong>
-              <small>개</small>
+              <small>공시 단위 기준</small>
             </div>
             <div>
               <span>데이터 행</span>
@@ -746,7 +764,7 @@ function Details({
           <h2 className={styles.helpHeading}>
             학과별 정규화 데이터
             <HelpTip label="정규화 데이터">
-              연도별로 달랐던 원본 열 구조를 하나의 형식으로 맞추고, 병합 셀의 학교·단과대학·학과·주야 값을 복원한 데이터입니다.
+              2019~2022년 45열과 2023~2025년 46열을 하나의 형식으로 맞추고, 대학·전문대학과 표준분류 대·중·소계열을 보존한 데이터입니다.
             </HelpTip>
           </h2>
         </div>
@@ -757,14 +775,17 @@ function Details({
           <thead>
             <tr>
               <th>연도</th>
+              <th>대학구분</th>
               <th>학교</th>
               <th>단과대학</th>
               <th>학과</th>
               <th>주야</th>
               <th>지역</th>
               <th>설립</th>
-              <th>계열</th>
-              <th>학과상태</th>
+              <th>대계열</th>
+              <th>중계열</th>
+              <th>소계열</th>
+              <th>학교상태</th>
               <th className={styles.numberCell}>재학생</th>
               <th className={styles.numberCell}>휴학생</th>
               <th className={styles.numberCell}>재적학생</th>
@@ -775,6 +796,7 @@ function Details({
             {data.details.map((row) => (
               <tr key={`${row.year}-${row.school}-${row.sourceRow}`}>
                 <td>{row.year}</td>
+                <td>{row.universityCategory}</td>
                 <td className={styles.strongCell}>{row.school}</td>
                 <td>{row.college}</td>
                 <td><LongName name={row.department} /></td>
@@ -782,15 +804,17 @@ function Details({
                 <td>{row.region}</td>
                 <td>{row.establishment}</td>
                 <td>{row.field}</td>
+                <td>{row.fieldMiddle}</td>
+                <td>{row.fieldSmall}</td>
                 <td>
                   <span
                     className={`${styles.statusPill} ${
-                      row.departmentStatus.includes("폐")
+                      row.schoolStatus.includes("폐")
                         ? styles.closed
                         : ""
                     }`}
                   >
-                    {row.departmentStatus}
+                    {row.schoolStatus}
                   </span>
                 </td>
                 <td className={styles.numberCell}>
@@ -818,19 +842,22 @@ function Details({
           >
             <div className={styles.detailCardHeader}>
               <div>
-                <span>{row.year}년 · {row.region}</span>
+                <span>{row.year}년 · {row.universityCategory} · {row.region}</span>
                 <strong title={row.school}>{row.school}</strong>
               </div>
               <span
                 className={`${styles.statusPill} ${
-                  row.departmentStatus.includes("폐") ? styles.closed : ""
+                  row.schoolStatus.includes("폐") ? styles.closed : ""
                 }`}
-                title="학과상태는 원본 자료의 변경·분리·통합·폐과 등 상태를 뜻합니다."
+                title="학교상태는 새 원본 자료의 기존·폐교 등 학교 상태를 뜻합니다."
               >
-                {row.departmentStatus}
+                {row.schoolStatus}
               </span>
             </div>
             <LongName name={row.department} />
+            <p className={styles.detailFieldPath}>
+              {row.field} · {row.fieldMiddle} · {row.fieldSmall}
+            </p>
             <dl className={styles.detailMetrics}>
               <div><dt>재학생</dt><dd>{fullNumber.format(row.enrolled)}명</dd></div>
               <div><dt>휴학생</dt><dd>{fullNumber.format(row.leave)}명</dd></div>
@@ -927,11 +954,14 @@ export function EnrollmentDashboard() {
     const params = new URLSearchParams();
     Object.entries({
       year: filters.year,
+      universityCategory: filters.universityCategory,
       region: filters.region,
       school: filters.school,
       establishment: filters.establishment,
       field: filters.field,
-      departmentStatus: filters.departmentStatus,
+      fieldMiddle: filters.fieldMiddle,
+      fieldSmall: filters.fieldSmall,
+      schoolStatus: filters.schoolStatus,
       department: appliedDepartment,
     }).forEach(([key, value]) => {
       if (value) params.set(key, value);
@@ -987,8 +1017,16 @@ export function EnrollmentDashboard() {
   const setRegion = (region: string) => {
     setFilters((current) => {
       const availableSchools = region
-        ? (data?.meta.schoolsByRegion[region] ?? [])
-        : (data?.meta.schools ?? []);
+        ? current.universityCategory
+          ? (data?.meta.schoolsByRegionAndCategory[region]?.[
+              current.universityCategory
+            ] ?? [])
+          : (data?.meta.schoolsByRegion[region] ?? [])
+        : current.universityCategory
+          ? (data?.meta.schoolsByUniversityCategory[
+              current.universityCategory
+            ] ?? [])
+          : (data?.meta.schools ?? []);
       return {
         ...current,
         region,
@@ -1000,6 +1038,57 @@ export function EnrollmentDashboard() {
     });
     setPage(1);
   };
+  const setUniversityCategory = (universityCategory: string) => {
+    setFilters((current) => {
+      const availableSchools = current.region
+        ? universityCategory
+          ? (data?.meta.schoolsByRegionAndCategory[current.region]?.[
+              universityCategory
+            ] ?? [])
+          : (data?.meta.schoolsByRegion[current.region] ?? [])
+        : universityCategory
+          ? (data?.meta.schoolsByUniversityCategory[universityCategory] ?? [])
+          : (data?.meta.schools ?? []);
+      return {
+        ...current,
+        universityCategory,
+        school:
+          current.school && !availableSchools.includes(current.school)
+            ? ""
+            : current.school,
+      };
+    });
+    setPage(1);
+  };
+  const setField = (field: string) => {
+    setFilters((current) => ({
+      ...current,
+      field,
+      fieldMiddle:
+        current.fieldMiddle &&
+        !(data?.meta.fieldMiddlesByField[field] ?? []).includes(
+          current.fieldMiddle,
+        )
+          ? ""
+          : current.fieldMiddle,
+      fieldSmall: "",
+    }));
+    setPage(1);
+  };
+  const setFieldMiddle = (fieldMiddle: string) => {
+    setFilters((current) => ({
+      ...current,
+      fieldMiddle,
+      fieldSmall:
+        current.fieldSmall &&
+        !(data?.meta.fieldSmallsByMiddle[fieldMiddle] ?? []).includes(
+          current.fieldSmall,
+        )
+          ? ""
+          : current.fieldSmall,
+    }));
+    setPage(1);
+  };
   const resetFilters = () => {
     setFilters(initialFilters);
     setAppliedDepartment("");
@@ -1007,8 +1096,28 @@ export function EnrollmentDashboard() {
     setFilterVersion((version) => version + 1);
   };
   const schoolOptions = filters.region
-    ? (data?.meta.schoolsByRegion[filters.region] ?? [])
-    : (data?.meta.schools ?? []);
+    ? filters.universityCategory
+      ? (data?.meta.schoolsByRegionAndCategory[filters.region]?.[
+          filters.universityCategory
+        ] ?? [])
+      : (data?.meta.schoolsByRegion[filters.region] ?? [])
+    : filters.universityCategory
+      ? (data?.meta.schoolsByUniversityCategory[
+          filters.universityCategory
+        ] ?? [])
+      : (data?.meta.schools ?? []);
+  const middleFieldOptions = filters.field
+    ? (data?.meta.fieldMiddlesByField[filters.field] ?? [])
+    : (data?.meta.fieldMiddles ?? []);
+  const smallFieldOptions = filters.fieldMiddle
+    ? (data?.meta.fieldSmallsByMiddle[filters.fieldMiddle] ?? [])
+    : filters.field
+      ? [...new Set(
+          middleFieldOptions.flatMap(
+            (middle) => data?.meta.fieldSmallsByMiddle[middle] ?? [],
+          ),
+        )].sort((left, right) => left.localeCompare(right, "ko-KR"))
+      : (data?.meta.fieldSmalls ?? []);
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const activeNav = navigation.find((item) => item.id === view)!;
 
@@ -1022,8 +1131,8 @@ export function EnrollmentDashboard() {
             <BarChart3 size={23} />
           </div>
           <div>
-            <strong>대학 재적학생</strong>
-            <span>트렌드</span>
+            <strong>대학 시장</strong>
+            <span>재적학생 트렌드</span>
           </div>
           <button
             className={styles.closeNav}
@@ -1034,7 +1143,7 @@ export function EnrollmentDashboard() {
             <X size={20} />
           </button>
         </div>
-        <div className={styles.localBadge}>LOCAL · 2단계 MVP</div>
+        <div className={styles.localBadge}>2019–2025 · 대학·전문대학</div>
         <nav aria-label="주요 화면">
           <span className={styles.navLabel}>분석 메뉴</span>
           {navigation.map((item) => {
@@ -1071,7 +1180,7 @@ export function EnrollmentDashboard() {
             </div>
           </div>
           <p>
-            대학알리미 학과별 자료 · {data?.publication.dataYearRange ?? "게시 데이터 확인 중"}
+            대학알리미 학과별 자료 · {data?.dataset.dataYearRange ?? "데이터 확인 중"}
           </p>
         </div>
       </aside>
@@ -1095,7 +1204,7 @@ export function EnrollmentDashboard() {
           </button>
           <div>
             <span>데이터 기준</span>
-            <strong>{data?.publication.dataYearRange ?? "게시 데이터 확인 중"} 대학알리미</strong>
+            <strong>{data?.dataset.dataYearRange ?? "데이터 확인 중"} 대학알리미</strong>
           </div>
           <div className={styles.topbarRight}>
             <span className={styles.verifiedPill}>
@@ -1112,26 +1221,17 @@ export function EnrollmentDashboard() {
           </div>
         </header>
         <div className={styles.content}>
-          {view === "admin" ? (
-            <DataManagement
-              onPublished={() => {
-                resetFilters();
-                void load();
-              }}
-            />
-          ) : (
-            <>
           <section className={styles.hero}>
             <div>
               <span className={styles.heroEyebrow}>{activeNav.label}</span>
               <h1>
-                대학의 학생 흐름을
+                대학 시장의 학생 흐름을
                 <br />
                 {" "}한눈에 살펴보세요.
               </h1>
               <p>
-                {data?.publication.dataYearRange ?? "게시된 연도"} 재학생·휴학생·재적학생의 변화를
-                학교와 학과 단위로 탐색합니다.
+                {data?.dataset.dataYearRange ?? "검산된 연도"} 재학생·휴학생·재적학생의 변화를
+                대학·전문대학과 대·중·소계열 단위로 탐색합니다.
               </p>
             </div>
             <div className={styles.heroSummary}>
@@ -1175,8 +1275,15 @@ export function EnrollmentDashboard() {
               <SelectFilter
                 label="연도"
                 value={filters.year}
-                options={data?.meta.years ?? [2023, 2024, 2025]}
+                options={data?.meta.years ?? [2019, 2020, 2021, 2022, 2023, 2024, 2025]}
                 onChange={(value) => setFilter("year", value)}
+              />
+              <SelectFilter
+                label="대학구분"
+                value={filters.universityCategory}
+                options={data?.meta.universityCategories ?? []}
+                onChange={setUniversityCategory}
+                helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
               />
               <SelectFilter
                 label="지역"
@@ -1197,17 +1304,32 @@ export function EnrollmentDashboard() {
                 onChange={(value) => setFilter("establishment", value)}
               />
               <SelectFilter
-                label="계열"
+                label="대계열"
                 value={filters.field}
                 options={data?.meta.fields ?? []}
-                onChange={(value) => setFilter("field", value)}
+                onChange={setField}
+                helpText="교육부 표준분류의 가장 큰 계열 구분입니다."
               />
               <SelectFilter
-                label="학과상태"
-                value={filters.departmentStatus}
-                options={data?.meta.departmentStatuses ?? []}
-                onChange={(value) => setFilter("departmentStatus", value)}
-                helpText="학과상태는 대학알리미 원본에 기록된 기존·변경·분리·통합·폐과 등의 상태를 뜻합니다."
+                label="중계열"
+                value={filters.fieldMiddle}
+                options={middleFieldOptions}
+                onChange={setFieldMiddle}
+                helpText="선택한 대계열 아래의 표준분류 중계열입니다."
+              />
+              <SelectFilter
+                label="소계열"
+                value={filters.fieldSmall}
+                options={smallFieldOptions}
+                onChange={(value) => setFilter("fieldSmall", value)}
+                helpText="가장 세부적인 표준분류 소계열입니다."
+              />
+              <SelectFilter
+                label="학교상태"
+                value={filters.schoolStatus}
+                options={data?.meta.schoolStatuses ?? []}
+                onChange={(value) => setFilter("schoolStatus", value)}
+                helpText="새 원본에는 학과상태가 없고 학교상태만 있습니다. 기존·폐교 등 원본 값을 그대로 사용합니다."
               />
               <label className={`${styles.filterField} ${styles.searchField}`}>
                 <span>학과명</span>
@@ -1244,13 +1366,14 @@ export function EnrollmentDashboard() {
           ) : !data ? (
             <div className={styles.loadingState}>
               <span className={styles.loader} />
-              <p>45,242행을 분석하고 있습니다…</p>
+              <p>18만여 행을 분석하고 있습니다…</p>
             </div>
           ) : data.rowCount === 0 ? (
             <EmptyState onReset={resetFilters} />
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview data={data} />}
+              {view === "market" && <MarketAnalysis baseQuery={baseQuery} />}
               {view === "departments" && <DepartmentTrends baseQuery={baseQuery} />}
               {view === "schools" && <Schools data={data} />}
               {view === "details" && (
@@ -1267,14 +1390,12 @@ export function EnrollmentDashboard() {
           )}
           <footer className={styles.footer}>
             <p>
-              일반 화면은 검산 후 게시된 활성 버전만 사용합니다. 원본은 서버 전용 비공개 영역에 보관됩니다.
+              검산을 통과한 정규화 데이터만 사용합니다. 원본 XLSX는 웹 공개 폴더에 복사하지 않습니다.
             </p>
             <span>
-              마지막 게시 · {data?.publication.latestPublishedAt?.slice(0, 10) ?? data?.validation.generatedAt.slice(0, 10) ?? "—"}
+              마지막 변환 · {data?.dataset.generatedAt.slice(0, 10) ?? "—"}
             </span>
           </footer>
-            </>
-          )}
         </div>
       </main>
     </div>
