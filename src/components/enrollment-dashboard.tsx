@@ -21,6 +21,9 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  CircleHelp,
   Database,
   Filter,
   GraduationCap,
@@ -32,7 +35,13 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
 import styles from "./enrollment-dashboard.module.css";
@@ -56,6 +65,7 @@ type DashboardResponse = {
     years: number[];
     regions: string[];
     schools: string[];
+    schoolsByRegion: Record<string, string[]>;
     establishments: string[];
     fields: string[];
     departmentStatuses: string[];
@@ -111,7 +121,7 @@ const navigation: {
   {
     id: "departments",
     label: "학과 트렌드",
-    description: "학과별 3개년 추세",
+    description: "선택 연도까지 추세",
     icon: BookOpen,
   },
   {
@@ -141,6 +151,44 @@ const percent = new Intl.NumberFormat("ko-KR", {
 function formatChange(value: number | null) {
   if (value === null) return "비교 연도 없음";
   return `${value >= 0 ? "+" : ""}${fullNumber.format(value)}명`;
+}
+
+function useMediaQuery(query: string) {
+  return useSyncExternalStore(
+    (listener) => {
+      const media = window.matchMedia(query);
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    },
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
+
+function HelpTip({ label, children }: { label: string; children: string }) {
+  return (
+    <details className={styles.helpTip}>
+      <summary aria-label={`${label} 도움말`} title={`${label} 도움말`}>
+        <CircleHelp size={14} />
+      </summary>
+      <p>{children}</p>
+    </details>
+  );
+}
+
+function LongName({ name }: { name: string }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <button
+      type="button"
+      className={`${styles.longName} ${expanded ? styles.longNameExpanded : ""}`}
+      title={name}
+      aria-expanded={expanded}
+      onClick={() => setExpanded((current) => !current)}
+    >
+      {name}
+    </button>
+  );
 }
 
 function ChangeBadge({
@@ -210,15 +258,20 @@ function SelectFilter({
   value,
   options,
   onChange,
+  helpText,
 }: {
   label: string;
   value: string;
   options: (string | number)[];
   onChange: (value: string) => void;
+  helpText?: string;
 }) {
   return (
     <label className={styles.filterField}>
-      <span>{label}</span>
+      <span className={styles.filterLabel}>
+        {label}
+        {helpText && <HelpTip label={label}>{helpText}</HelpTip>}
+      </span>
       <select value={value} onChange={(event) => onChange(event.target.value)}>
         <option value="">전체</option>
         {options.map((option) => (
@@ -228,6 +281,94 @@ function SelectFilter({
           </option>
         ))}
       </select>
+    </label>
+  );
+}
+
+function SchoolCombobox({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  const [query, setQuery] = useState(value);
+  const [open, setOpen] = useState(false);
+  const matches = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase("ko-KR");
+    return options
+      .filter(
+        (school) =>
+          !normalized || school.toLocaleLowerCase("ko-KR").includes(normalized),
+      )
+      .slice(0, 80);
+  }, [options, query]);
+
+  return (
+    <label className={`${styles.filterField} ${styles.comboboxField}`}>
+      <span>학교</span>
+      <div className={styles.combobox}>
+        <Search size={16} />
+        <input
+          role="combobox"
+          aria-label="학교 검색"
+          aria-expanded={open}
+          aria-controls="school-options"
+          autoComplete="off"
+          value={query}
+          placeholder={`${options.length}개 학교 검색`}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          onChange={(event) => {
+            const next = event.target.value;
+            setQuery(next);
+            setOpen(true);
+            if (value && next !== value) onChange("");
+          }}
+        />
+        {query && (
+          <button
+            type="button"
+            className={styles.clearCombobox}
+            aria-label="학교 선택 지우기"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => {
+              setQuery("");
+              onChange("");
+              setOpen(true);
+            }}
+          >
+            <X size={14} />
+          </button>
+        )}
+        {open && (
+          <div id="school-options" className={styles.comboboxOptions} role="listbox">
+            {matches.length > 0 ? (
+              matches.map((school) => (
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={school === value}
+                  key={school}
+                  title={school}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => {
+                    setQuery(school);
+                    onChange(school);
+                    setOpen(false);
+                  }}
+                >
+                  {school}
+                </button>
+              ))
+            ) : (
+              <p>검색되는 학교가 없습니다.</p>
+            )}
+          </div>
+        )}
+      </div>
     </label>
   );
 }
@@ -246,7 +387,7 @@ function RankingTable({
         <div className={styles.rankingRow} key={row.name}>
           <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
           <div className={styles.rankingName}>
-            <strong>{row.name}</strong>
+            <LongName name={row.name} />
             <div className={styles.progressTrack}>
               <span style={{ width: `${(row.total / max) * 100}%` }} />
             </div>
@@ -263,6 +404,7 @@ function RankingTable({
 }
 
 function Overview({ data }: { data: DashboardResponse }) {
+  const trendStart = data.annual.at(0)?.year;
   return (
     <>
       <section className={styles.metricGrid} aria-label="핵심 지표">
@@ -275,7 +417,7 @@ function Overview({ data }: { data: DashboardResponse }) {
         />
         <MetricCard
           label="재적학생"
-          description="재학생·휴학생·유예학생 합계"
+          description="재학생·휴학생·학위취득유예학생 합계"
           metric={data.metrics.total}
           icon={Users}
           accent="#0f9f83"
@@ -289,11 +431,16 @@ function Overview({ data }: { data: DashboardResponse }) {
           inverse
         />
       </section>
+      <p className={styles.colorGuide}>
+        <span /> 휴학생은 감소할 때 긍정적인 색상으로 표시합니다.
+      </p>
       <section className={styles.chartGrid}>
         <article className={`${styles.panel} ${styles.widePanel}`}>
           <div className={styles.panelHeader}>
             <div>
-              <span className={styles.eyebrow}>3개년 변화</span>
+              <span className={styles.eyebrow}>
+                {trendStart}–{data.currentYear}년 변화
+              </span>
               <h2>학생 수 추이</h2>
             </div>
             <span className={styles.panelNote}>단위: 명</span>
@@ -415,14 +562,19 @@ function Overview({ data }: { data: DashboardResponse }) {
               <small>행</small>
             </div>
             <div>
-              <span>취득유예</span>
+              <span className={styles.helpLabel}>
+                학위취득유예학생
+                <HelpTip label="학위취득유예학생">
+                  화면에서는 짧게 ‘학위취득유예학생’으로 표시합니다. 대학알리미 공식 항목명은 ‘학사학위취득유예학생’입니다.
+                </HelpTip>
+              </span>
               <strong>{fullNumber.format(data.metrics.deferment.value)}</strong>
               <small>명</small>
             </div>
           </div>
           <p className={styles.formulaNote}>
             <CheckCircle2 size={17} />
-            재적학생 = 재학생 + 휴학생 + 학사학위취득유예학생
+            재적학생 = 재학생 + 휴학생 + 학위취득유예학생
           </p>
         </article>
       </section>
@@ -440,13 +592,16 @@ function Departments({ data }: { data: DashboardResponse }) {
     return values;
   });
   const colors = ["#5b5bd6", "#0f9f83", "#e78b42", "#d05f78", "#2684c7"];
+  const trendStart = data.annual.at(0)?.year;
   return (
     <section className={styles.viewStack}>
       <article className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.eyebrow}>학과 트렌드</span>
-            <h2>상위 학과의 3개년 재적학생 변화</h2>
+            <h2>
+              상위 학과의 {trendStart}–{data.currentYear}년 재적학생 변화
+            </h2>
           </div>
           <span className={styles.panelNote}>동일 학과명 합산</span>
         </div>
@@ -504,7 +659,31 @@ function Departments({ data }: { data: DashboardResponse }) {
   );
 }
 
+function MobileSchoolTick({
+  x = 0,
+  y = 0,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}) {
+  const name = payload?.value ?? "";
+  const lines = name.length > 7 ? [name.slice(0, 7), name.slice(7)] : [name];
+  return (
+    <text x={x} y={y} textAnchor="end" fill="#686c79" fontSize={10}>
+      {lines.map((line, index) => (
+        <tspan key={line} x={x - 4} dy={index === 0 ? (lines.length > 1 ? -2 : 3) : 12}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
+}
+
 function Schools({ data }: { data: DashboardResponse }) {
+  const mobile = useMediaQuery("(max-width: 620px)");
+  const mobileHeight = Math.max(430, data.schools.length * 54);
   return (
     <section className={styles.viewStack}>
       <article className={styles.panel}>
@@ -515,26 +694,59 @@ function Schools({ data }: { data: DashboardResponse }) {
           </div>
           <span className={styles.panelNote}>상위 12개교</span>
         </div>
-        <div className={styles.largeChart}>
+        <div
+          className={`${styles.largeChart} ${mobile ? styles.mobileSchoolChart : ""}`}
+          style={mobile ? { height: mobileHeight } : undefined}
+        >
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.schools} margin={{ left: 10, right: 12 }}>
-              <CartesianGrid stroke="#e8eaf0" vertical={false} />
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                interval={0}
-                angle={-24}
-                textAnchor="end"
-                height={88}
-                tick={{ fontSize: 11 }}
+            <BarChart
+              data={data.schools}
+              layout={mobile ? "vertical" : "horizontal"}
+              margin={mobile ? { left: 0, right: 8 } : { left: 10, right: 12 }}
+            >
+              <CartesianGrid
+                stroke="#e8eaf0"
+                vertical={!mobile}
+                horizontal={mobile}
               />
-              <YAxis
-                tickFormatter={(value) => compactNumber.format(value)}
-                axisLine={false}
-                tickLine={false}
-                width={62}
-              />
+              {mobile ? (
+                <>
+                  <XAxis
+                    type="number"
+                    tickFormatter={(value) => compactNumber.format(value)}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    interval={0}
+                    width={128}
+                    tick={<MobileSchoolTick />}
+                  />
+                </>
+              ) : (
+                <>
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    interval={0}
+                    angle={-24}
+                    textAnchor="end"
+                    height={88}
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis
+                    tickFormatter={(value) => compactNumber.format(value)}
+                    axisLine={false}
+                    tickLine={false}
+                    width={62}
+                  />
+                </>
+              )}
               <Tooltip
                 formatter={(value, name) => [
                   `${fullNumber.format(Number(value))}명`,
@@ -546,8 +758,16 @@ function Schools({ data }: { data: DashboardResponse }) {
                   value === "total" ? "재적학생" : "재학생"
                 }
               />
-              <Bar dataKey="total" fill="#7777e7" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="enrolled" fill="#5ec6ac" radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="total"
+                fill="#7777e7"
+                radius={mobile ? [0, 6, 6, 0] : [6, 6, 0, 0]}
+              />
+              <Bar
+                dataKey="enrolled"
+                fill="#5ec6ac"
+                radius={mobile ? [0, 6, 6, 0] : [6, 6, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -571,22 +791,34 @@ function Schools({ data }: { data: DashboardResponse }) {
 function Details({
   data,
   onPage,
+  onPageSize,
 }: {
   data: DashboardResponse;
   onPage: (page: number) => void;
+  onPageSize: (pageSize: number) => void;
 }) {
+  const moveToInputPage = (formData: FormData) => {
+    const requested = Number(formData.get("page"));
+    if (Number.isFinite(requested)) {
+      onPage(Math.min(Math.max(1, Math.trunc(requested)), data.pagination.pages));
+    }
+  };
+
   return (
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
         <div>
-          <span className={styles.eyebrow}>상세 데이터 탐색</span>
-          <h2>학과별 정규화 데이터</h2>
+          <span className={styles.eyebrow}>{data.currentYear}년 상세 데이터 탐색</span>
+          <h2 className={styles.helpHeading}>
+            학과별 정규화 데이터
+            <HelpTip label="정규화 데이터">
+              연도별로 달랐던 원본 열 구조를 하나의 형식으로 맞추고, 병합 셀의 학교·단과대학·학과·주야 값을 복원한 데이터입니다.
+            </HelpTip>
+          </h2>
         </div>
-        <span className={styles.panelNote}>
-          총 {fullNumber.format(data.pagination.total)}행
-        </span>
+        <span className={styles.panelNote}>총 {fullNumber.format(data.pagination.total)}행</span>
       </div>
-      <div className={styles.tableScroller}>
+      <div className={`${styles.tableScroller} ${styles.desktopDetails}`}>
         <table className={styles.dataTable}>
           <thead>
             <tr>
@@ -611,7 +843,7 @@ function Details({
                 <td>{row.year}</td>
                 <td className={styles.strongCell}>{row.school}</td>
                 <td>{row.college}</td>
-                <td>{row.department}</td>
+                <td><LongName name={row.department} /></td>
                 <td>{row.dayNight}</td>
                 <td>{row.region}</td>
                 <td>{row.establishment}</td>
@@ -644,37 +876,94 @@ function Details({
           </tbody>
         </table>
       </div>
+      <div className={styles.mobileDetails} aria-label="모바일 상세 데이터 목록">
+        {data.details.map((row) => (
+          <article
+            className={styles.detailCard}
+            key={`${row.year}-${row.school}-${row.sourceRow}`}
+          >
+            <div className={styles.detailCardHeader}>
+              <div>
+                <span>{row.year}년 · {row.region}</span>
+                <strong title={row.school}>{row.school}</strong>
+              </div>
+              <span
+                className={`${styles.statusPill} ${
+                  row.departmentStatus.includes("폐") ? styles.closed : ""
+                }`}
+                title="학과상태는 원본 자료의 변경·분리·통합·폐과 등 상태를 뜻합니다."
+              >
+                {row.departmentStatus}
+              </span>
+            </div>
+            <LongName name={row.department} />
+            <dl className={styles.detailMetrics}>
+              <div><dt>재학생</dt><dd>{fullNumber.format(row.enrolled)}명</dd></div>
+              <div><dt>휴학생</dt><dd>{fullNumber.format(row.leave)}명</dd></div>
+              <div><dt>재적학생</dt><dd>{fullNumber.format(row.total)}명</dd></div>
+            </dl>
+            <div className={styles.detailChange}>
+              <span>전년 대비</span>
+              <ChangeBadge metric={row} />
+            </div>
+          </article>
+        ))}
+      </div>
       <div className={styles.pagination}>
-        <button
-          type="button"
-          onClick={() => onPage(data.pagination.page - 1)}
-          disabled={data.pagination.page <= 1}
-          aria-label="이전 페이지"
+        <label className={styles.pageSize}>
+          페이지당
+          <select
+            value={data.pagination.pageSize}
+            onChange={(event) => onPageSize(Number(event.target.value))}
+          >
+            {[10, 20, 50, 100].map((size) => (
+              <option key={size} value={size}>{size}행</option>
+            ))}
+          </select>
+        </label>
+        <div className={styles.pageButtons}>
+          <button type="button" onClick={() => onPage(1)} disabled={data.pagination.page <= 1} aria-label="처음 페이지">
+            <ChevronsLeft size={17} />
+          </button>
+          <button type="button" onClick={() => onPage(data.pagination.page - 1)} disabled={data.pagination.page <= 1} aria-label="이전 페이지">
+            <ChevronLeft size={17} />
+          </button>
+          <span><strong>{data.pagination.page}</strong> / {data.pagination.pages} 페이지</span>
+          <button type="button" onClick={() => onPage(data.pagination.page + 1)} disabled={data.pagination.page >= data.pagination.pages} aria-label="다음 페이지">
+            <ChevronRight size={17} />
+          </button>
+          <button type="button" onClick={() => onPage(data.pagination.pages)} disabled={data.pagination.page >= data.pagination.pages} aria-label="마지막 페이지">
+            <ChevronsRight size={17} />
+          </button>
+        </div>
+        <form
+          className={styles.pageJump}
+          action={(formData) => moveToInputPage(formData)}
         >
-          <ChevronLeft size={17} />
-        </button>
-        <span>
-          <strong>{data.pagination.page}</strong> / {data.pagination.pages}
-        </span>
-        <button
-          type="button"
-          onClick={() => onPage(data.pagination.page + 1)}
-          disabled={data.pagination.page >= data.pagination.pages}
-          aria-label="다음 페이지"
-        >
-          <ChevronRight size={17} />
-        </button>
+          <label htmlFor="detail-page">페이지 이동</label>
+          <input
+            key={data.pagination.page}
+            id="detail-page"
+            name="page"
+            type="number"
+            min={1}
+            max={data.pagination.pages}
+            defaultValue={data.pagination.page}
+          />
+          <button type="submit">이동</button>
+        </form>
       </div>
     </section>
   );
 }
 
-function EmptyState() {
+function EmptyState({ onReset }: { onReset: () => void }) {
   return (
     <div className={styles.emptyState}>
       <Search size={28} />
       <h2>조건에 맞는 데이터가 없습니다</h2>
       <p>필터를 줄이거나 학과명 검색어를 바꿔보세요.</p>
+      <button type="button" onClick={onReset}>필터 초기화</button>
     </div>
   );
 }
@@ -687,6 +976,8 @@ export function EnrollmentDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [filterVersion, setFilterVersion] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -712,8 +1003,9 @@ export function EnrollmentDashboard() {
       if (value) params.set(key, value);
     });
     params.set("page", String(page));
+    params.set("pageSize", String(pageSize));
     return params.toString();
-  }, [filters, appliedDepartment, page]);
+  }, [filters, appliedDepartment, page, pageSize]);
 
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -722,12 +1014,14 @@ export function EnrollmentDashboard() {
       try {
         const response = await fetch(`/api/dashboard?${query}`, { signal });
         if (!response.ok) {
-          throw new Error(`데이터 요청 실패 (${response.status})`);
+          throw new Error("dashboard_request_failed");
         }
         setData((await response.json()) as DashboardResponse);
       } catch (loadError) {
         if ((loadError as Error).name !== "AbortError") {
-          setError((loadError as Error).message);
+          setError(
+            "데이터 서버에 연결할 수 없습니다. 개발 서버 상태를 확인해 주세요.",
+          );
         }
       } finally {
         if (!signal?.aborted) setLoading(false);
@@ -751,11 +1045,31 @@ export function EnrollmentDashboard() {
     setFilters((current) => ({ ...current, [key]: value }));
     setPage(1);
   };
+  const setRegion = (region: string) => {
+    setFilters((current) => {
+      const availableSchools = region
+        ? (data?.meta.schoolsByRegion[region] ?? [])
+        : (data?.meta.schools ?? []);
+      return {
+        ...current,
+        region,
+        school:
+          current.school && !availableSchools.includes(current.school)
+            ? ""
+            : current.school,
+      };
+    });
+    setPage(1);
+  };
   const resetFilters = () => {
     setFilters(initialFilters);
     setAppliedDepartment("");
     setPage(1);
+    setFilterVersion((version) => version + 1);
   };
+  const schoolOptions = filters.region
+    ? (data?.meta.schoolsByRegion[filters.region] ?? [])
+    : (data?.meta.schools ?? []);
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const activeNav = navigation.find((item) => item.id === view)!;
 
@@ -863,7 +1177,7 @@ export function EnrollmentDashboard() {
               <h1>
                 대학의 학생 흐름을
                 <br />
-                한눈에 살펴보세요.
+                {" "}한눈에 살펴보세요.
               </h1>
               <p>
                 2023년부터 2025년까지 재학생·휴학생·재적학생의 변화를
@@ -871,12 +1185,20 @@ export function EnrollmentDashboard() {
               </p>
             </div>
             <div className={styles.heroSummary}>
-              <span>{data?.currentYear ?? "—"}년 선택 현황</span>
-              <strong>
-                {data ? compactNumber.format(data.metrics.total.value) : "—"}
-              </strong>
-              <small>재적학생</small>
-              {data && <ChangeBadge metric={data.metrics.total} />}
+              {data?.rowCount === 0 ? (
+                <>
+                  <span>선택 현황</span>
+                  <strong className={styles.noResultSummary}>검색 결과 없음</strong>
+                  <small>필터를 조정해 주세요</small>
+                </>
+              ) : (
+                <>
+                  <span>{data?.currentYear ?? "—"}년 선택 현황</span>
+                  <strong>{data ? compactNumber.format(data.metrics.total.value) : "—"}</strong>
+                  <small>재적학생</small>
+                  {data && <ChangeBadge metric={data.metrics.total} />}
+                </>
+              )}
             </div>
           </section>
           <section
@@ -910,12 +1232,12 @@ export function EnrollmentDashboard() {
                 label="지역"
                 value={filters.region}
                 options={data?.meta.regions ?? []}
-                onChange={(value) => setFilter("region", value)}
+                onChange={setRegion}
               />
-              <SelectFilter
-                label="학교"
+              <SchoolCombobox
+                key={`${filterVersion}-${filters.region}`}
                 value={filters.school}
-                options={data?.meta.schools ?? []}
+                options={schoolOptions}
                 onChange={(value) => setFilter("school", value)}
               />
               <SelectFilter
@@ -935,6 +1257,7 @@ export function EnrollmentDashboard() {
                 value={filters.departmentStatus}
                 options={data?.meta.departmentStatuses ?? []}
                 onChange={(value) => setFilter("departmentStatus", value)}
+                helpText="학과상태는 대학알리미 원본에 기록된 기존·변경·분리·통합·폐과 등의 상태를 뜻합니다."
               />
               <label className={`${styles.filterField} ${styles.searchField}`}>
                 <span>학과명</span>
@@ -974,13 +1297,22 @@ export function EnrollmentDashboard() {
               <p>45,242행을 분석하고 있습니다…</p>
             </div>
           ) : data.rowCount === 0 ? (
-            <EmptyState />
+            <EmptyState onReset={resetFilters} />
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview data={data} />}
               {view === "departments" && <Departments data={data} />}
               {view === "schools" && <Schools data={data} />}
-              {view === "details" && <Details data={data} onPage={setPage} />}
+              {view === "details" && (
+                <Details
+                  data={data}
+                  onPage={setPage}
+                  onPageSize={(nextPageSize) => {
+                    setPageSize(nextPageSize);
+                    setPage(1);
+                  }}
+                />
+              )}
             </div>
           )}
           <footer className={styles.footer}>

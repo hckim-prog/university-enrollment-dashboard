@@ -28,12 +28,16 @@ export async function GET(request: NextRequest) {
     departmentQuery: search.get("department") ?? "",
   };
   const page = Math.max(1, Number(search.get("page")) || 1);
+  const requestedPageSize = Number(search.get("pageSize"));
+  const pageSize = [10, 20, 50, 100].includes(requestedPageSize)
+    ? requestedPageSize
+    : 20;
   const [records, validation] = await Promise.all([
     getRecords(),
     getValidationReport(),
   ]);
   return NextResponse.json({
-    ...createDashboard(records, filters, page),
+    ...createDashboard(records, filters, page, pageSize),
     validation: {
       valid: validation.valid,
       totalRows: validation.totalRows,

@@ -53,6 +53,8 @@ describe("analytics", () => {
     expect(dashboard.metrics.total.value).toBe(170);
     expect(dashboard.metrics.total.change).toBe(70);
     expect(dashboard.annual).toHaveLength(2);
+    expect(dashboard.pagination.total).toBe(2);
+    expect(dashboard.details.every((row) => row.year === 2025)).toBe(true);
   });
 
   it("keeps the prior year as comparison context when a year is selected", () => {
@@ -61,5 +63,39 @@ describe("analytics", () => {
     expect(dashboard.metrics.total.value).toBe(110);
     expect(dashboard.metrics.total.change).toBe(10);
     expect(dashboard.pagination.total).toBe(1);
+  });
+
+  it("uses the selected year as the trend cutoff", () => {
+    const dashboard = createDashboard(records, {
+      ...emptyFilters(),
+      years: [2024],
+    });
+    expect(dashboard.currentYear).toBe(2024);
+    expect(dashboard.annual.map((point) => point.year)).toEqual([2024]);
+    expect(
+      dashboard.departmentSeries.flatMap((series) =>
+        series.annual.map((point) => point.year),
+      ),
+    ).toEqual([2024]);
+  });
+
+  it("returns region-linked schools and applies the requested page size", () => {
+    const dashboard = createDashboard(records, emptyFilters(), 1, 10);
+    expect(dashboard.meta.schoolsByRegion["서울"]).toEqual(["한빛대학교"]);
+    expect(dashboard.meta.schoolsByRegion["부산"]).toEqual(["다른대학교"]);
+    expect(dashboard.pagination.pageSize).toBe(10);
+  });
+
+  it("keeps KPI, final trend point, ranking, and details totals aligned", () => {
+    const dashboard = createDashboard(records, {
+      ...emptyFilters(),
+      years: [2025],
+      schools: ["한빛대학교"],
+    });
+    const detailTotal = dashboard.details.reduce((sum, row) => sum + row.total, 0);
+    expect(dashboard.metrics.total.value).toBe(110);
+    expect(dashboard.annual.at(-1)?.total).toBe(110);
+    expect(dashboard.schools[0].total).toBe(110);
+    expect(detailTotal).toBe(110);
   });
 });

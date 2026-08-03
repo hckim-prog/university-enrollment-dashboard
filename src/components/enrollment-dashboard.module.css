@@ -308,6 +308,12 @@
   display: block;
 }
 
+.noResultSummary {
+  margin-bottom: 8px;
+  font-size: 20px !important;
+  word-break: keep-all;
+}
+
 .heroSummary > span {
   color: #bfc0de;
   font-size: 11px;
@@ -394,6 +400,51 @@
   font-weight: 650;
 }
 
+.filterLabel,
+.helpLabel,
+.helpHeading {
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+}
+
+.helpTip {
+  position: relative;
+  display: inline-flex;
+  color: inherit;
+}
+
+.helpTip summary {
+  display: inline-grid;
+  place-items: center;
+  color: #858999;
+  cursor: help;
+  list-style: none;
+}
+
+.helpTip summary::-webkit-details-marker {
+  display: none;
+}
+
+.helpTip p {
+  position: absolute;
+  z-index: 20;
+  top: 20px;
+  left: 0;
+  width: min(290px, 75vw);
+  padding: 10px 11px;
+  border: 1px solid #dedfea;
+  border-radius: 9px;
+  color: #555968;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(27, 30, 51, 0.14);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.55;
+  text-align: left;
+  word-break: keep-all;
+}
+
 .filterField select,
 .filterField input {
   width: 100%;
@@ -433,6 +484,80 @@
   color: #979aa8;
 }
 
+.combobox {
+  position: relative;
+}
+
+.combobox > svg {
+  position: absolute;
+  z-index: 1;
+  top: 12px;
+  left: 10px;
+  color: #979aa8;
+  pointer-events: none;
+}
+
+.combobox input {
+  padding-right: 30px;
+}
+
+.clearCombobox {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  right: 6px;
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  color: #858998;
+  background: transparent;
+}
+
+.comboboxOptions {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 5px);
+  right: 0;
+  left: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #dedfea;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 13px 32px rgba(27, 30, 51, 0.16);
+}
+
+.comboboxOptions button {
+  width: 100%;
+  padding: 9px 8px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 7px;
+  color: #3f4351;
+  background: transparent;
+  font-size: 11px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comboboxOptions button:hover,
+.comboboxOptions button[aria-selected="true"] {
+  color: #4d4dc5;
+  background: #f0f0ff;
+}
+
+.comboboxOptions p {
+  padding: 14px 8px;
+  color: #858998;
+  font-size: 10px;
+  text-align: center;
+}
+
 .resetButton {
   display: inline-flex;
   height: 39px;
@@ -457,6 +582,24 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 16px;
+}
+
+.colorGuide {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -5px 2px 16px;
+  color: #7c808e;
+  font-size: 10px;
+  word-break: keep-all;
+}
+
+.colorGuide span {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #0f9f83;
 }
 
 .metricCard,
@@ -645,6 +788,33 @@
   white-space: nowrap;
 }
 
+.longName {
+  display: -webkit-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  color: #363946;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  text-overflow: ellipsis;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.longNameExpanded {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
 .progressTrack {
   width: 100%;
   height: 3px;
@@ -735,6 +905,10 @@
   font-size: 9px;
 }
 
+.mobileDetails {
+  display: none;
+}
+
 .tableScroller {
   overflow: auto;
   border: 1px solid #e9eaf0;
@@ -770,6 +944,10 @@
   white-space: nowrap;
 }
 
+.dataTable td .longName {
+  min-width: 150px;
+}
+
 .dataTable tr:hover td {
   background: #fafaff;
 }
@@ -801,12 +979,52 @@
 
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 13px;
   margin-top: 18px;
   color: #777b89;
   font-size: 11px;
+}
+
+.pageButtons,
+.pageSize,
+.pageJump {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pageButtons {
+  gap: 6px;
+}
+
+.pageSize select,
+.pageJump input {
+  height: 32px;
+  border: 1px solid #e1e3e8;
+  border-radius: 8px;
+  color: #515563;
+  background: #fff;
+  font-size: 11px;
+}
+
+.pageSize select {
+  padding: 0 24px 0 8px;
+}
+
+.pageJump input {
+  width: 58px;
+  padding: 0 7px;
+}
+
+.pageJump button {
+  width: auto;
+  min-width: 48px;
+  padding: 0 10px;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .pagination button {
@@ -852,6 +1070,16 @@
 .emptyState h2 {
   color: #454956;
   font-size: 17px;
+}
+
+.emptyState button {
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: #5b5bd6;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .loader {
@@ -996,6 +1224,17 @@
     padding: 26px 23px;
   }
 
+  .hero h1,
+  .hero p,
+  .panelHeader h2,
+  .panelNote,
+  .metricTop p,
+  .filterHeading,
+  .footer {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
   .hero h1 br {
     display: none;
   }
@@ -1013,12 +1252,26 @@
     padding: 18px;
   }
 
+  .panelHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .panelNote {
+    text-align: left;
+  }
+
   .chartArea {
     height: 250px;
   }
 
   .largeChart {
     height: 330px;
+  }
+
+  .mobileSchoolChart {
+    margin-left: -8px;
   }
 
   .rankingRow {
@@ -1028,6 +1281,119 @@
   .rankingRow > .changeBadge,
   .rankingRow > .mutedBadge {
     display: none;
+  }
+
+  .desktopDetails {
+    display: none;
+  }
+
+  .mobileDetails {
+    display: grid;
+    gap: 10px;
+  }
+
+  .detailCard {
+    padding: 15px;
+    border: 1px solid #e7e8ee;
+    border-radius: 13px;
+    background: #fbfbfd;
+  }
+
+  .detailCardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .detailCardHeader > div {
+    min-width: 0;
+  }
+
+  .detailCardHeader span:first-child {
+    display: block;
+    margin-bottom: 3px;
+    color: #9295a2;
+    font-size: 9px;
+  }
+
+  .detailCardHeader strong {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #292c38;
+    font-size: 12px;
+    line-height: 1.35;
+    word-break: keep-all;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .detailCard > .longName {
+    margin-bottom: 12px;
+    color: #4c4cbd;
+    font-size: 13px;
+  }
+
+  .detailMetrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .detailMetrics > div {
+    min-width: 0;
+    padding: 9px 7px;
+    border-radius: 9px;
+    background: #fff;
+  }
+
+  .detailMetrics dt {
+    color: #9295a2;
+    font-size: 8px;
+    word-break: keep-all;
+  }
+
+  .detailMetrics dd {
+    margin-top: 4px;
+    color: #303341;
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .detailChange {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: #888c9a;
+    font-size: 9px;
+  }
+
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .pageButtons {
+    justify-content: center;
+  }
+
+  .pageSize,
+  .pageJump {
+    justify-content: center;
+  }
+
+  .pageButtons span {
+    min-width: 92px;
+    text-align: center;
+  }
+
+  .helpTip p {
+    right: auto;
+    left: -12px;
   }
 
   .footer {

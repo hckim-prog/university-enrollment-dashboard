@@ -145,16 +145,18 @@ export function createDashboard(
   pageSize = 20,
 ) {
   const contextRows = filterRecords(records, filters, false);
+  const allYears = uniqueSorted(records, (row) => String(row.year)).map(Number);
   const availableYears = uniqueSorted(contextRows, (row) =>
     String(row.year),
   ).map(Number);
   const currentYear =
     filters.years.length > 0
       ? Math.max(...filters.years)
-      : Math.max(...availableYears);
-  const previousYear = availableYears.includes(currentYear - 1)
+      : Math.max(...allYears);
+  const previousYear = allYears.includes(currentYear - 1)
     ? currentYear - 1
     : null;
+  const trendYears = availableYears.filter((year) => year <= currentYear);
   const currentRows = contextRows.filter((row) => row.year === currentYear);
   const previousRows =
     previousYear === null
@@ -167,19 +169,21 @@ export function createDashboard(
     ...calculateChange(current[key], previous?.[key]),
   });
 
-  const annual: AnnualPoint[] = availableYears.map((year) => ({
+  const annual: AnnualPoint[] = trendYears.map((year) => ({
     year,
     ...aggregate(contextRows.filter((row) => row.year === year)),
   }));
-  const selectedRows = filterRecords(records, filters, true).sort(
+  const selectedRows = contextRows.filter((row) => row.year === currentYear).sort(
     (a, b) => b.year - a.year || b.total - a.total,
   );
   const comparisonIndex = new Map<string, EnrollmentRecord>();
   for (const row of contextRows) {
     comparisonIndex.set(`${row.year}\u001f${rowComparisonKey(row)}`, row);
   }
+  const pages = Math.max(1, Math.ceil(selectedRows.length / pageSize));
+  const safePage = Math.min(Math.max(1, page), pages);
   const details = selectedRows
-    .slice((page - 1) * pageSize, page * pageSize)
+    .slice((safePage - 1) * pageSize, safePage * pageSize)
     .map((row) => {
       const prior = comparisonIndex.get(
         `${row.year - 1}\u001f${rowComparisonKey(row)}`,
@@ -197,7 +201,7 @@ export function createDashboard(
   ).map((row) => row.name);
   const departmentSeries = topDepartmentNames.map((name) => ({
     name,
-    annual: availableYears.map((year) => ({
+    annual: trendYears.map((year) => ({
       year,
       ...aggregate(
         contextRows.filter(
@@ -209,9 +213,18 @@ export function createDashboard(
 
   return {
     meta: {
-      years: uniqueSorted(records, (row) => String(row.year)).map(Number),
+      years: allYears,
       regions: uniqueSorted(records, (row) => row.region),
       schools: uniqueSorted(records, (row) => row.school),
+      schoolsByRegion: Object.fromEntries(
+        uniqueSorted(records, (row) => row.region).map((region) => [
+          region,
+          uniqueSorted(
+            records.filter((row) => row.region === region),
+            (row) => row.school,
+          ),
+        ]),
+      ),
       establishments: uniqueSorted(records, (row) => row.establishment),
       fields: uniqueSorted(records, (row) => row.field),
       departmentStatuses: uniqueSorted(
@@ -253,10 +266,10 @@ export function createDashboard(
     ),
     details,
     pagination: {
-      page,
+      page: safePage,
       pageSize,
       total: selectedRows.length,
-      pages: Math.max(1, Math.ceil(selectedRows.length / pageSize)),
+      pages,
     },
   };
 }
