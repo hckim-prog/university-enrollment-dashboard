@@ -120,6 +120,7 @@ function rank(
   previousRows: EnrollmentRecord[],
   selector: (row: EnrollmentRecord) => string,
   limit = 10,
+  analysisMetric: "enrolled" | "total" = "total",
 ): RankedPoint[] {
   const current = groupAggregate(currentRows, selector);
   const previous = groupAggregate(previousRows, selector);
@@ -131,10 +132,10 @@ function rank(
         enrolled: values.enrolled,
         total: values.total,
         leave: values.leave,
-        ...calculateChange(values.total, prior?.total ?? null),
+        ...calculateChange(values[analysisMetric], prior?.[analysisMetric] ?? null),
       };
     })
-    .sort((a, b) => b.total - a.total)
+    .sort((a, b) => b[analysisMetric] - a[analysisMetric])
     .slice(0, limit);
 }
 
@@ -256,6 +257,7 @@ export function createDashboard(
   page = 1,
   pageSize = 20,
   requestedWindow?: AnalysisWindow,
+  analysisMetric: "enrolled" | "total" = "total",
 ) {
   const meta = createDashboardMeta(records);
   const contextRows = filterRecords(records, filters, false);
@@ -285,7 +287,7 @@ export function createDashboard(
     ...aggregate(contextRows.filter((row) => row.year === year)),
   }));
   const selectedRows = contextRows.filter((row) => row.year === currentYear).sort(
-    (a, b) => b.year - a.year || b.total - a.total,
+    (a, b) => b.year - a.year || b[analysisMetric] - a[analysisMetric],
   );
   const comparisonIndex = new Map<string, EnrollmentRecord>();
   for (const row of contextRows) {
@@ -301,7 +303,7 @@ export function createDashboard(
       );
       return {
         ...row,
-        ...calculateChange(row.total, prior?.total ?? null),
+        ...calculateChange(row[analysisMetric], prior?.[analysisMetric] ?? null),
       };
     });
   const topDepartmentNames = rank(
@@ -309,6 +311,7 @@ export function createDashboard(
     previousRows,
     (row) => row.department,
     8,
+    analysisMetric,
   ).map((row) => row.name);
   const departmentSeries = topDepartmentNames.map((name) => ({
     name,
@@ -325,6 +328,7 @@ export function createDashboard(
 
   return {
     meta,
+    analysisMetric,
     analysisWindow,
     currentYear,
     previousYear,
@@ -353,13 +357,14 @@ export function createDashboard(
       },
     },
     annual,
-    regions: rank(currentRows, previousRows, (row) => row.region, 8),
-    fields: rank(currentRows, previousRows, (row) => row.field, 8),
+    regions: rank(currentRows, previousRows, (row) => row.region, 8, analysisMetric),
+    fields: rank(currentRows, previousRows, (row) => row.field, 8, analysisMetric),
     departments: rank(
       currentRows,
       previousRows,
       (row) => row.department,
       12,
+      analysisMetric,
     ),
     departmentSeries,
     schools: rank(
@@ -367,6 +372,7 @@ export function createDashboard(
       previousRows,
       (row) => `${row.schoolCode}\u001e${row.campus}\u001e${row.school}`,
       12,
+      analysisMetric,
     ).map((row) => {
       const [, campus, school] = row.name.split("\u001e");
       return {

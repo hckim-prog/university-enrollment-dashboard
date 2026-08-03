@@ -122,4 +122,20 @@ describe("analytics", () => {
     expect(dashboard.details.every((row) => row.year === 2025)).toBe(true);
     expect(dashboard.metrics.total.change).toBe(70);
   });
+
+  it("uses the selected analysis metric for rankings and detail changes", () => {
+    const dashboard = createDashboard(
+      records,
+      { ...emptyFilters(), schools: ["한빛대학교"] },
+      1,
+      20,
+      { startYear: 2024, endYear: 2025 },
+      "enrolled",
+    );
+
+    expect(dashboard.analysisMetric).toBe("enrolled");
+    expect(dashboard.schools[0].enrolled).toBe(84);
+    expect(dashboard.schools[0].change).toBe(4);
+    expect(dashboard.details[0].change).toBe(4);
+  });
 });

@@ -44,6 +44,7 @@ import type {
   LifecycleEventType,
   TrendType,
 } from "@/lib/department-trends";
+import type { MarketMetric } from "@/lib/market-analysis";
 import styles from "./department-trends.module.css";
 
 type TrendTab = "groups" | "individuals" | "lifecycle";
@@ -262,9 +263,8 @@ const lifecycleColors: Record<LifecycleEventType, string> = {
   observed_exit: "#7f8596",
 };
 
-export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
+export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; metric: MarketMetric }) {
   const [tab, setTab] = useState<TrendTab>("groups");
-  const [metric, setMetric] = useState("total");
   const [period, setPeriod] = useState("sinceStart");
   const [minimumPrevious, setMinimumPrevious] = useState(30);
   const [minimumChange, setMinimumChange] = useState(20);
@@ -380,7 +380,6 @@ export function DepartmentTrends({ baseQuery }: { baseQuery: string }) {
         <summary><span><SlidersHorizontal size={17} /><strong>분석 기준</strong></span><span>{data.meta.metricLabel} · {data.meta.startYear}~{data.meta.endYear} · 시작 규모 {number.format(minimumStartValue)}명<ChevronDown size={16} /></span></summary>
         <div className={styles.criteriaGrid}>
           <label><span>목록 학과군</span><select value={groupId} onChange={(event) => setAnalysisFilter(setGroupId, event.target.value)}><option value="">전체 학과군</option>{data.meta.groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
-          <label><span>분석 지표</span><select value={metric} onChange={(event) => setAnalysisFilter(setMetric, event.target.value)}><option value="total">재적학생</option><option value="enrolled">재학생</option></select></label>
           <label><span>비교 기간</span><select value={period} onChange={(event) => setAnalysisFilter(setPeriod, event.target.value)}><option value="recent">최근 1년</option><option value="sinceStart">장기 시작연도 대비</option></select></label>
           <label><span>최소 전년도 학생 수</span><input type="number" min="0" value={minimumPrevious} onChange={(event) => { setMinimumPrevious(Number(event.target.value)); setPage(1); }} /></label>
           <label><span>최소 증감 인원</span><input type="number" min="0" value={minimumChange} onChange={(event) => { setMinimumChange(Number(event.target.value)); setPage(1); }} /></label>

@@ -367,6 +367,78 @@
   font-weight: 700;
 }
 
+.metricPriority {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 15px;
+  padding: 13px 15px;
+  border: 1px solid #dcddef;
+  border-radius: 13px;
+  background: #f8f8ff;
+}
+
+.metricPriorityCopy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.metricPriorityCopy > span {
+  color: #6262c4;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.metricPriorityCopy > strong {
+  color: #2e3140;
+  font-size: 14px;
+  word-break: keep-all;
+}
+
+.metricPriorityCopy > small {
+  color: #777b89;
+  font-size: 11px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.metricPriorityOptions {
+  display: grid;
+  min-width: 326px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.metricPriorityOptions button {
+  display: grid;
+  min-height: 54px;
+  align-content: center;
+  gap: 2px;
+  border: 1px solid #d9dbe7;
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: #565a69;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.metricPriorityOptions button strong { font-size: 14px; }
+.metricPriorityOptions button small { color: #8a8e9a; font-size: 10px; word-break: keep-all; }
+
+.metricPriorityOptions .metricPriorityActive {
+  border-color: #6868d5;
+  color: #4141a8;
+  background: #ededff;
+  box-shadow: 0 0 0 1px rgba(104, 104, 213, .08);
+}
+
+.metricPriorityOptions .metricPriorityActive small { color: #6262b8; }
+
 .filterToggle {
   display: inline-flex;
   align-items: center;
@@ -988,6 +1060,12 @@
   font-weight: 700;
 }
 
+.dataTable .selectedMetricCell {
+  color: #4141a8;
+  background: #f2f2ff;
+  font-weight: 800;
+}
+
 .statusPill {
   display: inline-flex;
   padding: 4px 7px;
@@ -1385,6 +1463,15 @@
     background: #fff;
   }
 
+  .detailMetrics > .selectedDetailMetric {
+    outline: 1px solid #c9c9ee;
+    color: #4141a8;
+    background: #eeeeff;
+  }
+
+  .detailMetrics > .selectedDetailMetric dt,
+  .detailMetrics > .selectedDetailMetric dd { color: #4141a8; }
+
   .detailMetrics dt {
     color: #9295a2;
     font-size: 11px;
@@ -1553,11 +1640,18 @@
 .helpTip p { font-size: 12px; }
 
 @media (max-width: 1100px) {
+  .metricPriority { align-items: stretch; flex-direction: column; gap: 10px; }
+  .metricPriorityOptions { width: 100%; min-width: 0; }
   .basicFilterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .periodFilter { grid-column: 1 / -1; }
 }
 
 @media (max-width: 620px) {
+  .metricPriority { padding: 12px; }
+  .metricPriorityCopy > strong { font-size: 13px; }
+  .metricPriorityCopy > small { font-size: 10px; }
+  .metricPriorityOptions button { min-height: 50px; padding: 7px 10px; }
+  .metricPriorityOptions button strong { font-size: 13px; }
   .summaryHero { gap: 10px; padding: 14px; }
   .summaryHero h1 { font-size: 18px; line-height: 1.32; }
   .summaryHero p { margin-top: 5px; font-size: 12px; line-height: 1.45; }

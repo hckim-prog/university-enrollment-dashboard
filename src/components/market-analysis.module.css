@@ -1,11 +1,9 @@
 .marketView { display: grid; gap: 18px; }
-.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border: 1px solid #e2e5ec; border-radius: 16px; background: #fff; }
+.toolbar { display: flex; align-items: center; gap: 16px; padding: 12px 14px; border: 1px solid #e2e5ec; border-radius: 16px; background: #fff; }
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tabs button { border: 0; border-radius: 11px; padding: 10px 14px; background: transparent; color: #666b79; font: inherit; font-weight: 700; cursor: pointer; }
 .tabs button:hover { background: #f3f3fb; color: #3e3e9c; }
 .tabs .activeTab { background: #ededff; color: #4d4db8; }
-.metricSelect { display: flex; align-items: center; gap: 9px; color: #6f7380; font-size: 13px; white-space: nowrap; }
-.metricSelect select { min-width: 112px; border: 1px solid #dcdfe7; border-radius: 10px; padding: 9px 28px 9px 10px; background: #fff; color: #2d3040; font: inherit; font-weight: 700; }
 .stack { display: grid; gap: 18px; }
 .kpiGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .kpiCard { min-width: 0; padding: 20px; border: 1px solid #e2e5ec; border-radius: 18px; background: #fff; box-shadow: 0 8px 30px rgba(45, 48, 69, .035); }
@@ -32,8 +30,9 @@
 .trendKey { display: flex; flex-wrap: wrap; gap: 14px; margin: -7px 0 7px; color: #5f6472; font-size: 12px; font-weight: 750; }
 .trendKey span { display: inline-flex; align-items: center; gap: 6px; }
 .trendKey i { width: 25px; height: 0; border-top: 3px solid; }
-.trendKey .totalLine { border-color: #6464d8; }
-.trendKey .enrolledLine { border-color: #158f7a; border-top-style: dashed; }
+.trendKey .selectedLine { border-color: #6464d8; }
+.trendKey .comparisonLine { border-color: #158f7a; border-top-style: dashed; }
+.trendKey b { padding: 2px 5px; border-radius: 999px; color: #4d4db8; background: #ededff; font-size: 9px; }
 .segmentRows { display: grid; gap: 12px; }
 .segmentRowHeader { display: grid; grid-template-columns: 26px minmax(80px, 1fr) 60px 70px; align-items: end; gap: 8px; padding-bottom: 7px; border-bottom: 1px solid #e8eaf0; color: #8d919e; font-size: 9px; font-weight: 750; line-height: 1.35; }
 .segmentRowHeader span:nth-child(3),
@@ -101,7 +100,6 @@
   .toolbar { align-items: stretch; flex-direction: column; }
   .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .tabs button { padding: 9px 5px; font-size: 12px; line-height: 1.35; text-align: center; word-break: keep-all; }
-  .metricSelect { justify-content: space-between; }
   .kpiGrid, .insightGrid, .competitionKpis, .moversGrid { grid-template-columns: 1fr; }
   .twoColumns { grid-template-columns: 1fr; }
   .panel, .kpiCard { padding: 17px; }

@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
   const pageSize = [10, 20, 50, 100].includes(requestedPageSize)
     ? requestedPageSize
     : 20;
+  const analysisMetric = search.get("analysisMetric") === "total" ? "total" : "enrolled";
   const dataset = await getValidatedData();
   const analysisWindow = parseAnalysisWindow(search, dataset.dataset.years);
   const cacheKey = `${dataset.revision}:${analysisWindow.startYear}-${analysisWindow.endYear}:${search.toString()}`;
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
   if (cached) return NextResponse.json(cached);
   const { records, validation } = dataset;
   const result = {
-    ...createDashboard(records, filters, page, pageSize, analysisWindow),
+    ...createDashboard(records, filters, page, pageSize, analysisWindow, analysisMetric),
     validation: {
       valid: validation.valid,
       totalRows: validation.totalRows,

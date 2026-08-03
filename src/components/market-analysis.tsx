@@ -215,9 +215,13 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
   const latest = data.annual.at(-1);
   const enrolledShare = latest && latest.total > 0 ? latest.enrolled / latest.total : null;
   const leaveShare = latest && latest.total > 0 ? latest.leave / latest.total : null;
+  const selectedKey = data.meta.metric;
+  const comparisonKey: MarketMetric = selectedKey === "enrolled" ? "total" : "enrolled";
+  const selectedLabel = data.meta.metricLabel;
+  const comparisonLabel = comparisonKey === "enrolled" ? "재학생" : "재적학생";
   const annualChanges = data.annual.map((row, index) => ({
     ...row,
-    annualChange: index === 0 ? null : row.total - data.annual[index - 1].total,
+    annualChange: index === 0 ? null : row[selectedKey] - data.annual[index - 1][selectedKey],
   }));
   const longTrend = data.annual;
   const indexedCategories = data.meta.years.map((year, yearIndex) => {
@@ -233,7 +237,7 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
   return (
     <div className={styles.stack}>
       <section className={styles.kpiGrid} aria-label="시장 핵심 지표">
-        <SummaryKpi label={`${data.meta.endYear}년 재적학생`} value={`${number.format(market.value)}명`} note="종료연도 전체 합계" />
+        <SummaryKpi label={`${data.meta.endYear}년 ${selectedLabel}`} value={`${number.format(market.value)}명`} note="종료연도 전체 합계" />
         <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
         <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년 연평균`} />
         <SummaryKpi label="최근 1년 변화" value={isFinite(market.change ?? NaN) ? signedNumber(market.change) : "비교 불가"} note={formatRate(market.changeRate)} />
@@ -242,10 +246,10 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
 
       <section className={styles.primaryCharts}>
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>장기 추세</span><h3>재적학생 장기 추세</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 단위: 명 · 변화 확인을 위해 축 범위를 확대함</p></div><small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명 · {signedNumber(market.changeFromStart)}</small></header>
+          <header className={styles.panelHeader}><div><span>장기 추세</span><h3>{selectedLabel} 장기 추세</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 단위: 명 · 선택 지표를 진한 실선으로 표시</p></div><small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명 · {signedNumber(market.changeFromStart)}</small></header>
           <div className={styles.trendKey} aria-label="장기 추세 범례">
-            <span><i className={styles.totalLine} />재적학생</span>
-            <span><i className={styles.enrolledLine} />재학생</span>
+            <span><i className={styles.selectedLine} />{selectedLabel}<b>선택</b></span>
+            <span><i className={styles.comparisonLine} />{comparisonLabel}</span>
           </div>
           <div className={styles.chartLarge}>
             <ResponsiveContainer width="100%" height="100%">
@@ -268,14 +272,14 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
                     );
                   }}
                 />
-                <Line name="재적학생" type="monotone" dataKey="total" stroke={palette.purple} strokeWidth={3} dot={{r:4}} />
-                <Line name="재학생" type="monotone" dataKey="enrolled" stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
+                <Line name={selectedLabel} type="monotone" dataKey={selectedKey} stroke={palette.purple} strokeWidth={3} dot={{r:4}} />
+                <Line name={comparisonLabel} type="monotone" dataKey={comparisonKey} stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </article>
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>연도별 이동</span><h3>전년 대비 재적학생 증감</h3><p>첫 연도는 비교값 없음 · 단위: 명</p></div></header>
+          <header className={styles.panelHeader}><div><span>연도별 이동</span><h3>전년 대비 {selectedLabel} 증감</h3><p>첫 연도는 비교값 없음 · 단위: 명</p></div></header>
           <div className={styles.chartLarge}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={annualChanges} margin={{left:8,right:12,top:24,bottom:4}}>
@@ -512,15 +516,16 @@ function CompetitionView({ data }: { data: MarketAnalysisResponse }) {
 
 export function MarketAnalysis({
   baseQuery,
+  metric,
   initialTab = "summary",
   compactToolbar = false,
 }: {
   baseQuery: string;
+  metric: MarketMetric;
   initialTab?: Tab;
   compactToolbar?: boolean;
 }) {
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [metric, setMetric] = useState<MarketMetric>("total");
   const [data, setData] = useState<MarketAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -567,13 +572,6 @@ export function MarketAnalysis({
             <button key={id} type="button" role="tab" aria-selected={tab === id} className={tab === id ? styles.activeTab : ""} onClick={() => setTab(id)}>{label}</button>
           ))}
         </div>
-        <label className={styles.metricSelect}>
-          분석 지표
-          <select value={metric} onChange={(event) => setMetric(event.target.value as MarketMetric)}>
-            <option value="total">재적학생</option>
-            <option value="enrolled">재학생</option>
-          </select>
-        </label>
       </div>}
 
       {error ? (

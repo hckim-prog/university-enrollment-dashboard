@@ -43,6 +43,7 @@ import {
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
+import type { MarketMetric } from "@/lib/market-analysis";
 import { isFlatChange } from "@/lib/analysis-window";
 import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
@@ -67,6 +68,7 @@ type DetailRow = EnrollmentRecord & {
   changeRate: number | null;
 };
 type DashboardResponse = {
+  analysisMetric: MarketMetric;
   meta: {
     years: number[];
     universityCategories: string[];
@@ -234,6 +236,47 @@ function ChangeBadge({
       {formatChange(metric.change)}
       {metric.changeRate === null ? "" : ` (${percent.format(metric.changeRate)})`}
     </span>
+  );
+}
+
+function AnalysisMetricSwitch({
+  value,
+  onChange,
+}: {
+  value: MarketMetric;
+  onChange: (metric: MarketMetric) => void;
+}) {
+  const activeLabel = value === "enrolled" ? "재학생" : "재적학생";
+  return (
+    <div className={styles.metricPriority}>
+      <div className={styles.metricPriorityCopy}>
+        <span>우선 분석 지표</span>
+        <strong>{activeLabel} 기준으로 전체 화면을 분석합니다</strong>
+        <small>시장 분석 기본값은 재학생이며, 선택은 KPI·차트·순위·상세 데이터에 함께 적용됩니다.</small>
+      </div>
+      <div className={styles.metricPriorityOptions} role="radiogroup" aria-label="우선 분석 지표">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={value === "enrolled"}
+          className={value === "enrolled" ? styles.metricPriorityActive : ""}
+          onClick={() => onChange("enrolled")}
+        >
+          <strong>재학생</strong>
+          <small>시장분석 기본</small>
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={value === "total"}
+          className={value === "total" ? styles.metricPriorityActive : ""}
+          onClick={() => onChange("total")}
+        >
+          <strong>재적학생</strong>
+          <small>재학생+휴학생+유예</small>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -663,58 +706,62 @@ export function LegacyOverview({ data }: { data: DashboardResponse }) {
   );
 }
 
-function Overview({ baseQuery }: { baseQuery: string }) {
-  return <MarketAnalysis baseQuery={baseQuery} />;
+function Overview({ baseQuery, metric }: { baseQuery: string; metric: MarketMetric }) {
+  return <MarketAnalysis baseQuery={baseQuery} metric={metric} />;
 }
 
-function Schools({ data, baseQuery }: { data: DashboardResponse; baseQuery: string }) {
+function Schools({ data, baseQuery, metric }: { data: DashboardResponse; baseQuery: string; metric: MarketMetric }) {
   const visibleSchools = data.schools.slice(0, 10);
-  const maxSchoolTotal = Math.max(...visibleSchools.map((school) => school.total), 1);
+  const metricLabel = metric === "enrolled" ? "재학생" : "재적학생";
+  const maxSchoolValue = Math.max(...visibleSchools.map((school) => school[metric]), 1);
   return (
     <section className={styles.viewStack}>
       <article className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
             <span className={styles.eyebrow}>학교 시장 포지션</span>
-            <h2>{data.currentYear}년 규모와 전년 변화를 함께 보는 상위 학교</h2>
-            <p className={styles.panelDescription}>막대는 현재 재적학생 규모, 오른쪽 값은 전년 대비 증감입니다. 큰 학교가 성장 중인지 축소 중인지 한 번에 비교할 수 있습니다.</p>
+            <h2>{data.currentYear}년 {metricLabel} 규모와 전년 변화를 함께 보는 상위 학교</h2>
+            <p className={styles.panelDescription}>막대는 현재 {metricLabel} 규모, 오른쪽 값은 전년 대비 증감입니다. 큰 학교가 성장 중인지 축소 중인지 한 번에 비교할 수 있습니다.</p>
           </div>
-          <span className={styles.panelNote}>현재 재적학생 규모순 · 상위 {visibleSchools.length}개교</span>
+          <span className={styles.panelNote}>현재 {metricLabel} 규모순 · 상위 {visibleSchools.length}개교</span>
         </div>
         <div className={styles.schoolComparison}>
           <div className={styles.schoolComparisonHeader} aria-hidden="true">
-            <span>순위</span><span>학교·현재 규모</span><span>재적학생·전체 비중</span><span>전년 대비</span>
+            <span>순위</span><span>학교·현재 규모</span><span>{metricLabel}·전체 비중</span><span>전년 대비</span>
           </div>
           {visibleSchools.map((school, index) => (
             <div className={styles.schoolComparisonRow} key={school.name}>
               <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
               <div className={styles.schoolComparisonName}>
                 <LongName name={school.name} />
-                <div className={styles.schoolScale}><i style={{ width: `${(school.total / maxSchoolTotal) * 100}%` }} /></div>
+                <div className={styles.schoolScale}><i style={{ width: `${(school[metric] / maxSchoolValue) * 100}%` }} /></div>
               </div>
               <div className={styles.schoolCurrentValue}>
-                <strong>{fullNumber.format(school.total)}명</strong>
-                <small>전체의 {percent.format(data.metrics.total.value > 0 ? school.total / data.metrics.total.value : 0)}</small>
+                <strong>{fullNumber.format(school[metric])}명</strong>
+                <small>전체의 {percent.format(data.metrics[metric].value > 0 ? school[metric] / data.metrics[metric].value : 0)}</small>
               </div>
               <ChangeBadge metric={school} />
             </div>
           ))}
         </div>
       </article>
-      <MarketAnalysis baseQuery={baseQuery} initialTab="competition" compactToolbar />
+      <MarketAnalysis baseQuery={baseQuery} metric={metric} initialTab="competition" compactToolbar />
     </section>
   );
 }
 
 function Details({
   data,
+  metric,
   onPage,
   onPageSize,
 }: {
   data: DashboardResponse;
+  metric: MarketMetric;
   onPage: (page: number) => void;
   onPageSize: (pageSize: number) => void;
 }) {
+  const metricLabel = metric === "enrolled" ? "재학생" : "재적학생";
   const moveToInputPage = (formData: FormData) => {
     const requested = Number(formData.get("page"));
     if (Number.isFinite(requested)) {
@@ -752,10 +799,10 @@ function Details({
               <th>중계열</th>
               <th>소계열</th>
               <th>학교상태</th>
-              <th className={styles.numberCell}>재학생</th>
+              <th className={`${styles.numberCell} ${metric === "enrolled" ? styles.selectedMetricCell : ""}`}>재학생</th>
               <th className={styles.numberCell}>휴학생</th>
-              <th className={styles.numberCell}>재적학생</th>
-              <th>전년 대비</th>
+              <th className={`${styles.numberCell} ${metric === "total" ? styles.selectedMetricCell : ""}`}>재적학생</th>
+              <th>{metricLabel} 전년 대비</th>
             </tr>
           </thead>
           <tbody>
@@ -783,13 +830,13 @@ function Details({
                     {row.schoolStatus}
                   </span>
                 </td>
-                <td className={styles.numberCell}>
+                <td className={`${styles.numberCell} ${metric === "enrolled" ? styles.selectedMetricCell : ""}`}>
                   {fullNumber.format(row.enrolled)}
                 </td>
                 <td className={styles.numberCell}>
                   {fullNumber.format(row.leave)}
                 </td>
-                <td className={`${styles.numberCell} ${styles.strongCell}`}>
+                <td className={`${styles.numberCell} ${styles.strongCell} ${metric === "total" ? styles.selectedMetricCell : ""}`}>
                   {fullNumber.format(row.total)}
                 </td>
                 <td>
@@ -825,12 +872,12 @@ function Details({
               {row.field} · {row.fieldMiddle} · {row.fieldSmall}
             </p>
             <dl className={styles.detailMetrics}>
-              <div><dt>재학생</dt><dd>{fullNumber.format(row.enrolled)}명</dd></div>
+              <div className={metric === "enrolled" ? styles.selectedDetailMetric : ""}><dt>재학생</dt><dd>{fullNumber.format(row.enrolled)}명</dd></div>
               <div><dt>휴학생</dt><dd>{fullNumber.format(row.leave)}명</dd></div>
-              <div><dt>재적학생</dt><dd>{fullNumber.format(row.total)}명</dd></div>
+              <div className={metric === "total" ? styles.selectedDetailMetric : ""}><dt>재적학생</dt><dd>{fullNumber.format(row.total)}명</dd></div>
             </dl>
             <div className={styles.detailChange}>
-              <span>전년 대비</span>
+              <span>{metricLabel} 전년 대비</span>
               <ChangeBadge metric={row} />
             </div>
           </article>
@@ -895,19 +942,20 @@ function EmptyState({ onReset }: { onReset: () => void }) {
   );
 }
 
-function marketHeadline(data: DashboardResponse | null) {
+function marketHeadline(data: DashboardResponse | null, metric: MarketMetric) {
   if (!data || data.annual.length === 0) return "장기 시장 변화를 불러오고 있습니다.";
   const start = data.annual[0];
   const end = data.annual.at(-1)!;
-  const change = end.total - start.total;
-  const rate = start.total === 0 ? null : change / start.total;
+  const metricLabel = metric === "enrolled" ? "재학생" : "재적학생";
+  const change = end[metric] - start[metric];
+  const rate = start[metric] === 0 ? null : change / start[metric];
   const longChangeText = change === 0
     ? "변화가 없었으며"
     : `${fullNumber.format(Math.abs(change))}명 ${change < 0 ? "감소" : "증가"}했으며`;
-  const recent = isFlatChange(data.metrics.total.changeRate)
-    ? ` ${end.year}년은 전년 대비 보합이며 정확한 증감은 ${formatChange(data.metrics.total.change)}입니다.`
-    : ` ${end.year}년은 전년 대비 ${formatChange(data.metrics.total.change)} (${data.metrics.total.changeRate === null ? "비교 불가" : percent.format(data.metrics.total.changeRate)})입니다.`;
-  return `재적학생은 ${start.year}년 대비 ${longChangeText} 장기 변화율은 ${rate === null ? "비교 불가" : percent.format(rate)}입니다.${recent}`;
+  const recent = isFlatChange(data.metrics[metric].changeRate)
+    ? ` ${end.year}년은 전년 대비 보합이며 정확한 증감은 ${formatChange(data.metrics[metric].change)}입니다.`
+    : ` ${end.year}년은 전년 대비 ${formatChange(data.metrics[metric].change)} (${data.metrics[metric].changeRate === null ? "비교 불가" : percent.format(data.metrics[metric].changeRate)})입니다.`;
+  return `${metricLabel}은 ${start.year}년 대비 ${longChangeText} 장기 변화율은 ${rate === null ? "비교 불가" : percent.format(rate)}입니다.${recent}`;
 }
 
 export function EnrollmentDashboard() {
@@ -922,6 +970,7 @@ export function EnrollmentDashboard() {
   const [filterVersion, setFilterVersion] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [analysisMetric, setAnalysisMetric] = useState<MarketMetric>("enrolled");
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -945,11 +994,12 @@ export function EnrollmentDashboard() {
       fieldSmall: filters.fieldSmall,
       schoolStatus: filters.schoolStatus,
       department: appliedDepartment,
+      analysisMetric,
     }).forEach(([key, value]) => {
       if (value) params.set(key, value);
     });
     return params.toString();
-  }, [filters, appliedDepartment]);
+  }, [filters, appliedDepartment, analysisMetric]);
 
   const query = useMemo(() => {
     const params = new URLSearchParams(baseQuery);
@@ -1241,7 +1291,7 @@ export function EnrollmentDashboard() {
           <section className={`${styles.hero} ${view === "overview" ? styles.summaryHero : styles.pageHero}`}>
             <div>
               <span className={styles.heroEyebrow}>{activeNav.label}</span>
-              <h1>{view === "overview" ? marketHeadline(data) : activeNav.label}</h1>
+              <h1>{view === "overview" ? marketHeadline(data, analysisMetric) : activeNav.label}</h1>
               <p>
                 {view === "overview"
                   ? "공시 학생 수의 기술 통계이며 원인·수요·취업 전망을 단정하지 않습니다."
@@ -1258,9 +1308,9 @@ export function EnrollmentDashboard() {
                   </>
                 ) : (
                   <>
-                    <span>{data?.currentYear ?? "—"}년 재적학생</span>
-                    <strong>{data ? compactNumber.format(data.metrics.total.value) : "—"}</strong>
-                    {data && <ChangeBadge metric={data.metrics.total} />}
+                    <span>{data?.currentYear ?? "—"}년 {analysisMetric === "enrolled" ? "재학생" : "재적학생"}</span>
+                    <strong>{data ? compactNumber.format(data.metrics[analysisMetric].value) : "—"}</strong>
+                    {data && <ChangeBadge metric={data.metrics[analysisMetric]} />}
                   </>
                 )}
               </div>
@@ -1290,6 +1340,13 @@ export function EnrollmentDashboard() {
                     : "상세 조건"}
               </button>
             </div>
+            <AnalysisMetricSwitch
+              value={analysisMetric}
+              onChange={(metric) => {
+                setAnalysisMetric(metric);
+                setPage(1);
+              }}
+            />
             <div className={styles.basicFilterGrid}>
               <AnalysisPeriodFilter
                 years={availableYears}
@@ -1450,12 +1507,13 @@ export function EnrollmentDashboard() {
             <EmptyState onReset={resetFilters} />
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
-              {view === "overview" && <Overview baseQuery={baseQuery} />}
-              {view === "departments" && <DepartmentTrends baseQuery={baseQuery} />}
-              {view === "schools" && <Schools data={data} baseQuery={baseQuery} />}
+              {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} />}
+              {view === "departments" && <DepartmentTrends baseQuery={baseQuery} metric={analysisMetric} />}
+              {view === "schools" && <Schools data={data} baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "details" && (
                 <Details
                   data={data}
+                  metric={analysisMetric}
                   onPage={setPage}
                   onPageSize={(nextPageSize) => {
                     setPageSize(nextPageSize);
