@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "data:convert": "tsx scripts/convert-enrollment.ts",
+    "data:migrate": "tsx scripts/migrate-local-data.ts",
+    "data:store:validate": "tsx scripts/validate-local-store.ts",
     "data:validate": "tsx scripts/validate-enrollment.ts",
     "check": "pnpm lint && pnpm test && pnpm build"
   },

@@ -25,6 +25,7 @@ import {
   ChevronsRight,
   CircleHelp,
   Database,
+  FolderCog,
   Filter,
   GraduationCap,
   LayoutDashboard,
@@ -44,10 +45,12 @@ import {
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
+import type { DataPublicationStatus } from "@/lib/data-management-types";
+import { DataManagement } from "./data-management";
 import { DepartmentTrends } from "./department-trends";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "departments" | "schools" | "details";
+type View = "overview" | "departments" | "schools" | "details" | "admin";
 type Filters = {
   year: string;
   region: string;
@@ -96,6 +99,7 @@ type DashboardResponse = {
     issueCount: number;
     generatedAt: string;
   };
+  publication: DataPublicationStatus;
 };
 
 const initialFilters: Filters = {
@@ -136,6 +140,12 @@ const navigation: {
     label: "상세 데이터",
     description: "원자료 단위 탐색",
     icon: Database,
+  },
+  {
+    id: "admin",
+    label: "데이터 관리",
+    description: "업로드·게시·복구",
+    icon: FolderCog,
   },
 ];
 const compactNumber = new Intl.NumberFormat("ko-KR", {
@@ -1024,7 +1034,7 @@ export function EnrollmentDashboard() {
             <X size={20} />
           </button>
         </div>
-        <div className={styles.localBadge}>LOCAL · 1단계 MVP</div>
+        <div className={styles.localBadge}>LOCAL · 2단계 MVP</div>
         <nav aria-label="주요 화면">
           <span className={styles.navLabel}>분석 메뉴</span>
           {navigation.map((item) => {
@@ -1060,7 +1070,9 @@ export function EnrollmentDashboard() {
               </span>
             </div>
           </div>
-          <p>대학알리미 학과별 자료 · 2023–2025</p>
+          <p>
+            대학알리미 학과별 자료 · {data?.publication.dataYearRange ?? "게시 데이터 확인 중"}
+          </p>
         </div>
       </aside>
       {mobileNav && (
@@ -1083,7 +1095,7 @@ export function EnrollmentDashboard() {
           </button>
           <div>
             <span>데이터 기준</span>
-            <strong>2023–2025년 대학알리미</strong>
+            <strong>{data?.publication.dataYearRange ?? "게시 데이터 확인 중"} 대학알리미</strong>
           </div>
           <div className={styles.topbarRight}>
             <span className={styles.verifiedPill}>
@@ -1100,6 +1112,15 @@ export function EnrollmentDashboard() {
           </div>
         </header>
         <div className={styles.content}>
+          {view === "admin" ? (
+            <DataManagement
+              onPublished={() => {
+                resetFilters();
+                void load();
+              }}
+            />
+          ) : (
+            <>
           <section className={styles.hero}>
             <div>
               <span className={styles.heroEyebrow}>{activeNav.label}</span>
@@ -1109,7 +1130,7 @@ export function EnrollmentDashboard() {
                 {" "}한눈에 살펴보세요.
               </h1>
               <p>
-                2023년부터 2025년까지 재학생·휴학생·재적학생의 변화를
+                {data?.publication.dataYearRange ?? "게시된 연도"} 재학생·휴학생·재적학생의 변화를
                 학교와 학과 단위로 탐색합니다.
               </p>
             </div>
@@ -1246,11 +1267,14 @@ export function EnrollmentDashboard() {
           )}
           <footer className={styles.footer}>
             <p>
-              원본 파일은 프로젝트 밖에 유지되며, 화면은 검산된 정규화 데이터만
-              사용합니다.
+              일반 화면은 검산 후 게시된 활성 버전만 사용합니다. 원본은 서버 전용 비공개 영역에 보관됩니다.
             </p>
-            <span>마지막 변환 · {data?.validation.generatedAt.slice(0, 10)}</span>
+            <span>
+              마지막 게시 · {data?.publication.latestPublishedAt?.slice(0, 10) ?? data?.validation.generatedAt.slice(0, 10) ?? "—"}
+            </span>
           </footer>
+            </>
+          )}
         </div>
       </main>
     </div>

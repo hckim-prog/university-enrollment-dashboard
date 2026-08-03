@@ -1,0 +1,10 @@
+{
+  "maxUploadBytes": 20971520,
+  "rowCountChangeRate": 0.2,
+  "totalStudentChangeRate": 0.1,
+  "schoolCountChangeRate": 0.15,
+  "classificationRateDrop": 0.05,
+  "unclassifiedShareIncrease": 0.05,
+  "lifecycleObservationChangeRate": 0.5,
+  "minimumLifecycleObservationDifference": 100
+}

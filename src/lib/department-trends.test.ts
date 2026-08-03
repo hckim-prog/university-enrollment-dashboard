@@ -96,4 +96,23 @@ describe("department trend analysis", () => {
     expect(result.validation.invalidRateCount).toBe(0);
     expect(result.validation.lifecycleOverlapCount).toBe(0);
   });
+
+  it("classifies a new publication year using its latest three-year window", () => {
+    const extended = [
+      row(2024, "미래공학과", 100),
+      row(2025, "미래공학과", 125),
+      row(2026, "미래공학과", 155),
+    ];
+    const result = createDepartmentTrends(extended, {
+      ...emptyFilters(),
+      years: [2026],
+    });
+    const department = result.individuals.find(
+      (item) => item.department === "미래공학과",
+    );
+
+    expect(result.meta.years).toEqual([2024, 2025, 2026]);
+    expect(department?.trendType).toBe("persistent_up");
+    expect(department?.values).toEqual({ 2024: 100, 2025: 125, 2026: 155 });
+  });
 });

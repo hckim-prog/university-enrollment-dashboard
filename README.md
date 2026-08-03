@@ -1,6 +1,6 @@
 # 대학 재적학생 트렌드
 
-2023~2025년 대학알리미의 학과별 재적 학생 현황을 통합해, 재학생·휴학생·재적학생 변화를 탐색하는 한국어 로컬 대시보드입니다. 현재는 학과군·개별 학과·신설·폐과 분석을 보강한 1.5단계이며 로그인, 외부 데이터베이스, 관리자 업로드, 인터넷 배포는 제외합니다.
+대학알리미의 학과별 재적 학생 현황을 통합해 재학생·휴학생·재적학생 변화를 탐색하는 한국어 로컬 대시보드입니다. 2단계에서는 검증된 2023~2025년을 최초 게시 버전으로 이관하고, 관리자 XLSX 업로드·검증·차이 비교·게시·복구 기능을 추가했습니다. 로그인, Supabase, 클라우드 데이터베이스와 인터넷 배포는 아직 제외합니다.
 
 ## 구현 화면
 
@@ -11,6 +11,7 @@
 - 공통 필터: 연도, 지역, 학교, 설립구분, 계열, 학과상태, 학과명
 - 학과 분석 기준: 학과군, 추세 유형, 최소 전년도 학생 수, 최소 증감 인원·증감률, 재학생·재적학생, 비교 기간, 폐과 포함 여부
 - 반응형 UI: 데스크톱 사이드바와 모바일 메뉴·접이식 필터
+- 데이터 관리: XLSX 업로드, 게시 차단 오류·경고, 버전 이력, 원자적 게시와 이전 버전 복구
 
 ## 실행
 
@@ -18,6 +19,8 @@
 
 ```powershell
 pnpm install
+pnpm data:migrate -- --input-dir "C:\Users\user\Downloads\data_20260731153427"
+pnpm data:store:validate
 pnpm dev
 ```
 
@@ -32,13 +35,18 @@ pnpm start
 
 ## 데이터 위치와 보안 범위
 
-원본 XLSX는 프로젝트 폴더나 `public/`에 복사하지 않습니다. 웹 앱은 프로젝트 내부의 검산된 정규화 데이터만 서버에서 읽으며, 이 파일도 `public/` 밖에 있습니다.
+원본 XLSX는 `public/`에 복사하지 않습니다. 최초 이관과 웹 업로드 원본은 Git에서 제외된 `data/local-store/originals`에 안전한 내부 이름으로 보관하며 서버만 접근합니다. 원래 파일명·크기·SHA-256·기준연도는 감사 메타데이터에 기록됩니다.
 
 - 정규화 데이터: `data/processed/enrollment.json`
 - 검산 보고서: `data/processed/validation-report.json`
 - 변환·계산 명세: `data/processed/methodology.json`
 - 전용 변환기: `scripts/convert-enrollment.ts`
 - 독립 재검산: `scripts/validate-enrollment.ts`
+- 비공개 버전 저장소: `data/local-store/` (`.gitignore` 적용)
+- 최초 이관: `scripts/migrate-local-data.ts`
+- 게시 저장소 검산: `scripts/validate-local-store.ts`
+
+관리자 업로드, 오류와 경고, 새·과거 연도 추가, 기존 연도 교체, 게시·복구, 백업과 Supabase 이전 방법은 [로컬 데이터 관리 운영 가이드](docs/local-data-management.md)에 정리했습니다.
 
 ## 원본 데이터 갱신
 
@@ -47,6 +55,7 @@ pnpm start
 ```powershell
 pnpm data:convert -- --input-dir "C:\원본\폴더"
 pnpm data:validate
+pnpm data:store:validate
 pnpm test
 pnpm build
 ```
@@ -96,24 +105,28 @@ pnpm test
 pnpm build
 ```
 
-분석 로직 테스트는 필터, 전년 대비 계산, 선택 연도 컷오프, 학과군 단일 배정·합계, 기여도, 신규·이탈 중복과 0명 기준 증감률을 확인합니다.
+분석 테스트와 업로드 통합 테스트는 필터, 전년 대비 계산, 선택 연도 컷오프, 학과군 합계, 정상·손상 XLSX, 연도·스키마·숫자·합계 오류, SHA-256 중복, 게시 전 미반영, 새·과거 연도, 교체·복구, 처리 실패 원자성과 캐시 재계산을 확인합니다.
 
 ## 폴더 구조
 
 ```text
 data/processed/             변환 데이터·검산 보고서·명세
+data/local-store/           Git 제외 원본·버전·보고서·게시 스냅샷
 scripts/                    대학알리미 전용 변환기와 재검산
 src/app/api/dashboard/      서버 측 필터·집계 API
 src/app/api/department-trends/ 학과군·개별 학과·생애주기 분석 API
-src/config/                 학과군 분류 규칙
-src/components/             대시보드 UI
-src/lib/                    데이터 로더·분석 로직·타입·테스트
-docs/                       분석 방법론
+src/app/api/admin/data/     업로드·게시·복구 API
+src/config/                 학과군 규칙·데이터 경고 기준
+src/components/             분석 화면·데이터 관리 UI
+src/lib/data-store/         교체 가능한 버전 저장소 계층
+src/lib/                    데이터 로더·변환·분석·테스트
+docs/                       분석 방법론·운영 가이드
 ```
 
-## 1단계 이후 남은 범위
+## 다음 단계에서 남은 범위
 
 - 로그인과 사용자 권한
 - Supabase 연결 및 서버 저장
-- 관리자용 XLSX 업로드·이력 관리
 - 인터넷 배포와 운영 모니터링
+- 관리자 로그인·권한, API 세션 검증과 CSRF 보호
+- 비공개 객체 저장소, 악성 파일 검사와 요청 속도 제한

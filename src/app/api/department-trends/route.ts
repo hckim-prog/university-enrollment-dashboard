@@ -7,7 +7,7 @@ import {
   type TrendMetric,
   type TrendType,
 } from "@/lib/department-trends";
-import { getRecords } from "@/lib/data";
+import { getPublishedData } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,8 @@ function boundedNumber(
 
 export async function GET(request: NextRequest) {
   const search = request.nextUrl.searchParams;
-  const cacheKey = search.toString();
+  const published = await getPublishedData();
+  const cacheKey = `${published.revision}:${search.toString()}`;
   const cached = responseCache.get(cacheKey);
   if (cached) return NextResponse.json(cached);
   const defaults = emptyFilters();
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
     period,
     includeClosed: search.get("includeClosed") === "true",
   };
-  const records = await getRecords();
+  const records = published.records;
   const result = createDepartmentTrends(records, filters, criteria, {
     groupId: search.get("departmentGroup") || undefined,
     focusGroupId: search.get("focusGroup") || undefined,

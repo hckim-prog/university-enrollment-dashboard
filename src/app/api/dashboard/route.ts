@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createDashboard, emptyFilters } from "@/lib/analytics";
-import { getRecords, getValidationReport } from "@/lib/data";
+import { getPublishedData } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +32,8 @@ export async function GET(request: NextRequest) {
   const pageSize = [10, 20, 50, 100].includes(requestedPageSize)
     ? requestedPageSize
     : 20;
-  const [records, validation] = await Promise.all([
-    getRecords(),
-    getValidationReport(),
-  ]);
+  const published = await getPublishedData();
+  const { records, validation } = published;
   return NextResponse.json({
     ...createDashboard(records, filters, page, pageSize),
     validation: {
@@ -44,5 +42,6 @@ export async function GET(request: NextRequest) {
       issueCount: validation.issueCount,
       generatedAt: validation.generatedAt,
     },
+    publication: published.publication,
   });
 }

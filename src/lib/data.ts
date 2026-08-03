@@ -4,25 +4,59 @@ import type {
   EnrollmentRecord,
   ValidationReport,
 } from "./types";
+import type { PublishedDataset } from "./data-management-types";
+import { getDataManagementService } from "./data-store/service";
 
-let recordsPromise: Promise<EnrollmentRecord[]> | undefined;
-let validationPromise: Promise<ValidationReport> | undefined;
+let fallbackPromise: Promise<PublishedDataset> | undefined;
 
 function processedPath(fileName: string) {
   return path.join(process.cwd(), "data", "processed", fileName);
 }
 
-export function getRecords() {
-  recordsPromise ??= readFile(processedPath("enrollment.json"), "utf8").then(
-    (content) => JSON.parse(content) as EnrollmentRecord[],
-  );
-  return recordsPromise;
+function getFallbackDataset() {
+  fallbackPromise ??= Promise.all([
+    readFile(processedPath("enrollment.json"), "utf8"),
+    readFile(processedPath("validation-report.json"), "utf8"),
+  ]).then(([recordContent, validationContent]) => {
+    const records = JSON.parse(recordContent) as EnrollmentRecord[];
+    const validation = JSON.parse(validationContent) as ValidationReport;
+    const years = [...new Set(records.map((record) => record.year))].sort();
+    return {
+      revision: `processed-${validation.generatedAt}`,
+      records,
+      validation: {
+        valid: validation.valid,
+        totalRows: validation.totalRows,
+        issueCount: validation.issueCount,
+        generatedAt: validation.generatedAt,
+      },
+      publication: {
+        initialized: false,
+        activeYears: years,
+        activeVersions: [],
+        latestPublishedAt: null,
+        totalRows: records.length,
+        dataYearRange: `${years[0]}–${years.at(-1)}년`,
+        validationValid: validation.valid,
+        validationIssueCount: validation.issueCount,
+        revision: `processed-${validation.generatedAt}`,
+      },
+    } satisfies PublishedDataset;
+  });
+  return fallbackPromise;
 }
 
-export function getValidationReport() {
-  validationPromise ??= readFile(
-    processedPath("validation-report.json"),
-    "utf8",
-  ).then((content) => JSON.parse(content) as ValidationReport);
-  return validationPromise;
+export async function getPublishedData() {
+  return (
+    (await getDataManagementService().getPublishedDataset()) ??
+    (await getFallbackDataset())
+  );
+}
+
+export async function getRecords() {
+  return (await getPublishedData()).records;
+}
+
+export async function getValidationReport() {
+  return (await getPublishedData()).validation;
 }

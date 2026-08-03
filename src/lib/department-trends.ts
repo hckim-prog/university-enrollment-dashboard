@@ -411,37 +411,42 @@ function classifyTrend(
   const strongRecent =
     Math.abs(recentChange) >= criteria.minimumChange &&
     Math.abs(recentRate) >= criteria.minimumRate;
-  if (selectedYear >= 2025) {
-    const value2023 = values[2023];
-    const value2024 = values[2024];
-    const value2025 = values[2025];
-    if (value2023 !== null && value2024 !== null && value2025 !== null) {
-      const cumulative = value2025 - value2023;
-      const cumulativeRate = value2023 === 0 ? null : cumulative / value2023;
-      const strongCumulative =
-        Math.abs(cumulative) >= criteria.minimumChange &&
-        cumulativeRate !== null &&
-        Math.abs(cumulativeRate) >= criteria.minimumRate;
-      if (value2023 < value2024 && value2024 < value2025 && strongCumulative) {
-        return "persistent_up";
-      }
-      if (value2023 > value2024 && value2024 > value2025 && strongCumulative) {
-        return "persistent_down";
-      }
-      if (value2023 > value2024 && value2025 > value2024 && strongRecent) {
-        return "rebound";
-      }
-      if (value2023 < value2024 && value2025 < value2024 && strongRecent) {
-        return "turn_down";
-      }
-      const earlierChange = value2024 - value2023;
-      const earlierRate = value2023 === 0 ? null : earlierChange / value2023;
-      const earlierWasSmall =
-        Math.abs(earlierChange) < criteria.minimumChange ||
-        earlierRate === null ||
-        Math.abs(earlierRate) < criteria.minimumRate;
-      if (earlierWasSmall && recentChange > 0 && strongRecent) return "turn_up";
+  const earlierValue = values[selectedYear - 2];
+  const middleValue = values[selectedYear - 1];
+  const latestValue = values[selectedYear];
+  if (
+    earlierValue !== undefined &&
+    earlierValue !== null &&
+    middleValue !== undefined &&
+    middleValue !== null &&
+    latestValue !== undefined &&
+    latestValue !== null
+  ) {
+    const cumulative = latestValue - earlierValue;
+    const cumulativeRate = earlierValue === 0 ? null : cumulative / earlierValue;
+    const strongCumulative =
+      Math.abs(cumulative) >= criteria.minimumChange &&
+      cumulativeRate !== null &&
+      Math.abs(cumulativeRate) >= criteria.minimumRate;
+    if (earlierValue < middleValue && middleValue < latestValue && strongCumulative) {
+      return "persistent_up";
     }
+    if (earlierValue > middleValue && middleValue > latestValue && strongCumulative) {
+      return "persistent_down";
+    }
+    if (earlierValue > middleValue && latestValue > middleValue && strongRecent) {
+      return "rebound";
+    }
+    if (earlierValue < middleValue && latestValue < middleValue && strongRecent) {
+      return "turn_down";
+    }
+    const firstChange = middleValue - earlierValue;
+    const firstRate = earlierValue === 0 ? null : firstChange / earlierValue;
+    const firstWasSmall =
+      Math.abs(firstChange) < criteria.minimumChange ||
+      firstRate === null ||
+      Math.abs(firstRate) < criteria.minimumRate;
+    if (firstWasSmall && recentChange > 0 && strongRecent) return "turn_up";
   }
   if (strongRecent && recentChange > 0) return "recent_up";
   if (strongRecent && recentChange < 0) return "recent_down";

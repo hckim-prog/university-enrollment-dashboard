@@ -38,6 +38,7 @@ yarn-error.log*
 
 # source spreadsheets must stay outside the web project
 /data/raw/
+/data/local-store/
 *.xlsx
 
 # vercel

@@ -22,7 +22,15 @@ export type EnrollmentRecord = {
 export type ValidationIssue = {
   year: number;
   sourceRow: number;
-  type: "duplicate" | "negative" | "subtotal" | "enrollment_equation" | "missing_dimension";
+  type:
+    | "duplicate"
+    | "negative"
+    | "subtotal"
+    | "enrollment_equation"
+    | "missing_dimension"
+    | "invalid_numeric"
+    | "missing_column"
+    | "schema";
   message: string;
 };
 
