@@ -44,6 +44,7 @@ import {
 } from "react";
 import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
+import { DepartmentTrends } from "./department-trends";
 import styles from "./enrollment-dashboard.module.css";
 
 type View = "overview" | "departments" | "schools" | "details";
@@ -582,83 +583,6 @@ function Overview({ data }: { data: DashboardResponse }) {
   );
 }
 
-function Departments({ data }: { data: DashboardResponse }) {
-  const chartData = data.annual.map((point) => {
-    const values: Record<string, number> = { year: point.year };
-    data.departmentSeries.slice(0, 5).forEach((series) => {
-      values[series.name] =
-        series.annual.find((value) => value.year === point.year)?.total ?? 0;
-    });
-    return values;
-  });
-  const colors = ["#5b5bd6", "#0f9f83", "#e78b42", "#d05f78", "#2684c7"];
-  const trendStart = data.annual.at(0)?.year;
-  return (
-    <section className={styles.viewStack}>
-      <article className={styles.panel}>
-        <div className={styles.panelHeader}>
-          <div>
-            <span className={styles.eyebrow}>학과 트렌드</span>
-            <h2>
-              상위 학과의 {trendStart}–{data.currentYear}년 재적학생 변화
-            </h2>
-          </div>
-          <span className={styles.panelNote}>동일 학과명 합산</span>
-        </div>
-        <div className={styles.largeChart}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ left: 10, right: 18 }}>
-              <CartesianGrid stroke="#e8eaf0" vertical={false} />
-              <XAxis
-                dataKey="year"
-                tickFormatter={(value) => `${value}년`}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tickFormatter={(value) => compactNumber.format(value)}
-                axisLine={false}
-                tickLine={false}
-                width={62}
-              />
-              <Tooltip
-                formatter={(value, name) => [
-                  `${fullNumber.format(Number(value))}명`,
-                  name,
-                ]}
-                labelFormatter={(label) => `${label}년`}
-              />
-              <Legend />
-              {data.departmentSeries.slice(0, 5).map((series, index) => (
-                <Line
-                  key={series.name}
-                  type="monotone"
-                  dataKey={series.name}
-                  stroke={colors[index]}
-                  strokeWidth={2.5}
-                  dot={{ r: 3 }}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </article>
-      <article className={styles.panel}>
-        <div className={styles.panelHeader}>
-          <div>
-            <span className={styles.eyebrow}>{data.currentYear}년 기준</span>
-            <h2>재적학생 규모가 큰 학과</h2>
-          </div>
-          <span className={styles.panelNote}>
-            학과명 필터로 원하는 학과를 검색하세요
-          </span>
-        </div>
-        <RankingTable rows={data.departments} label="명" />
-      </article>
-    </section>
-  );
-}
-
 function MobileSchoolTick({
   x = 0,
   y = 0,
@@ -989,7 +913,7 @@ export function EnrollmentDashboard() {
     return () => window.clearTimeout(timer);
   }, [filters.department]);
 
-  const query = useMemo(() => {
+  const baseQuery = useMemo(() => {
     const params = new URLSearchParams();
     Object.entries({
       year: filters.year,
@@ -1002,10 +926,15 @@ export function EnrollmentDashboard() {
     }).forEach(([key, value]) => {
       if (value) params.set(key, value);
     });
+    return params.toString();
+  }, [filters, appliedDepartment]);
+
+  const query = useMemo(() => {
+    const params = new URLSearchParams(baseQuery);
     params.set("page", String(page));
     params.set("pageSize", String(pageSize));
     return params.toString();
-  }, [filters, appliedDepartment, page, pageSize]);
+  }, [baseQuery, page, pageSize]);
 
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -1301,7 +1230,7 @@ export function EnrollmentDashboard() {
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview data={data} />}
-              {view === "departments" && <Departments data={data} />}
+              {view === "departments" && <DepartmentTrends baseQuery={baseQuery} />}
               {view === "schools" && <Schools data={data} />}
               {view === "details" && (
                 <Details

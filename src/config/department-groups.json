@@ -1,0 +1,222 @@
+[
+  {
+    "id": "ai-data",
+    "name": "AI·데이터",
+    "includeKeywords": ["인공지능", "에이아이", "ai", "빅데이터", "데이터", "통계"],
+    "excludeKeywords": ["데이터경영"],
+    "priority": 220,
+    "manualIncludes": ["통계・데이터과학과"],
+    "manualExcludes": [],
+    "description": "인공지능, 데이터과학, 빅데이터와 통계 중심 학과"
+  },
+  {
+    "id": "education",
+    "name": "교육",
+    "includeKeywords": ["교육", "교직", "평생학습"],
+    "excludeKeywords": [],
+    "priority": 210,
+    "manualIncludes": ["초등교육과", "특수교육과"],
+    "manualExcludes": [],
+    "description": "교원 양성, 교육학, 유아·특수·평생교육 관련 학과"
+  },
+  {
+    "id": "health",
+    "name": "간호·의료·보건",
+    "includeKeywords": ["간호", "보건", "의학", "의예", "약학", "치의", "한의", "수의", "치위생", "치기공", "물리치료", "작업치료", "응급구조", "방사선", "임상병리", "안경광학", "재활", "의료", "제약"],
+    "excludeKeywords": ["의료경영", "보건행정"],
+    "priority": 200,
+    "manualIncludes": ["의학과", "의예과", "약학과"],
+    "manualExcludes": [],
+    "description": "간호, 의약학, 치료·검사·재활과 보건 전문인력 관련 학과"
+  },
+  {
+    "id": "social-care",
+    "name": "사회복지·상담",
+    "includeKeywords": ["사회복지", "상담", "심리", "아동", "청소년", "가족복지", "노인복지"],
+    "excludeKeywords": ["심리학실험"],
+    "priority": 190,
+    "manualIncludes": ["사회복지학과", "상담심리학과"],
+    "manualExcludes": [],
+    "description": "사회복지, 상담·심리, 아동·청소년 지원 관련 학과"
+  },
+  {
+    "id": "tourism-service",
+    "name": "관광·호텔·외식",
+    "includeKeywords": ["관광", "호텔", "외식", "조리", "항공서비스", "카지노", "푸드서비스"],
+    "excludeKeywords": [],
+    "priority": 180,
+    "manualIncludes": ["관광경영학과", "항공서비스학과"],
+    "manualExcludes": [],
+    "description": "관광, 호텔, 외식·조리와 항공 서비스 관련 학과"
+  },
+  {
+    "id": "content-media",
+    "name": "콘텐츠·미디어",
+    "includeKeywords": ["미디어", "콘텐츠", "방송", "영상", "광고", "홍보", "언론", "커뮤니케이션", "게임", "애니메이션", "웹툰", "만화"],
+    "excludeKeywords": [],
+    "priority": 170,
+    "manualIncludes": ["미디어커뮤니케이션학과", "광고홍보학과"],
+    "manualExcludes": [],
+    "description": "미디어, 콘텐츠 제작, 방송·영상, 광고·언론과 게임 관련 학과"
+  },
+  {
+    "id": "design-beauty",
+    "name": "디자인·패션·뷰티",
+    "includeKeywords": ["디자인", "패션", "의상", "뷰티", "미용", "조형", "메이크업"],
+    "excludeKeywords": [],
+    "priority": 160,
+    "manualIncludes": ["산업디자인학과", "시각디자인학과"],
+    "manualExcludes": [],
+    "description": "시각·산업 디자인, 패션, 조형과 뷰티 관련 학과"
+  },
+  {
+    "id": "chemical-materials",
+    "name": "화학·신소재공학",
+    "includeKeywords": ["화학공학", "신소재", "재료공학", "고분자", "세라믹", "금속공학"],
+    "excludeKeywords": [],
+    "priority": 155,
+    "manualIncludes": ["화학공학과", "신소재공학과"],
+    "manualExcludes": [],
+    "description": "화학공학, 신소재·재료, 고분자와 금속·세라믹 관련 학과"
+  },
+  {
+    "id": "semiconductor-electronics",
+    "name": "반도체·전기·전자",
+    "includeKeywords": ["반도체", "전자", "전기", "디스플레이", "나노", "정보통신", "전파"],
+    "excludeKeywords": ["전자상거래"],
+    "priority": 150,
+    "manualIncludes": ["전자공학과", "전기공학과", "전기전자공학과"],
+    "manualExcludes": [],
+    "description": "반도체, 전기·전자, 디스플레이와 정보통신 하드웨어 관련 학과"
+  },
+  {
+    "id": "software-computing",
+    "name": "소프트웨어·컴퓨터",
+    "includeKeywords": ["컴퓨터", "소프트웨어", "소프트", "정보보호", "사이버보안", "it융합", "it학", "전산"],
+    "excludeKeywords": ["컴퓨터교육"],
+    "priority": 140,
+    "manualIncludes": ["컴퓨터공학과", "컴퓨터과학과", "소프트웨어학과"],
+    "manualExcludes": [],
+    "description": "컴퓨터공학, 소프트웨어, 정보보호와 전산 관련 학과"
+  },
+  {
+    "id": "mechanical-mobility",
+    "name": "기계·모빌리티",
+    "includeKeywords": ["기계", "자동차", "모빌리티", "항공우주", "항공운항", "항공정비", "조선", "기관시스템", "로봇", "메카트로닉스", "드론"],
+    "excludeKeywords": [],
+    "priority": 130,
+    "manualIncludes": ["기계공학과", "기계공학부"],
+    "manualExcludes": [],
+    "description": "기계, 자동차·모빌리티, 항공우주, 조선과 로봇 관련 학과"
+  },
+  {
+    "id": "environment-energy",
+    "name": "환경·에너지",
+    "includeKeywords": ["환경", "에너지", "신재생", "탄소", "기후", "자원공학", "원자력"],
+    "excludeKeywords": ["환경디자인"],
+    "priority": 120,
+    "manualIncludes": ["환경공학과"],
+    "manualExcludes": [],
+    "description": "환경, 기후·탄소, 에너지·자원과 원자력 관련 학과"
+  },
+  {
+    "id": "bio-life-food",
+    "name": "바이오·생명·식품",
+    "includeKeywords": ["바이오", "생명", "생물", "의생명", "농학", "원예", "식품", "축산", "산림", "해양생물", "반려동물", "동물자원"],
+    "excludeKeywords": ["생명윤리"],
+    "priority": 110,
+    "manualIncludes": ["생명과학과", "식품영양학과", "식품공학과"],
+    "manualExcludes": [],
+    "description": "바이오·생명과학, 농림·축산, 식품·영양 관련 학과"
+  },
+  {
+    "id": "architecture-civil",
+    "name": "건축·토목·도시",
+    "includeKeywords": ["건축", "토목", "도시", "건설", "부동산", "공간정보", "지적", "조경"],
+    "excludeKeywords": ["건축디자인"],
+    "priority": 100,
+    "manualIncludes": ["건축공학과", "건축학과", "토목공학과"],
+    "manualExcludes": [],
+    "description": "건축, 토목·건설, 도시·부동산과 공간정보 관련 학과"
+  },
+  {
+    "id": "industrial-safety",
+    "name": "산업·안전공학",
+    "includeKeywords": ["산업공학", "산업경영공학", "안전공학", "소방", "재난", "시스템경영"],
+    "excludeKeywords": [],
+    "priority": 90,
+    "manualIncludes": ["산업경영공학과"],
+    "manualExcludes": [],
+    "description": "산업·시스템 공학, 안전·소방과 재난관리 관련 학과"
+  },
+  {
+    "id": "business-finance",
+    "name": "경영·경제·금융",
+    "includeKeywords": ["경영", "경제", "금융", "회계", "세무", "무역", "통상", "비즈니스", "경상", "유통", "물류", "마케팅", "전자상거래"],
+    "excludeKeywords": ["관광경영", "호텔경영", "의료경영", "보건행정"],
+    "priority": 80,
+    "manualIncludes": ["경영학과", "경영학부", "경제학과"],
+    "manualExcludes": [],
+    "description": "경영, 경제, 금융·회계, 무역·유통과 물류 관련 학과"
+  },
+  {
+    "id": "law-public",
+    "name": "법·행정·공공",
+    "includeKeywords": ["법학", "행정", "정치", "정책", "공공", "경찰", "군사", "국방", "교정"],
+    "excludeKeywords": ["경영행정"],
+    "priority": 70,
+    "manualIncludes": ["행정학과", "법학과", "경찰행정학과"],
+    "manualExcludes": [],
+    "description": "법학, 행정·정책, 정치, 경찰·국방과 공공 분야 관련 학과"
+  },
+  {
+    "id": "social-international",
+    "name": "사회과학·국제",
+    "includeKeywords": ["사회학", "사회과학", "국제학", "국제관계", "지역학", "지리학", "외교"],
+    "excludeKeywords": ["사회복지"],
+    "priority": 65,
+    "manualIncludes": ["사회학과", "국제학부"],
+    "manualExcludes": [],
+    "description": "사회학, 사회과학, 국제·지역 연구와 국제관계 관련 학과"
+  },
+  {
+    "id": "humanities-language",
+    "name": "인문·언어·문화",
+    "includeKeywords": ["국어", "영어", "일어", "일본", "중어", "중국", "독어", "불어", "러시아", "스페인", "언어", "문학", "문예창작", "철학", "사학", "역사", "문화", "종교", "신학", "문헌정보", "고고"],
+    "excludeKeywords": ["문화콘텐츠", "한국어교육", "영어교육", "역사교육"],
+    "priority": 60,
+    "manualIncludes": ["영어영문학과", "국어국문학과", "철학과"],
+    "manualExcludes": [],
+    "description": "언어·문학, 역사·철학, 종교와 문화·문헌정보 관련 학과"
+  },
+  {
+    "id": "natural-science",
+    "name": "수학·물리·화학",
+    "includeKeywords": ["수학", "물리", "화학", "지구과학", "천문", "기초과학"],
+    "excludeKeywords": ["수학교육", "물리교육", "화학교육", "화학공학"],
+    "priority": 50,
+    "manualIncludes": ["수학과", "물리학과", "화학과"],
+    "manualExcludes": [],
+    "description": "수학, 물리, 화학과 지구·천문 등 기초 자연과학 학과"
+  },
+  {
+    "id": "arts-sports",
+    "name": "예술·체육",
+    "includeKeywords": ["체육", "스포츠", "음악", "미술", "무용", "연극", "공연", "예술", "실용음악", "성악", "관현악", "피아노", "기악", "회화", "태권도"],
+    "excludeKeywords": ["스포츠경영", "공연콘텐츠"],
+    "priority": 40,
+    "manualIncludes": ["음악학과", "체육학과"],
+    "manualExcludes": [],
+    "description": "음악·미술·공연예술과 체육·스포츠 관련 학과"
+  },
+  {
+    "id": "convergence-open",
+    "name": "자유전공·융합",
+    "includeKeywords": ["자유전공", "자율전공", "융합학부", "융합계열", "교양학부", "창의융합"],
+    "excludeKeywords": [],
+    "priority": 20,
+    "manualIncludes": ["자유전공학부"],
+    "manualExcludes": [],
+    "description": "전공 탐색, 자유·자율전공과 포괄적 융합계열 학과"
+  }
+]
