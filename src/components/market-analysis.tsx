@@ -11,20 +11,17 @@ import {
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Scatter,
-  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
-  ZAxis,
 } from "recharts";
 import {
-  Activity,
   ArrowDownRight,
   ArrowUpRight,
   CircleAlert,
   Layers3,
   RefreshCw,
+  Search,
   SearchX,
   Users,
 } from "lucide-react";
@@ -38,6 +35,7 @@ import type {
 import styles from "./market-analysis.module.css";
 
 type Tab = "summary" | "fields" | "competition";
+type FieldLevel = "large" | "middle" | "small";
 
 const number = new Intl.NumberFormat("ko-KR");
 const compact = new Intl.NumberFormat("ko-KR", {
@@ -364,89 +362,146 @@ function SummaryView({ data }: { data: MarketAnalysisResponse }) {
         </article>
       </section>
 
-      <section className={styles.insightGrid}>
-        {data.insights.map((insight) => (
-          <article className={`${styles.insight} ${styles[insight.tone]}`} key={insight.id}>
-            <span>{insight.tone === "caution" ? <CircleAlert size={17} /> : <Activity size={17} />}</span>
-            <div>
-              <small>분석 신호</small>
-              <h4>{insight.title}</h4>
-              <strong>{insight.value}</strong>
-              <p>{insight.body}</p>
-            </div>
-          </article>
-        ))}
-      </section>
     </div>
   );
 }
 
-function FieldsView({ data }: { data: MarketAnalysisResponse }) {
-  const scatter = data.portfolio.map((row) => ({
-    ...row,
-    sharePercent: row.share * 100,
-    changePercent: (row.changeRate ?? 0) * 100,
-  }));
+function FieldMoverList({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: MarketSegment[];
+}) {
+  return (
+    <article className={styles.panel}>
+      <header className={styles.panelHeader}>
+        <div><span>장기 변화</span><h3>{title}</h3><p>시작연도와 종료연도가 모두 있는 계열 기준</p></div>
+      </header>
+      <div className={styles.fieldMoverList}>
+        {rows.length ? rows.map((row, index) => (
+          <div key={row.name}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong title={row.name}>{row.name}</strong>
+            <b className={(row.changeFromStart ?? 0) >= 0 ? styles.rateUp : styles.rateDown}>
+              {signedNumber(row.changeFromStart)}
+            </b>
+            <small>{formatRate(row.changeRateFromStart)}</small>
+          </div>
+        )) : <p className={styles.fieldEmpty}>비교 가능한 계열이 없습니다.</p>}
+      </div>
+    </article>
+  );
+}
+
+function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selection: string }) {
+  const [level, setLevel] = useState<FieldLevel>("middle");
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const levels: Array<{ id: FieldLevel; label: string; rows: MarketSegment[] }> = [
+    { id: "large", label: "대계열", rows: data.fields },
+    { id: "middle", label: "중계열", rows: data.fieldMiddles },
+    { id: "small", label: "소계열", rows: data.fieldSmalls },
+  ];
+  const activeLevel = levels.find((item) => item.id === level)!;
+  const normalizedQuery = query.trim().toLocaleLowerCase("ko-KR");
+  const filteredRows = activeLevel.rows.filter((row) =>
+    row.name.toLocaleLowerCase("ko-KR").includes(normalizedQuery),
+  );
+  const pageSize = 12;
+  const pages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  const safePage = Math.min(page, pages);
+  const visibleRows = filteredRows.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const comparable = activeLevel.rows.filter((row) => row.startValue !== null && row.changeFromStart !== null);
+  const increases = comparable
+    .filter((row) => (row.changeFromStart ?? 0) > 0)
+    .toSorted((left, right) => (right.changeFromStart ?? 0) - (left.changeFromStart ?? 0))
+    .slice(0, 5);
+  const decreases = comparable
+    .filter((row) => (row.changeFromStart ?? 0) < 0)
+    .toSorted((left, right) => (left.changeFromStart ?? 0) - (right.changeFromStart ?? 0))
+    .slice(0, 5);
+  const market = data.kpis.marketSize;
+  const latest = data.annual.at(-1);
+
   return (
     <div className={styles.stack}>
-      <section className={styles.hierarchyGrid}>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>대계열</span><h3>시장 포트폴리오</h3><p>현재 규모와 전년 변화율</p></div></header>
-          <SegmentRows rows={data.fields} limit={7} />
-        </article>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>중계열</span><h3>세부 시장 상위 분야</h3><p>표준분류 중계열 기준</p></div></header>
-          <SegmentRows rows={data.fieldMiddles} limit={8} />
-        </article>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>소계열</span><h3>학과 시장 상위 분야</h3><p>표준분류 소계열 기준</p></div></header>
-          <SegmentRows rows={data.fieldSmalls} limit={8} />
-        </article>
+      <section className={styles.fieldDefinition}>
+        <div><Layers3 size={19} /><span>대학알리미 공식 표준분류</span></div>
+        <strong>대계열 → 중계열 → 소계열</strong>
+        <p>원본 Q·R·S열을 그대로 사용합니다. 상단에서 계열을 선택하면 모든 숫자와 차트가 함께 바뀝니다.</p>
+      </section>
+
+      <section className={styles.fieldKpiGrid} aria-label="선택 계열 시장 핵심 지표">
+        <SummaryKpi label={`${data.meta.endYear}년 ${data.meta.metricLabel}`} value={`${number.format(market.value)}명`} note={selection} />
+        <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
+        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년`} />
+        <SummaryKpi label="운영 학교" value={`${number.format(data.kpis.schoolCount.value)}개교`} note={`${latest ? number.format(latest.departmentCount) : "—"}개 학과 관측`} />
       </section>
 
       <section className={styles.twoColumns}>
         <article className={`${styles.panel} ${styles.wide}`}>
           <header className={styles.panelHeader}>
-            <div><span>중계열 포트폴리오</span><h3>점유율과 전년 성장률</h3><p>점 하나는 중계열이며, 점 크기는 현재 학생 규모입니다. 0%선 위는 성장, 아래는 축소입니다.</p></div>
-            <small>단위: %</small>
+            <div><span>장기 추세</span><h3>{selection} {data.meta.metricLabel} 변화</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 상단 계열 필터와 연동 · 단위: 명</p></div>
+            <small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명</small>
           </header>
           <div className={styles.chartLarge}>
             <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={{ left: 6, right: 18, top: 12, bottom: 6 }}>
-                <CartesianGrid stroke="#e9ebf1" />
-                <XAxis type="number" dataKey="sharePercent" name="점유율" unit="%" axisLine={false} tickLine={false} />
-                <YAxis type="number" dataKey="changePercent" name="전년 성장률" unit="%" axisLine={false} tickLine={false} width={52} />
-                <ZAxis type="number" dataKey="value" range={[70, 700]} name="학생 규모" />
-                <ReferenceLine y={0} stroke={palette.ink} strokeDasharray="4 4" />
-                <Tooltip
-                  cursor={{ strokeDasharray: "4 4" }}
-                  formatter={(value, name) => [
-                    name === "학생 규모" ? `${number.format(Number(value))}명` : `${Number(value).toFixed(1)}%`,
-                    name,
-                  ]}
-                  labelFormatter={(_, payload) => payload[0]?.payload?.name ?? ""}
-                />
-                <Scatter data={scatter} fill={palette.purple} stroke="#3f3fa8" fillOpacity={0.72} />
-              </ScatterChart>
+              <LineChart data={data.annual} margin={{ left: 8, right: 18, top: 18, bottom: 4 }}>
+                <CartesianGrid stroke="#e9ebf1" vertical={false} />
+                <XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} />
+                <YAxis domain={["dataMin - 1000", "dataMax + 1000"]} tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
+                <Tooltip formatter={(value) => [`${number.format(Number(value))}명`, data.meta.metricLabel]} labelFormatter={(label) => `${label}년`} />
+                <Line type="monotone" dataKey="value" name={data.meta.metricLabel} stroke={palette.purple} strokeWidth={3} dot={{ r: 4, fill: "#fff", strokeWidth: 2 }} />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </article>
 
         <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>증감 기여</span><h3>대계열별 시장 변화</h3><p>전년 대비 전체 증감을 구성한 인원입니다.</p></div></header>
-          <div className={styles.contributionList}>
-            {data.contribution.map((row) => (
-              <div key={row.name}>
-                <span title={row.name}>{row.name}</span>
-                <b className={row.change >= 0 ? styles.rateUp : styles.rateDown}>
-                  {row.change >= 0 ? "+" : ""}{number.format(row.change)}명
-                </b>
-                <small>{row.contributionRate === null ? "변동 비중 비교 불가" : `절대 변동의 ${percent.format(row.contributionRate)}`}</small>
-              </div>
-            ))}
-          </div>
+          <header className={styles.panelHeader}><div><span>대학구분</span><h3>대학·전문대학 구성</h3><p>선택한 계열 안에서 현재 규모와 비중을 비교합니다.</p></div></header>
+          <SegmentRows rows={data.universityCategories} limit={4} />
         </article>
       </section>
+
+      <article className={styles.panel}>
+        <header className={styles.fieldExplorerHeader}>
+          <div><span>계열 순위</span><h3>공식 분류별 시장 규모와 장기 변화</h3><p>현재 필터 결과 안에서 규모·비중·장기 증감을 비교합니다.</p></div>
+          <label className={styles.fieldSearch}><Search size={15} /><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="계열명 검색" /></label>
+        </header>
+        <div className={styles.fieldLevelTabs} role="tablist" aria-label="계열 분류 단계">
+          {levels.map((item) => (
+            <button type="button" role="tab" aria-selected={level === item.id} key={item.id} onClick={() => { setLevel(item.id); setPage(1); }}>
+              {item.label}<span>{number.format(item.rows.length)}</span>
+            </button>
+          ))}
+        </div>
+        <div className={styles.fieldRankingHeader} aria-hidden="true"><span>순위·계열명</span><span>현재 규모</span><span>현재 비중</span><span>{data.meta.startYear}년 대비</span><span>연평균 변화율</span></div>
+        <div className={styles.fieldRanking}>
+          {visibleRows.map((row) => (
+            <div key={row.name}>
+              <span className={styles.rank}>{String(row.rank).padStart(2, "0")}</span>
+              <strong title={row.name}>{row.name}</strong>
+              <b><small>현재</small>{number.format(row.value)}명</b>
+              <span><small>비중</small>{percent.format(row.share)}</span>
+              <span className={(row.changeFromStart ?? 0) >= 0 ? styles.rateUp : styles.rateDown}><small>장기</small>{signedNumber(row.changeFromStart)}</span>
+              <span><small>연평균</small>{formatRate(row.cagr)}</span>
+            </div>
+          ))}
+          {!visibleRows.length && <p className={styles.fieldEmpty}>검색 조건에 맞는 계열이 없습니다.</p>}
+        </div>
+        {pages > 1 && <div className={styles.fieldPagination}><button type="button" disabled={safePage <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>이전</button><span><strong>{safePage}</strong> / {pages} 페이지</span><button type="button" disabled={safePage >= pages} onClick={() => setPage((value) => Math.min(pages, value + 1))}>다음</button></div>}
+      </article>
+
+      <section className={styles.twoColumns}>
+        <FieldMoverList title={`${activeLevel.label} 장기 증가`} rows={increases} />
+        <FieldMoverList title={`${activeLevel.label} 장기 감소`} rows={decreases} />
+      </section>
+
+      <article className={styles.panel}>
+        <header className={styles.panelHeader}><div><span>지역 분포</span><h3>선택 계열의 지역별 시장</h3><p>현재 규모와 {data.meta.startYear}년 대비 증감을 함께 봅니다.</p></div></header>
+        <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} />
+      </article>
     </div>
   );
 }
@@ -517,15 +572,14 @@ function CompetitionView({ data }: { data: MarketAnalysisResponse }) {
 export function MarketAnalysis({
   baseQuery,
   metric,
-  initialTab = "summary",
-  compactToolbar = false,
+  view = "summary",
+  fieldSelection = "전체 계열",
 }: {
   baseQuery: string;
   metric: MarketMetric;
-  initialTab?: Tab;
-  compactToolbar?: boolean;
+  view?: Tab;
+  fieldSelection?: string;
 }) {
-  const [tab, setTab] = useState<Tab>(initialTab);
   const [data, setData] = useState<MarketAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -562,18 +616,6 @@ export function MarketAnalysis({
 
   return (
     <section className={styles.marketView}>
-      {!compactToolbar && <div className={styles.toolbar}>
-        <div className={styles.tabs} role="tablist" aria-label="시장 분석 보기">
-          {([
-            ["summary", "시장 요약"],
-            ["fields", "계열 포트폴리오"],
-            ["competition", "지역·학교 경쟁"],
-          ] as const).map(([id, label]) => (
-            <button key={id} type="button" role="tab" aria-selected={tab === id} className={tab === id ? styles.activeTab : ""} onClick={() => setTab(id)}>{label}</button>
-          ))}
-        </div>
-      </div>}
-
       {error ? (
         <div className={styles.state}><CircleAlert size={28} /><strong>시장 분석을 불러오지 못했습니다.</strong><p>{error}</p><button type="button" onClick={() => load()}><RefreshCw size={15} /> 다시 시도</button></div>
       ) : !data ? (
@@ -582,13 +624,13 @@ export function MarketAnalysis({
         <div className={styles.state}><SearchX size={28} /><strong>조건에 맞는 시장 데이터가 없습니다.</strong><p>상단 필터를 줄이거나 기준연도를 바꿔보세요.</p></div>
       ) : (
         <div className={loading ? styles.loading : ""}>
-          {tab === "summary" && <SummaryView data={data} />}
-          {tab === "fields" && <FieldsView data={data} />}
-          {tab === "competition" && <CompetitionView data={data} />}
-          <aside className={styles.notes}>
-            <Layers3 size={18} />
-            <div><strong>분석 해석 시 주의사항</strong>{data.notes.map((note) => <p key={note}>{note}</p>)}</div>
-          </aside>
+          {view === "summary" && <SummaryView data={data} />}
+          {view === "fields" && <FieldsView data={data} selection={fieldSelection} />}
+          {view === "competition" && <CompetitionView data={data} />}
+          <details className={styles.notes}>
+            <summary><Layers3 size={17} /><strong>분석 해석 시 주의사항</strong><span>펼쳐보기</span></summary>
+            <div>{data.notes.map((note) => <p key={note}>{note}</p>)}</div>
+          </details>
         </div>
       )}
     </section>

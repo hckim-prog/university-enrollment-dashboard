@@ -76,7 +76,7 @@
 .navLabel {
   display: block;
   margin: 0 12px 11px;
-  color: #6f738b;
+  color: #969aaf;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -91,7 +91,7 @@
   padding: 12px 13px;
   border: 1px solid transparent;
   border-radius: 12px;
-  color: #888ca4;
+  color: #adb1c4;
   text-align: left;
   background: transparent;
   transition: 160ms ease;
@@ -115,7 +115,7 @@
 
 .sidebar nav button small {
   margin-top: 3px;
-  color: #6d7189;
+  color: #85899f;
   font-size: 11px;
 }
 

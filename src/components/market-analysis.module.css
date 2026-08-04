@@ -1,9 +1,4 @@
 .marketView { display: grid; gap: 18px; }
-.toolbar { display: flex; align-items: center; gap: 16px; padding: 12px 14px; border: 1px solid #e2e5ec; border-radius: 16px; background: #fff; }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.tabs button { border: 0; border-radius: 11px; padding: 10px 14px; background: transparent; color: #666b79; font: inherit; font-weight: 700; cursor: pointer; }
-.tabs button:hover { background: #f3f3fb; color: #3e3e9c; }
-.tabs .activeTab { background: #ededff; color: #4d4db8; }
 .stack { display: grid; gap: 18px; }
 .kpiGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .kpiCard { min-width: 0; padding: 20px; border: 1px solid #e2e5ec; border-radius: 18px; background: #fff; box-shadow: 0 8px 30px rgba(45, 48, 69, .035); }
@@ -48,24 +43,42 @@
 .segmentMetric b { color: #333645; font-size: 12px; }
 .segmentMetric small { color: #999da8; font-size: 10px; }
 .rateText { justify-self: end; font-size: 11px; font-weight: 800; }
-.insightGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.insight { display: flex; gap: 12px; min-width: 0; padding: 18px; border: 1px solid #e2e5ec; border-radius: 16px; background: #fff; }
-.insight > span { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; }
-.insight div { min-width: 0; }
-.insight small { color: #969aa5; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.insight h4 { margin: 5px 0 7px; color: #343746; font-size: 14px; line-height: 1.4; }
-.insight strong { color: #202331; font-size: 13px; }
-.insight p { margin: 7px 0 0; color: #7d818e; font-size: 11px; line-height: 1.55; }
-.positive > span { background: #e8f6f2; color: #16836f; }
-.negative > span { background: #fff0eb; color: #c15a3a; }
-.neutral > span { background: #eef1f6; color: #5f6572; }
-.caution > span { background: #fff4e5; color: #c2702e; }
-.hierarchyGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.contributionList { display: grid; gap: 10px; }
-.contributionList > div { display: grid; grid-template-columns: minmax(90px, 1fr) auto; gap: 2px 12px; padding: 11px 0; border-bottom: 1px solid #eff0f4; }
-.contributionList span { overflow: hidden; color: #4d505d; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.contributionList b { font-size: 12px; }
-.contributionList small { grid-column: 1 / -1; color: #999da8; font-size: 10px; }
+.fieldDefinition { display: flex; align-items: center; gap: 18px; padding: 17px 20px; border: 1px solid #dfe0ef; border-radius: 16px; background: #f8f8ff; }
+.fieldDefinition > div { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; color: #5d5dc3; font-size: 11px; font-weight: 800; }
+.fieldDefinition > strong { flex: 0 0 auto; color: #292c3a; font-size: 17px; word-break: keep-all; }
+.fieldDefinition > p { margin: 0 0 0 auto; color: #747887; font-size: 12px; line-height: 1.55; word-break: keep-all; }
+.fieldKpiGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.fieldExplorerHeader { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+.fieldExplorerHeader > div { min-width: 0; }
+.fieldExplorerHeader span { color: #6565c9; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+.fieldExplorerHeader h3 { margin: 5px 0 4px; color: #292c3a; font-size: 18px; }
+.fieldExplorerHeader p { margin: 0; color: #898d99; font-size: 12px; line-height: 1.55; word-break: keep-all; }
+.fieldSearch { display: flex; width: min(230px, 100%); align-items: center; gap: 7px; border: 1px solid #dfe1e8; border-radius: 10px; padding: 0 10px; color: #8a8e9b; background: #fafbfc; }
+.fieldSearch input { width: 100%; min-width: 0; height: 39px; border: 0; outline: 0; color: #303341; background: transparent; font: inherit; font-size: 12px; }
+.fieldLevelTabs { display: flex; gap: 7px; margin-bottom: 14px; }
+.fieldLevelTabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; border: 1px solid #dedfe8; border-radius: 9px; padding: 0 13px; color: #656978; background: #fff; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+.fieldLevelTabs button[aria-selected="true"] { border-color: #6b6bd4; color: #4b4bad; background: #eeeeff; }
+.fieldLevelTabs button span { display: grid; min-width: 22px; height: 20px; place-items: center; border-radius: 99px; color: #777b89; background: #eef0f4; font-size: 10px; }
+.fieldRankingHeader,
+.fieldRanking > div { display: grid; grid-template-columns: 34px minmax(180px, 1.5fr) repeat(4, minmax(92px, .65fr)); align-items: center; gap: 10px; }
+.fieldRankingHeader { padding: 9px 12px; border-bottom: 1px solid #e7e9ef; color: #8b8f9c; font-size: 10px; font-weight: 750; }
+.fieldRankingHeader span:first-child { grid-column: 1 / 3; }
+.fieldRanking > div { min-height: 54px; padding: 9px 12px; border-bottom: 1px solid #eff0f4; color: #575b69; font-size: 12px; }
+.fieldRanking > div:hover { background: #fafaff; }
+.fieldRanking strong { overflow: hidden; color: #353846; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.fieldRanking b { color: #292c3a; font-size: 12px; }
+.fieldRanking b small,
+.fieldRanking > div > span small { display: none; }
+.fieldPagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 15px; color: #777b89; font-size: 12px; }
+.fieldPagination button { min-height: 34px; border: 1px solid #dfe1e8; border-radius: 8px; padding: 0 12px; color: #5559aa; background: #fff; font: inherit; font-size: 12px; font-weight: 750; }
+.fieldPagination button:disabled { color: #b1b4bd; background: #f7f8fa; }
+.fieldMoverList { display: grid; }
+.fieldMoverList > div { display: grid; grid-template-columns: 25px minmax(100px, 1fr) auto auto; align-items: center; gap: 9px; min-height: 44px; border-bottom: 1px solid #eff0f4; }
+.fieldMoverList > div > span:first-child { color: #a0a4af; font-size: 10px; font-weight: 800; }
+.fieldMoverList strong { overflow: hidden; color: #444755; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.fieldMoverList b { font-size: 12px; }
+.fieldMoverList small { min-width: 48px; color: #7e828f; font-size: 11px; text-align: right; }
+.fieldEmpty { grid-column: 1 / -1; margin: 0; padding: 24px; color: #8b8f9b; font-size: 12px; text-align: center; }
 .competitionKpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .competitionKpis > div { display: grid; gap: 3px; padding: 20px; border: 1px solid #e2e5ec; border-radius: 16px; background: linear-gradient(135deg, #fff, #f8f8ff); }
 .competitionKpis span { color: #737784; font-size: 12px; }
@@ -76,10 +89,13 @@
 .dualCharts h4 { height: 22px; margin: 0; color: #626674; font-size: 12px; }
 .dualCharts :global(.recharts-responsive-container) { height: calc(100% - 22px) !important; }
 .moversGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.notes { display: flex; align-items: flex-start; gap: 12px; padding: 18px; border: 1px solid #e6e2d4; border-radius: 16px; background: #fffdf6; color: #6f6753; }
-.notes > svg { flex: 0 0 auto; margin-top: 2px; }
-.notes strong { display: block; margin-bottom: 7px; color: #555044; font-size: 13px; }
-.notes p { margin: 3px 0; font-size: 11px; line-height: 1.55; }
+.notes { padding: 0 16px; border: 1px solid #e6e2d4; border-radius: 14px; background: #fffdf6; color: #6f6753; }
+.notes summary { display: flex; min-height: 48px; align-items: center; gap: 8px; cursor: pointer; list-style: none; }
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary strong { color: #555044; font-size: 12px; }
+.notes summary span { margin-left: auto; color: #8a826f; font-size: 10px; }
+.notes > div { padding: 0 10px 13px 25px; border-top: 1px solid #eee9da; }
+.notes p { margin: 8px 0 0; font-size: 11px; line-height: 1.55; }
 .state { display: grid; justify-items: center; gap: 9px; padding: 70px 20px; border: 1px solid #e2e5ec; border-radius: 18px; background: #fff; color: #727684; text-align: center; }
 .state strong { color: #343746; }
 .state p { margin: 0; font-size: 13px; }
@@ -91,16 +107,13 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 1080px) {
-  .kpiGrid, .insightGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .hierarchyGrid { grid-template-columns: 1fr; }
-  .hierarchyGrid .panel { min-height: 0; }
+  .kpiGrid, .fieldKpiGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fieldDefinition { align-items: flex-start; flex-wrap: wrap; }
+  .fieldDefinition > p { flex-basis: 100%; margin-left: 0; }
 }
 
 @media (max-width: 760px) {
-  .toolbar { align-items: stretch; flex-direction: column; }
-  .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
-  .tabs button { padding: 9px 5px; font-size: 12px; line-height: 1.35; text-align: center; word-break: keep-all; }
-  .kpiGrid, .insightGrid, .competitionKpis, .moversGrid { grid-template-columns: 1fr; }
+  .kpiGrid, .fieldKpiGrid, .competitionKpis, .moversGrid { grid-template-columns: 1fr; }
   .twoColumns { grid-template-columns: 1fr; }
   .panel, .kpiCard { padding: 17px; }
   .chartLarge { height: 300px; }
@@ -110,6 +123,22 @@
   .segmentRowHeader { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
   .rateText { font-size: 10px; }
   .segmentRow:nth-child(n+6) { display: none; }
+  .fieldExplorerHeader { align-items: stretch; flex-direction: column; }
+  .fieldSearch { width: 100%; }
+  .fieldLevelTabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fieldLevelTabs button { justify-content: center; padding-inline: 7px; }
+  .fieldRankingHeader { display: none; }
+  .fieldRanking > div { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 4px 8px; padding: 11px 7px; }
+  .fieldRanking > div > .rank { grid-column: 1; grid-row: 1; }
+  .fieldRanking > div > strong { grid-column: 2; grid-row: 1; }
+  .fieldRanking > div > b { grid-column: 3; grid-row: 1; text-align: right; }
+  .fieldRanking > div > span:nth-of-type(2) { grid-column: 2; grid-row: 2; }
+  .fieldRanking > div > span:nth-of-type(3) { grid-column: 3; grid-row: 2; text-align: right; }
+  .fieldRanking > div > span:nth-of-type(4) { grid-column: 3; grid-row: 3; text-align: right; }
+  .fieldRanking b small,
+  .fieldRanking > div > span small { display: inline; margin-right: 4px; color: #999da8; font-size: 9px; font-weight: 650; }
+  .fieldMoverList > div { grid-template-columns: 22px minmax(90px, 1fr) auto; }
+  .fieldMoverList small { grid-column: 2 / -1; text-align: left; }
 }
 
 .summaryKpi {

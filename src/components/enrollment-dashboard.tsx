@@ -28,6 +28,7 @@ import {
   Filter,
   GraduationCap,
   LayoutDashboard,
+  Layers3,
   Menu,
   RefreshCw,
   Search,
@@ -49,7 +50,7 @@ import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "departments" | "schools" | "details";
+type View = "overview" | "departments" | "fields" | "schools" | "details";
 type Filters = {
   startYear: string;
   endYear: string;
@@ -148,8 +149,14 @@ const navigation: {
   {
     id: "departments",
     label: "학과 변화",
-    description: "장기·최근 학과군 변화",
+    description: "시장 학과군·개별 학과",
     icon: BookOpen,
+  },
+  {
+    id: "fields",
+    label: "계열별 시장",
+    description: "공식 대·중·소계열 분석",
+    icon: Layers3,
   },
   {
     id: "schools",
@@ -707,7 +714,22 @@ export function LegacyOverview({ data }: { data: DashboardResponse }) {
 }
 
 function Overview({ baseQuery, metric }: { baseQuery: string; metric: MarketMetric }) {
-  return <MarketAnalysis baseQuery={baseQuery} metric={metric} />;
+  return <MarketAnalysis baseQuery={baseQuery} metric={metric} view="summary" />;
+}
+
+function Fields({
+  baseQuery,
+  metric,
+  filters,
+}: {
+  baseQuery: string;
+  metric: MarketMetric;
+  filters: Filters;
+}) {
+  const selection = [filters.field, filters.fieldMiddle, filters.fieldSmall]
+    .filter(Boolean)
+    .join(" → ") || "전체 계열";
+  return <MarketAnalysis baseQuery={baseQuery} metric={metric} view="fields" fieldSelection={selection} />;
 }
 
 function Schools({ data, baseQuery, metric }: { data: DashboardResponse; baseQuery: string; metric: MarketMetric }) {
@@ -745,7 +767,7 @@ function Schools({ data, baseQuery, metric }: { data: DashboardResponse; baseQue
           ))}
         </div>
       </article>
-      <MarketAnalysis baseQuery={baseQuery} metric={metric} initialTab="competition" compactToolbar />
+      <MarketAnalysis baseQuery={baseQuery} metric={metric} view="competition" />
     </section>
   );
 }
@@ -1176,6 +1198,8 @@ export function EnrollmentDashboard() {
       ? ["universityCategory", "region"]
       : view === "departments"
         ? ["universityCategory", "fieldMiddle", "department"]
+        : view === "fields"
+          ? ["universityCategory", "region", "field", "fieldMiddle", "fieldSmall"]
         : view === "schools"
           ? ["region", "establishment", "school"]
           : [],
@@ -1196,7 +1220,7 @@ export function EnrollmentDashboard() {
           </div>
           <div>
             <strong>대학 시장</strong>
-            <span>재적학생 트렌드</span>
+            <span>대학 시장 분석</span>
           </div>
           <button
             className={styles.closeNav}
@@ -1354,7 +1378,7 @@ export function EnrollmentDashboard() {
                 endYear={filters.endYear}
                 onChange={setAnalysisWindow}
               />
-              {(view === "overview" || view === "departments") && (
+              {(view === "overview" || view === "departments" || view === "fields") && (
                 <SelectFilter
                   label="대학구분"
                   value={filters.universityCategory}
@@ -1363,7 +1387,7 @@ export function EnrollmentDashboard() {
                   helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
                 />
               )}
-              {(view === "overview" || view === "schools") && (
+              {(view === "overview" || view === "schools" || view === "fields") && (
                 <SelectFilter label="지역" value={filters.region} options={data?.meta.regions ?? []} onChange={setRegion} />
               )}
               {view === "departments" && (
@@ -1373,6 +1397,31 @@ export function EnrollmentDashboard() {
                     <span>학과 검색</span>
                     <div><Search size={16} /><input value={filters.department} onChange={(event) => setFilter("department", event.target.value)} placeholder="예: 간호, 컴퓨터" /></div>
                   </label>
+                </>
+              )}
+              {view === "fields" && (
+                <>
+                  <SelectFilter
+                    label="대계열"
+                    value={filters.field}
+                    options={data?.meta.fields ?? []}
+                    onChange={setField}
+                    helpText="원본 Q열의 교육부 표준분류 대계열입니다."
+                  />
+                  <SelectFilter
+                    label="중계열"
+                    value={filters.fieldMiddle}
+                    options={middleFieldOptions}
+                    onChange={setFieldMiddle}
+                    helpText="선택한 대계열 아래 원본 R열의 표준분류 중계열입니다."
+                  />
+                  <SelectFilter
+                    label="소계열"
+                    value={filters.fieldSmall}
+                    options={smallFieldOptions}
+                    onChange={(value) => setFilter("fieldSmall", value)}
+                    helpText="선택한 중계열 아래 원본 S열의 가장 세부적인 표준분류입니다."
+                  />
                 </>
               )}
               {view === "schools" && (
@@ -1412,14 +1461,14 @@ export function EnrollmentDashboard() {
                   onChange={(value) => setFilter("establishment", value)}
                 />
               )}
-              <SelectFilter
+              {view !== "fields" && <SelectFilter
                 label="대계열"
                 value={filters.field}
                 options={data?.meta.fields ?? []}
                 onChange={setField}
                 helpText="교육부 표준분류의 가장 큰 계열 구분입니다."
-              />
-              {view !== "departments" && (
+              />}
+              {view !== "departments" && view !== "fields" && (
                 <SelectFilter
                   label="중계열"
                   value={filters.fieldMiddle}
@@ -1428,13 +1477,13 @@ export function EnrollmentDashboard() {
                   helpText="선택한 대계열 아래의 표준분류 중계열입니다."
                 />
               )}
-              <SelectFilter
+              {view !== "fields" && <SelectFilter
                 label="소계열"
                 value={filters.fieldSmall}
                 options={smallFieldOptions}
                 onChange={(value) => setFilter("fieldSmall", value)}
                 helpText="가장 세부적인 표준분류 소계열입니다."
-              />
+              />}
               <SelectFilter
                 label="학교상태"
                 value={filters.schoolStatus}
@@ -1509,6 +1558,7 @@ export function EnrollmentDashboard() {
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "departments" && <DepartmentTrends baseQuery={baseQuery} metric={analysisMetric} />}
+              {view === "fields" && <Fields baseQuery={baseQuery} metric={analysisMetric} filters={filters} />}
               {view === "schools" && <Schools data={data} baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "details" && (
                 <Details
