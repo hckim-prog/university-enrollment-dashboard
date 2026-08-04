@@ -55,20 +55,38 @@
 .fieldExplorerHeader p { margin: 0; color: #898d99; font-size: 12px; line-height: 1.55; word-break: keep-all; }
 .fieldSearch { display: flex; width: min(230px, 100%); align-items: center; gap: 7px; border: 1px solid #dfe1e8; border-radius: 10px; padding: 0 10px; color: #8a8e9b; background: #fafbfc; }
 .fieldSearch input { width: 100%; min-width: 0; height: 39px; border: 0; outline: 0; color: #303341; background: transparent; font: inherit; font-size: 12px; }
+.fieldExplorerMode { display: inline-flex; gap: 4px; margin-bottom: 12px; padding: 4px; border-radius: 10px; background: #f1f2f6; }
+.fieldExplorerMode button { min-height: 34px; border: 0; border-radius: 8px; padding: 0 13px; color: #777b88; background: transparent; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+.fieldExplorerMode button[aria-pressed="true"] { color: #4c4cb4; background: #fff; box-shadow: 0 2px 8px rgb(45 48 70 / 8%); }
+.fieldBreadcrumb { display: flex; min-height: 42px; align-items: center; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; padding: 8px 11px; border: 1px solid #e3e4ee; border-radius: 11px; color: #989ba8; background: #fafaff; }
+.fieldBreadcrumb button,
+.fieldBreadcrumb span { border: 0; padding: 4px 6px; color: #666a79; background: transparent; font: inherit; font-size: 12px; font-weight: 750; line-height: 1.4; word-break: keep-all; }
+.fieldBreadcrumb button { border-radius: 6px; cursor: pointer; }
+.fieldBreadcrumb button:hover { color: #4f4fb7; background: #eeeeff; }
+.fieldBreadcrumb [aria-current="page"] { color: #4f4fb7; background: #eeeeff; }
 .fieldLevelTabs { display: flex; gap: 7px; margin-bottom: 14px; }
 .fieldLevelTabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; border: 1px solid #dedfe8; border-radius: 9px; padding: 0 13px; color: #656978; background: #fff; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
 .fieldLevelTabs button[aria-selected="true"] { border-color: #6b6bd4; color: #4b4bad; background: #eeeeff; }
 .fieldLevelTabs button span { display: grid; min-width: 22px; height: 20px; place-items: center; border-radius: 99px; color: #777b89; background: #eef0f4; font-size: 10px; }
+.fieldComparisonChart { overflow: hidden; margin-bottom: 16px; padding: 16px 14px 10px; border: 1px solid #e5e6ee; border-radius: 14px; background: #fbfbfe; }
+.fieldComparisonChart > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.fieldComparisonChart > header div { min-width: 0; }
+.fieldComparisonChart > header strong { color: #373a48; font-size: 14px; }
+.fieldComparisonChart > header p { margin: 4px 0 0; color: #858995; font-size: 11px; line-height: 1.45; word-break: keep-all; }
+.fieldComparisonChart > header > span { flex: 0 0 auto; color: #989ca8; font-size: 10px; }
 .fieldRankingHeader,
-.fieldRanking > div { display: grid; grid-template-columns: 34px minmax(180px, 1.5fr) repeat(4, minmax(92px, .65fr)); align-items: center; gap: 10px; }
+.fieldRanking > button { display: grid; grid-template-columns: 34px minmax(180px, 1.5fr) repeat(4, minmax(92px, .65fr)); align-items: center; gap: 10px; }
 .fieldRankingHeader { padding: 9px 12px; border-bottom: 1px solid #e7e9ef; color: #8b8f9c; font-size: 10px; font-weight: 750; }
 .fieldRankingHeader span:first-child { grid-column: 1 / 3; }
-.fieldRanking > div { min-height: 54px; padding: 9px 12px; border-bottom: 1px solid #eff0f4; color: #575b69; font-size: 12px; }
-.fieldRanking > div:hover { background: #fafaff; }
+.fieldRanking > button { position: relative; width: 100%; min-height: 54px; border: 0; border-bottom: 1px solid #eff0f4; padding: 9px 34px 9px 12px; color: #575b69; background: #fff; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+.fieldRanking > button:hover,
+.fieldRanking > button:focus-visible { outline: none; background: #f7f7ff; }
+.fieldRanking > button[aria-current="true"] { background: #effaf7; }
 .fieldRanking strong { overflow: hidden; color: #353846; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
 .fieldRanking b { color: #292c3a; font-size: 12px; }
 .fieldRanking b small,
-.fieldRanking > div > span small { display: none; }
+.fieldRanking > button > span small { display: none; }
+.drillArrow { position: absolute; right: 10px; color: #999dac; }
 .fieldPagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 15px; color: #777b89; font-size: 12px; }
 .fieldPagination button { min-height: 34px; border: 1px solid #dfe1e8; border-radius: 8px; padding: 0 12px; color: #5559aa; background: #fff; font: inherit; font-size: 12px; font-weight: 750; }
 .fieldPagination button:disabled { color: #b1b4bd; background: #f7f8fa; }
@@ -110,6 +128,16 @@
   .kpiGrid, .fieldKpiGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fieldDefinition { align-items: flex-start; flex-wrap: wrap; }
   .fieldDefinition > p { flex-basis: 100%; margin-left: 0; }
+  .fieldRankingHeader { display: none; }
+  .fieldRanking > button { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 4px 8px; padding: 11px 32px 11px 7px; }
+  .fieldRanking > button > .rank { grid-column: 1; grid-row: 1; }
+  .fieldRanking > button > strong { grid-column: 2; grid-row: 1; }
+  .fieldRanking > button > b { grid-column: 3; grid-row: 1; text-align: right; }
+  .fieldRanking > button > span:nth-of-type(2) { grid-column: 2; grid-row: 2; }
+  .fieldRanking > button > span:nth-of-type(3) { grid-column: 3; grid-row: 2; text-align: right; }
+  .fieldRanking > button > span:nth-of-type(4) { grid-column: 3; grid-row: 3; text-align: right; }
+  .fieldRanking b small,
+  .fieldRanking > button > span small { display: inline; margin-right: 4px; color: #999da8; font-size: 9px; font-weight: 650; }
 }
 
 @media (max-width: 760px) {
@@ -127,16 +155,10 @@
   .fieldSearch { width: 100%; }
   .fieldLevelTabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .fieldLevelTabs button { justify-content: center; padding-inline: 7px; }
-  .fieldRankingHeader { display: none; }
-  .fieldRanking > div { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 4px 8px; padding: 11px 7px; }
-  .fieldRanking > div > .rank { grid-column: 1; grid-row: 1; }
-  .fieldRanking > div > strong { grid-column: 2; grid-row: 1; }
-  .fieldRanking > div > b { grid-column: 3; grid-row: 1; text-align: right; }
-  .fieldRanking > div > span:nth-of-type(2) { grid-column: 2; grid-row: 2; }
-  .fieldRanking > div > span:nth-of-type(3) { grid-column: 3; grid-row: 2; text-align: right; }
-  .fieldRanking > div > span:nth-of-type(4) { grid-column: 3; grid-row: 3; text-align: right; }
-  .fieldRanking b small,
-  .fieldRanking > div > span small { display: inline; margin-right: 4px; color: #999da8; font-size: 9px; font-weight: 650; }
+  .fieldExplorerMode { display: grid; grid-template-columns: 1fr 1fr; }
+  .fieldExplorerMode button { padding-inline: 8px; }
+  .fieldComparisonChart { margin-inline: -5px; padding-inline: 7px; }
+  .fieldComparisonChart > header { flex-direction: column; }
   .fieldMoverList > div { grid-template-columns: 22px minmax(90px, 1fr) auto; }
   .fieldMoverList small { grid-column: 2 / -1; text-align: left; }
 }

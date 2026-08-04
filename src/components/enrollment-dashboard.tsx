@@ -721,15 +721,36 @@ function Fields({
   baseQuery,
   metric,
   filters,
+  onFieldChange,
+  onFieldMiddleChange,
+  onFieldSmallChange,
 }: {
   baseQuery: string;
   metric: MarketMetric;
   filters: Filters;
+  onFieldChange: (value: string) => void;
+  onFieldMiddleChange: (value: string) => void;
+  onFieldSmallChange: (value: string) => void;
 }) {
   const selection = [filters.field, filters.fieldMiddle, filters.fieldSmall]
     .filter(Boolean)
     .join(" → ") || "전체 계열";
-  return <MarketAnalysis baseQuery={baseQuery} metric={metric} view="fields" fieldSelection={selection} />;
+  return (
+    <MarketAnalysis
+      baseQuery={baseQuery}
+      metric={metric}
+      view="fields"
+      fieldSelection={selection}
+      fieldPath={{
+        field: filters.field,
+        fieldMiddle: filters.fieldMiddle,
+        fieldSmall: filters.fieldSmall,
+      }}
+      onFieldChange={onFieldChange}
+      onFieldMiddleChange={onFieldMiddleChange}
+      onFieldSmallChange={onFieldSmallChange}
+    />
+  );
 }
 
 function Schools({ data, baseQuery, metric }: { data: DashboardResponse; baseQuery: string; metric: MarketMetric }) {
@@ -1558,7 +1579,16 @@ export function EnrollmentDashboard() {
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "departments" && <DepartmentTrends baseQuery={baseQuery} metric={analysisMetric} />}
-              {view === "fields" && <Fields baseQuery={baseQuery} metric={analysisMetric} filters={filters} />}
+              {view === "fields" && (
+                <Fields
+                  baseQuery={baseQuery}
+                  metric={analysisMetric}
+                  filters={filters}
+                  onFieldChange={setField}
+                  onFieldMiddleChange={setFieldMiddle}
+                  onFieldSmallChange={(value) => setFilter("fieldSmall", value)}
+                />
+              )}
               {view === "schools" && <Schools data={data} baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "details" && (
                 <Details

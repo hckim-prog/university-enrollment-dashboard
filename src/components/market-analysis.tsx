@@ -18,6 +18,7 @@ import {
 import {
   ArrowDownRight,
   ArrowUpRight,
+  ChevronRight,
   CircleAlert,
   Layers3,
   RefreshCw,
@@ -36,6 +37,12 @@ import styles from "./market-analysis.module.css";
 
 type Tab = "summary" | "fields" | "competition";
 type FieldLevel = "large" | "middle" | "small";
+type FieldMode = "drill" | "compare";
+type FieldPath = {
+  field: string;
+  fieldMiddle: string;
+  fieldSmall: string;
+};
 
 const number = new Intl.NumberFormat("ko-KR");
 const compact = new Intl.NumberFormat("ko-KR", {
@@ -394,8 +401,23 @@ function FieldMoverList({
   );
 }
 
-function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selection: string }) {
-  const [level, setLevel] = useState<FieldLevel>("middle");
+function FieldsView({
+  data,
+  selection,
+  path,
+  onFieldChange,
+  onFieldMiddleChange,
+  onFieldSmallChange,
+}: {
+  data: MarketAnalysisResponse;
+  selection: string;
+  path: FieldPath;
+  onFieldChange: (value: string) => void;
+  onFieldMiddleChange: (value: string) => void;
+  onFieldSmallChange: (value: string) => void;
+}) {
+  const [mode, setMode] = useState<FieldMode>("drill");
+  const [compareLevel, setCompareLevel] = useState<FieldLevel>("middle");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const levels: Array<{ id: FieldLevel; label: string; rows: MarketSegment[] }> = [
@@ -403,6 +425,12 @@ function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selecti
     { id: "middle", label: "중계열", rows: data.fieldMiddles },
     { id: "small", label: "소계열", rows: data.fieldSmalls },
   ];
+  const drillLevel: FieldLevel = path.fieldMiddle || path.fieldSmall
+    ? "small"
+    : path.field
+      ? "middle"
+      : "large";
+  const level = mode === "drill" ? drillLevel : compareLevel;
   const activeLevel = levels.find((item) => item.id === level)!;
   const normalizedQuery = query.trim().toLocaleLowerCase("ko-KR");
   const filteredRows = activeLevel.rows.filter((row) =>
@@ -412,6 +440,8 @@ function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selecti
   const pages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
   const safePage = Math.min(page, pages);
   const visibleRows = filteredRows.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const chartRows = filteredRows.slice(0, 12);
+  const chartHeight = Math.max(250, chartRows.length * 42 + 48);
   const comparable = activeLevel.rows.filter((row) => row.startValue !== null && row.changeFromStart !== null);
   const increases = comparable
     .filter((row) => (row.changeFromStart ?? 0) > 0)
@@ -423,6 +453,34 @@ function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selecti
     .slice(0, 5);
   const market = data.kpis.marketSize;
   const latest = data.annual.at(-1);
+  const selectedName = level === "large"
+    ? path.field
+    : level === "middle"
+      ? path.fieldMiddle
+      : path.fieldSmall;
+  const nextLevelLabel = level === "large" ? "중계열" : level === "middle" ? "소계열" : "상세 시장";
+
+  const selectRow = (row: MarketSegment) => {
+    if (level === "large") onFieldChange(row.name);
+    else if (level === "middle") onFieldMiddleChange(row.name);
+    else onFieldSmallChange(row.name);
+    setMode("drill");
+    setQuery("");
+    setPage(1);
+  };
+
+  const resetPath = () => {
+    onFieldChange("");
+    setMode("drill");
+    setQuery("");
+    setPage(1);
+  };
+
+  const drillGuide = level === "large"
+    ? "대계열을 선택하면 해당 중계열로 이동합니다."
+    : level === "middle"
+      ? `${path.field || "선택 범위"}의 중계열을 선택하면 소계열로 이동합니다.`
+      : "소계열을 선택하면 해당 시장의 KPI와 장기 추세를 자세히 볼 수 있습니다.";
 
   return (
     <div className={styles.stack}>
@@ -466,27 +524,77 @@ function FieldsView({ data, selection }: { data: MarketAnalysisResponse; selecti
 
       <article className={styles.panel}>
         <header className={styles.fieldExplorerHeader}>
-          <div><span>계열 순위</span><h3>공식 분류별 시장 규모와 장기 변화</h3><p>현재 필터 결과 안에서 규모·비중·장기 증감을 비교합니다.</p></div>
+          <div><span>계열 탐색</span><h3>공식 분류별 시장 규모와 장기 변화</h3><p>{drillGuide}</p></div>
           <label className={styles.fieldSearch}><Search size={15} /><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="계열명 검색" /></label>
         </header>
-        <div className={styles.fieldLevelTabs} role="tablist" aria-label="계열 분류 단계">
-          {levels.map((item) => (
-            <button type="button" role="tab" aria-selected={level === item.id} key={item.id} onClick={() => { setLevel(item.id); setPage(1); }}>
-              {item.label}<span>{number.format(item.rows.length)}</span>
-            </button>
-          ))}
+        <div className={styles.fieldExplorerMode} role="group" aria-label="계열 탐색 방식">
+          <button type="button" aria-pressed={mode === "drill"} onClick={() => { setMode("drill"); setQuery(""); setPage(1); }}>계층 탐색</button>
+          <button type="button" aria-pressed={mode === "compare"} onClick={() => { setMode("compare"); setCompareLevel(drillLevel); setQuery(""); setPage(1); }}>전체 단계 비교</button>
         </div>
+        <nav className={styles.fieldBreadcrumb} aria-label="선택한 계열 경로">
+          <button type="button" aria-current={!path.field && !path.fieldMiddle && !path.fieldSmall ? "page" : undefined} onClick={resetPath}>전체 계열</button>
+          {path.field && <><ChevronRight size={14} /><button type="button" aria-current={!path.fieldMiddle && !path.fieldSmall ? "page" : undefined} onClick={() => { onFieldMiddleChange(""); setMode("drill"); setPage(1); }}>{path.field}</button></>}
+          {path.fieldMiddle && <><ChevronRight size={14} /><button type="button" aria-current={!path.fieldSmall ? "page" : undefined} onClick={() => { onFieldSmallChange(""); setMode("drill"); setPage(1); }}>{path.fieldMiddle}</button></>}
+          {path.fieldSmall && <><ChevronRight size={14} /><span aria-current="page">{path.fieldSmall}</span></>}
+        </nav>
+        {mode === "compare" && (
+          <div className={styles.fieldLevelTabs} role="tablist" aria-label="전체 계열 분류 단계 비교">
+            {levels.map((item) => (
+              <button type="button" role="tab" aria-selected={level === item.id} key={item.id} onClick={() => { setCompareLevel(item.id); setPage(1); }}>
+                {item.label}<span>{number.format(item.rows.length)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        <section className={styles.fieldComparisonChart} aria-label={`${activeLevel.label} 현재 규모 비교`}>
+          <header>
+            <div><strong>{activeLevel.label} 현재 규모 비교</strong><p>{data.meta.endYear}년 {data.meta.metricLabel} 상위 {number.format(chartRows.length)}개 · 막대나 표의 행을 선택하면 {nextLevelLabel}로 이동합니다.</p></div>
+            <span>단위: 명</span>
+          </header>
+          {chartRows.length ? (
+            <div style={{ height: chartHeight }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartRows} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
+                  <CartesianGrid stroke="#eceef3" horizontal={false} />
+                  <XAxis type="number" tickFormatter={(value) => compact.format(Number(value))} axisLine={false} tickLine={false} />
+                  <YAxis type="category" dataKey="name" width={124} tickFormatter={(value) => String(value).length > 13 ? `${String(value).slice(0, 12)}…` : String(value)} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    cursor={{ fill: "#eeeeff" }}
+                    content={({ active, payload }) => {
+                      const row = payload?.[0]?.payload as MarketSegment | undefined;
+                      if (!active || !row) return null;
+                      return (
+                        <div className={styles.chartTooltip}>
+                          <strong>{row.name}</strong>
+                          <span>{data.meta.metricLabel} {number.format(row.value)}명</span>
+                          <span>현재 비중 {percent.format(row.share)}</span>
+                        </div>
+                      );
+                    }}
+                  />
+                  <Bar dataKey="value" radius={[0, 6, 6, 0]} cursor="pointer" onClick={(entry) => {
+                    const row = (entry as unknown as { payload?: MarketSegment }).payload;
+                    if (row) selectRow(row);
+                  }}>
+                    {chartRows.map((row) => <Cell key={row.name} fill={row.name === selectedName ? palette.teal : palette.purple} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : <p className={styles.fieldEmpty}>검색 조건에 맞는 계열이 없습니다.</p>}
+        </section>
         <div className={styles.fieldRankingHeader} aria-hidden="true"><span>순위·계열명</span><span>현재 규모</span><span>현재 비중</span><span>{data.meta.startYear}년 대비</span><span>연평균 변화율</span></div>
         <div className={styles.fieldRanking}>
           {visibleRows.map((row) => (
-            <div key={row.name}>
+            <button type="button" key={row.name} aria-current={row.name === selectedName ? "true" : undefined} aria-label={`${row.name} 선택, ${nextLevelLabel} 보기`} onClick={() => selectRow(row)}>
               <span className={styles.rank}>{String(row.rank).padStart(2, "0")}</span>
               <strong title={row.name}>{row.name}</strong>
               <b><small>현재</small>{number.format(row.value)}명</b>
               <span><small>비중</small>{percent.format(row.share)}</span>
               <span className={(row.changeFromStart ?? 0) >= 0 ? styles.rateUp : styles.rateDown}><small>장기</small>{signedNumber(row.changeFromStart)}</span>
               <span><small>연평균</small>{formatRate(row.cagr)}</span>
-            </div>
+              <ChevronRight className={styles.drillArrow} size={16} aria-hidden="true" />
+            </button>
           ))}
           {!visibleRows.length && <p className={styles.fieldEmpty}>검색 조건에 맞는 계열이 없습니다.</p>}
         </div>
@@ -574,11 +682,19 @@ export function MarketAnalysis({
   metric,
   view = "summary",
   fieldSelection = "전체 계열",
+  fieldPath = { field: "", fieldMiddle: "", fieldSmall: "" },
+  onFieldChange = () => undefined,
+  onFieldMiddleChange = () => undefined,
+  onFieldSmallChange = () => undefined,
 }: {
   baseQuery: string;
   metric: MarketMetric;
   view?: Tab;
   fieldSelection?: string;
+  fieldPath?: FieldPath;
+  onFieldChange?: (value: string) => void;
+  onFieldMiddleChange?: (value: string) => void;
+  onFieldSmallChange?: (value: string) => void;
 }) {
   const [data, setData] = useState<MarketAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -625,7 +741,16 @@ export function MarketAnalysis({
       ) : (
         <div className={loading ? styles.loading : ""}>
           {view === "summary" && <SummaryView data={data} />}
-          {view === "fields" && <FieldsView data={data} selection={fieldSelection} />}
+          {view === "fields" && (
+            <FieldsView
+              data={data}
+              selection={fieldSelection}
+              path={fieldPath}
+              onFieldChange={onFieldChange}
+              onFieldMiddleChange={onFieldMiddleChange}
+              onFieldSmallChange={onFieldSmallChange}
+            />
+          )}
           {view === "competition" && <CompetitionView data={data} />}
           <details className={styles.notes}>
             <summary><Layers3 size={17} /><strong>분석 해석 시 주의사항</strong><span>펼쳐보기</span></summary>
