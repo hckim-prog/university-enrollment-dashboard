@@ -4,12 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
-  LabelList,
   Legend,
-  Line,
-  LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -18,6 +13,7 @@ import {
 import {
   ArrowDownRight,
   ArrowUpRight,
+  BookOpen,
   ChevronRight,
   CircleAlert,
   Layers3,
@@ -57,12 +53,6 @@ const percent = new Intl.NumberFormat("ko-KR", {
 
 const palette = {
   purple: "#6464d8",
-  purpleLight: "#adadef",
-  teal: "#158f7a",
-  orange: "#d97735",
-  blue: "#3778c2",
-  ink: "#252838",
-  muted: "#8b90a0",
 };
 
 function formatRate(value: number | null) {
@@ -163,6 +153,7 @@ function SegmentRows({
   changeMode = "recent",
   startYear,
   endYear,
+  dimensionLabel = "항목",
 }: {
   rows: MarketSegment[];
   limit?: number;
@@ -170,6 +161,7 @@ function SegmentRows({
   changeMode?: "recent" | "long";
   startYear?: number;
   endYear?: number;
+  dimensionLabel?: string;
 }) {
   const max = Math.max(...rows.slice(0, limit).map((row) => row.value), 1);
   return (
@@ -177,7 +169,7 @@ function SegmentRows({
       {changeMode === "long" && startYear !== undefined && endYear !== undefined ? (
         <div className={styles.segmentRowHeader} aria-hidden="true">
           <span />
-          <span>지역 · {startYear}→{endYear} 규모</span>
+          <span>{dimensionLabel} · {startYear}→{endYear} 규모</span>
           <span>현재 규모·점유율</span>
           <span>{startYear}년 대비 증감</span>
         </div>
@@ -217,158 +209,49 @@ function SegmentRows({
 
 function SummaryView({ data }: { data: MarketAnalysisResponse }) {
   const market = data.kpis.marketSize;
-  const latest = data.annual.at(-1);
-  const enrolledShare = latest && latest.total > 0 ? latest.enrolled / latest.total : null;
-  const leaveShare = latest && latest.total > 0 ? latest.leave / latest.total : null;
-  const selectedKey = data.meta.metric;
-  const comparisonKey: MarketMetric = selectedKey === "enrolled" ? "total" : "enrolled";
   const selectedLabel = data.meta.metricLabel;
-  const comparisonLabel = comparisonKey === "enrolled" ? "재학생" : "재적학생";
-  const annualChanges = data.annual.map((row, index) => ({
-    ...row,
-    annualChange: index === 0 ? null : row[selectedKey] - data.annual[index - 1][selectedKey],
-  }));
-  const longTrend = data.annual;
-  const indexedCategories = data.meta.years.map((year, yearIndex) => {
-    const row: Record<string, string | number | null> = { year };
-    for (const series of data.universityCategoryAnnual) {
-      const point = series.annual.find((item) => item.year === year);
-      row[series.name] = point?.index ?? null;
-      row[`${series.name}Actual`] = point?.value ?? null;
-      row[`${series.name}Label`] = yearIndex === data.meta.years.length - 1 ? series.name : "";
-    }
-    return row;
-  });
+  const topFields = data.fields.slice(0, 6);
+  const largestField = topFields[0];
+  const chartHeight = Math.max(280, topFields.length * 48);
   return (
     <div className={styles.stack}>
+      <aside className={styles.publisherNotice}>
+        <BookOpen size={18} />
+        <p><strong>출판시장 참고 기준</strong> 학생 수는 전공별 잠재 독자 규모를 비교하는 자료입니다. 실제 교재 채택·판매량이나 향후 수요를 뜻하지 않습니다.</p>
+      </aside>
+
       <section className={styles.kpiGrid} aria-label="시장 핵심 지표">
         <SummaryKpi label={`${data.meta.endYear}년 ${selectedLabel}`} value={`${number.format(market.value)}명`} note="종료연도 전체 합계" />
         <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
-        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년 연평균`} />
-        <SummaryKpi label="최근 1년 변화" value={isFinite(market.change ?? NaN) ? signedNumber(market.change) : "비교 불가"} note={formatRate(market.changeRate)} />
-        <SummaryKpi label="학생 구성" value={`재학생 ${formatRate(enrolledShare)}`} note={`휴학생 ${formatRate(leaveShare)} · 유예 ${number.format(latest?.deferment ?? 0)}명`} />
-      </section>
-
-      <section className={styles.primaryCharts}>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>장기 추세</span><h3>{selectedLabel} 장기 추세</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 단위: 명 · 선택 지표를 진한 실선으로 표시</p></div><small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명 · {signedNumber(market.changeFromStart)}</small></header>
-          <div className={styles.trendKey} aria-label="장기 추세 범례">
-            <span><i className={styles.selectedLine} />{selectedLabel}<b>선택</b></span>
-            <span><i className={styles.comparisonLine} />{comparisonLabel}</span>
-          </div>
-          <div className={styles.chartLarge}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={longTrend} margin={{left:8,right:18,top:24,bottom:4}}>
-                <CartesianGrid stroke="#e9ebf1" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} />
-                <YAxis domain={["dataMin - 50000", "dataMax + 50000"]} tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
-                <Tooltip
-                  content={({ active, payload, label }) => {
-                    const point = payload?.[0]?.payload as (typeof longTrend)[number] | undefined;
-                    if (!active || !point) return null;
-                    return (
-                      <div className={styles.chartTooltip}>
-                        <strong>{label}년</strong>
-                        <span>재적학생 {number.format(point.total)}명</span>
-                        <span>재학생 {number.format(point.enrolled)}명</span>
-                        <span>휴학생 {number.format(point.leave)}명</span>
-                        <span>학위취득유예학생 {number.format(point.deferment)}명</span>
-                      </div>
-                    );
-                  }}
-                />
-                <Line name={selectedLabel} type="monotone" dataKey={selectedKey} stroke={palette.purple} strokeWidth={3} dot={{r:4}} />
-                <Line name={comparisonLabel} type="monotone" dataKey={comparisonKey} stroke={palette.teal} strokeWidth={2} strokeDasharray="5 4" dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>연도별 이동</span><h3>전년 대비 {selectedLabel} 증감</h3><p>첫 연도는 비교값 없음 · 단위: 명</p></div></header>
-          <div className={styles.chartLarge}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={annualChanges} margin={{left:8,right:12,top:24,bottom:4}}>
-                <CartesianGrid stroke="#eceef3" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(value) => `${String(value).slice(2)}년`} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
-                <ReferenceLine y={0} stroke={palette.ink} />
-                <Tooltip formatter={(value) => signedNumber(Number(value))} labelFormatter={(label) => `${label}년`} />
-                <Bar dataKey="annualChange" fill={palette.purpleLight} radius={[4,4,0,0]}>
-                  {annualChanges.map((row) => (
-                    <Cell key={row.year} fill={(row.annualChange ?? 0) >= 0 ? palette.teal : palette.orange} />
-                  ))}
-                  <LabelList dataKey="annualChange" position="top" formatter={(value) => value === null ? "" : signedNumber(Number(value))} />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
-      </section>
-
-      <section className={styles.primaryCharts}>
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>상대 변화</span><h3>대학·전문대학 지수</h3><p>{data.meta.startYear}년=100 · 실제 학생 수는 툴팁에서 확인</p></div></header>
-          <div className={styles.chartLarge}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={indexedCategories} margin={{left:8,right:18,top:16,bottom:4}}>
-                <CartesianGrid stroke="#eceef3" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(value) => `${String(value).slice(2)}년`} axisLine={false} tickLine={false} />
-                <YAxis domain={["auto","auto"]} tickFormatter={(value) => Number(value).toFixed(0)} axisLine={false} tickLine={false} width={44} />
-                <ReferenceLine y={100} stroke={palette.ink} strokeDasharray="4 4" />
-                <Tooltip formatter={(value, name, item) => [`지수 ${Number(value).toFixed(1)} · ${number.format(Number(item.payload[`${String(name)}Actual`]))}명`, String(name)]} labelFormatter={(label) => `${label}년`} />
-                <Legend formatter={(value) => String(value)} />
-                <Line type="monotone" dataKey="대학" stroke={palette.purple} strokeWidth={3} dot={{r:3}} connectNulls={false} />
-                <Line type="monotone" dataKey="전문대학" stroke={palette.teal} strokeWidth={3} strokeDasharray="6 4" dot={{r:3}} connectNulls={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
+        <SummaryKpi label="운영 학교" value={`${number.format(data.kpis.schoolCount.value)}개교`} note="선택 조건에서 학생이 있는 본·분교" />
+        <SummaryKpi label="가장 큰 대계열" value={largestField?.name ?? "데이터 없음"} note={largestField ? `${number.format(largestField.value)}명 · 전체 ${percent.format(largestField.share)}` : "비교 가능한 계열 없음"} />
       </section>
 
       <section className={styles.twoColumns}>
         <article className={`${styles.panel} ${styles.wide}`}>
-          <header className={styles.panelHeader}>
-            <div>
-              <span>장기 시장 규모</span>
-              <h3>{data.meta.startYear}–{data.meta.selectedYear}년 학생 구성</h3>
-              <p>같은 축에서 재학생·휴학생·학위취득유예학생 합계를 비교합니다.</p>
-            </div>
-            <small>단위: 명</small>
-          </header>
-          <div className={styles.chartLarge}>
+          <header className={styles.panelHeader}><div><span>전공 규모</span><h3>현재 학생 규모가 큰 대계열</h3><p>{data.meta.endYear}년 {selectedLabel} 상위 6개 · 막대는 현재 규모, 툴팁은 {data.meta.startYear}년 대비 변화를 표시합니다.</p></div><small>단위: 명</small></header>
+          <div style={{ height: chartHeight }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.annual} margin={{ left: 8, right: 12, top: 8 }}>
-                <CartesianGrid stroke="#e9ebf1" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
-                <Tooltip
-                  labelFormatter={(label) => `${label}년`}
-                  formatter={(value, name) => [
-                    `${number.format(Number(value))}명`,
-                    name === "enrolled" ? "재학생" : name === "leave" ? "휴학생" : "학위취득유예학생",
-                  ]}
-                />
-                <Legend formatter={(value) => value === "enrolled" ? "재학생" : value === "leave" ? "휴학생" : "학위취득유예학생"} />
-                <Bar dataKey="enrolled" stackId="students" fill={palette.purple} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="leave" stackId="students" fill={palette.orange} />
-                <Bar dataKey="deferment" stackId="students" fill={palette.muted} />
+              <BarChart data={topFields} layout="vertical" margin={{ left: 8, right: 22, top: 6, bottom: 6 }}>
+                <CartesianGrid stroke="#eceef3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(value) => compact.format(Number(value))} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" width={92} axisLine={false} tickLine={false} />
+                <Tooltip cursor={{ fill: "#f6f7fa" }} content={({ active, payload }) => {
+                  const row = payload?.[0]?.payload as MarketSegment | undefined;
+                  if (!active || !row) return null;
+                  return <div className={styles.chartTooltip}><strong>{row.name}</strong><span>현재 {number.format(row.value)}명</span><span>{data.meta.startYear}년 대비 {signedNumber(row.changeFromStart)}</span><span>전체의 {percent.format(row.share)}</span></div>;
+                }} />
+                <Bar dataKey="value" fill={palette.purple} radius={[0, 5, 5, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </article>
 
         <article className={styles.panel}>
-          <header className={styles.panelHeader}>
-            <div>
-              <span>학교 체제별 시장</span>
-              <h3>대학·전문대학 구성</h3>
-              <p>선택 지표의 규모, 점유율, 전년 변화입니다.</p>
-            </div>
-          </header>
-          <SegmentRows rows={data.universityCategories} limit={4} />
+          <header className={styles.panelHeader}><div><span>학교 유형</span><h3>대학·전문대학 규모</h3><p>현재 규모와 {data.meta.startYear}년 대비 변화를 비교합니다.</p></div></header>
+          <SegmentRows rows={data.universityCategories} limit={4} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} dimensionLabel="구분" />
         </article>
       </section>
-
     </div>
   );
 }
@@ -440,8 +323,6 @@ function FieldsView({
   const pages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
   const safePage = Math.min(page, pages);
   const visibleRows = filteredRows.slice((safePage - 1) * pageSize, safePage * pageSize);
-  const chartRows = filteredRows.slice(0, 12);
-  const chartHeight = Math.max(250, chartRows.length * 42 + 48);
   const comparable = activeLevel.rows.filter((row) => row.startValue !== null && row.changeFromStart !== null);
   const increases = comparable
     .filter((row) => (row.changeFromStart ?? 0) > 0)
@@ -452,7 +333,6 @@ function FieldsView({
     .toSorted((left, right) => (left.changeFromStart ?? 0) - (right.changeFromStart ?? 0))
     .slice(0, 5);
   const market = data.kpis.marketSize;
-  const latest = data.annual.at(-1);
   const selectedName = level === "large"
     ? path.field
     : level === "middle"
@@ -480,46 +360,21 @@ function FieldsView({
     ? "대계열을 선택하면 해당 중계열로 이동합니다."
     : level === "middle"
       ? `${path.field || "선택 범위"}의 중계열을 선택하면 소계열로 이동합니다.`
-      : "소계열을 선택하면 해당 시장의 KPI와 장기 추세를 자세히 볼 수 있습니다.";
+      : "소계열을 선택하면 해당 분야의 학생 규모와 장기 변화를 자세히 볼 수 있습니다.";
 
   return (
     <div className={styles.stack}>
       <section className={styles.fieldDefinition}>
-        <div><Layers3 size={19} /><span>대학알리미 공식 표준분류</span></div>
+        <div><Layers3 size={19} /><span>전공 분류</span></div>
         <strong>대계열 → 중계열 → 소계열</strong>
-        <p>원본 Q·R·S열을 그대로 사용합니다. 상단에서 계열을 선택하면 모든 숫자와 차트가 함께 바뀝니다.</p>
+        <p>큰 전공 분야에서 세부 분야로 단계별로 내려가며 학생 규모와 장기 변화를 비교합니다.</p>
       </section>
 
-      <section className={styles.fieldKpiGrid} aria-label="선택 계열 시장 핵심 지표">
+      <section className={styles.fieldKpiGrid} aria-label="선택 계열 핵심 수치">
         <SummaryKpi label={`${data.meta.endYear}년 ${data.meta.metricLabel}`} value={`${number.format(market.value)}명`} note={selection} />
         <SummaryKpi label={`${data.meta.startYear}년 대비`} value={signedNumber(market.changeFromStart)} note={formatRate(market.changeRateFromStart)} />
-        <SummaryKpi label="연평균 변화율" value={formatRate(market.cagr)} note={`${data.meta.startYear}~${data.meta.endYear}년`} />
-        <SummaryKpi label="운영 학교" value={`${number.format(data.kpis.schoolCount.value)}개교`} note={`${latest ? number.format(latest.departmentCount) : "—"}개 학과 관측`} />
-      </section>
-
-      <section className={styles.twoColumns}>
-        <article className={`${styles.panel} ${styles.wide}`}>
-          <header className={styles.panelHeader}>
-            <div><span>장기 추세</span><h3>{selection} {data.meta.metricLabel} 변화</h3><p>{data.meta.startYear}~{data.meta.endYear}년 · 상단 계열 필터와 연동 · 단위: 명</p></div>
-            <small>{number.format(market.startValue ?? 0)}명 → {number.format(market.value)}명</small>
-          </header>
-          <div className={styles.chartLarge}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data.annual} margin={{ left: 8, right: 18, top: 18, bottom: 4 }}>
-                <CartesianGrid stroke="#e9ebf1" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={false} tickLine={false} />
-                <YAxis domain={["dataMin - 1000", "dataMax + 1000"]} tickFormatter={(value) => compact.format(value)} axisLine={false} tickLine={false} width={58} />
-                <Tooltip formatter={(value) => [`${number.format(Number(value))}명`, data.meta.metricLabel]} labelFormatter={(label) => `${label}년`} />
-                <Line type="monotone" dataKey="value" name={data.meta.metricLabel} stroke={palette.purple} strokeWidth={3} dot={{ r: 4, fill: "#fff", strokeWidth: 2 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
-
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>대학구분</span><h3>대학·전문대학 구성</h3><p>선택한 계열 안에서 현재 규모와 비중을 비교합니다.</p></div></header>
-          <SegmentRows rows={data.universityCategories} limit={4} />
-        </article>
+        <SummaryKpi label="최근 1년 변화" value={market.change === null ? "비교 불가" : signedNumber(market.change)} note={formatRate(market.changeRate)} />
+        <SummaryKpi label="운영 학교" value={`${number.format(data.kpis.schoolCount.value)}개교`} note="선택한 전공 분야를 운영하는 본·분교" />
       </section>
 
       <article className={styles.panel}>
@@ -546,44 +401,7 @@ function FieldsView({
             ))}
           </div>
         )}
-        <section className={styles.fieldComparisonChart} aria-label={`${activeLevel.label} 현재 규모 비교`}>
-          <header>
-            <div><strong>{activeLevel.label} 현재 규모 비교</strong><p>{data.meta.endYear}년 {data.meta.metricLabel} 상위 {number.format(chartRows.length)}개 · 막대나 표의 행을 선택하면 {nextLevelLabel}로 이동합니다.</p></div>
-            <span>단위: 명</span>
-          </header>
-          {chartRows.length ? (
-            <div style={{ height: chartHeight }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartRows} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
-                  <CartesianGrid stroke="#eceef3" horizontal={false} />
-                  <XAxis type="number" tickFormatter={(value) => compact.format(Number(value))} axisLine={false} tickLine={false} />
-                  <YAxis type="category" dataKey="name" width={124} tickFormatter={(value) => String(value).length > 13 ? `${String(value).slice(0, 12)}…` : String(value)} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    cursor={{ fill: "#eeeeff" }}
-                    content={({ active, payload }) => {
-                      const row = payload?.[0]?.payload as MarketSegment | undefined;
-                      if (!active || !row) return null;
-                      return (
-                        <div className={styles.chartTooltip}>
-                          <strong>{row.name}</strong>
-                          <span>{data.meta.metricLabel} {number.format(row.value)}명</span>
-                          <span>현재 비중 {percent.format(row.share)}</span>
-                        </div>
-                      );
-                    }}
-                  />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]} cursor="pointer" onClick={(entry) => {
-                    const row = (entry as unknown as { payload?: MarketSegment }).payload;
-                    if (row) selectRow(row);
-                  }}>
-                    {chartRows.map((row) => <Cell key={row.name} fill={row.name === selectedName ? palette.teal : palette.purple} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : <p className={styles.fieldEmpty}>검색 조건에 맞는 계열이 없습니다.</p>}
-        </section>
-        <div className={styles.fieldRankingHeader} aria-hidden="true"><span>순위·계열명</span><span>현재 규모</span><span>현재 비중</span><span>{data.meta.startYear}년 대비</span><span>연평균 변화율</span></div>
+        <div className={styles.fieldRankingHeader} aria-hidden="true"><span>순위·계열명</span><span>현재 규모</span><span>현재 비중</span><span>{data.meta.startYear}년 대비</span></div>
         <div className={styles.fieldRanking}>
           {visibleRows.map((row) => (
             <button type="button" key={row.name} aria-current={row.name === selectedName ? "true" : undefined} aria-label={`${row.name} 선택, ${nextLevelLabel} 보기`} onClick={() => selectRow(row)}>
@@ -592,7 +410,6 @@ function FieldsView({
               <b><small>현재</small>{number.format(row.value)}명</b>
               <span><small>비중</small>{percent.format(row.share)}</span>
               <span className={(row.changeFromStart ?? 0) >= 0 ? styles.rateUp : styles.rateDown}><small>장기</small>{signedNumber(row.changeFromStart)}</span>
-              <span><small>연평균</small>{formatRate(row.cagr)}</span>
               <ChevronRight className={styles.drillArrow} size={16} aria-hidden="true" />
             </button>
           ))}
@@ -608,60 +425,48 @@ function FieldsView({
 
       <article className={styles.panel}>
         <header className={styles.panelHeader}><div><span>지역 분포</span><h3>선택 계열의 지역별 시장</h3><p>현재 규모와 {data.meta.startYear}년 대비 증감을 함께 봅니다.</p></div></header>
-        <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} />
+        <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} dimensionLabel="지역" />
       </article>
     </div>
   );
 }
 
 function CompetitionView({ data }: { data: MarketAnalysisResponse }) {
-  const hhiLevel = data.kpis.hhi.value < 1_000 ? "분산 시장" : data.kpis.hhi.value < 1_800 ? "중간 집중" : "고집중";
+  const chartRows = data.regions.slice(0, 10);
+  const largestRegion = data.regions[0];
+  const growingRegions = data.regions.filter(
+    (region) => (region.changeFromStart ?? 0) > 0,
+  ).length;
+  const chartHeight = Math.max(360, chartRows.length * 44);
+
   return (
     <div className={styles.stack}>
-      <section className={styles.competitionKpis}>
-        <div><span>시장 집중도 HHI</span><strong>{data.kpis.hhi.value.toFixed(0)}</strong><small>{hhiLevel}</small></div>
-        <div><span>상위 10개교 점유율</span><strong>{percent.format(data.kpis.top10Share.value)}</strong><small>선택 지표 기준</small></div>
-        <div><span>활동 학교 수</span><strong>{number.format(data.kpis.schoolCount.value)}</strong><small>본·분교 기준</small></div>
+      <section className={styles.regionKpis}>
+        <div><span>분석 지역</span><strong>{number.format(data.regions.length)}개</strong><small>{data.meta.startYear}–{data.meta.endYear}년</small></div>
+        <div><span>현재 최대 지역</span><strong>{largestRegion?.name ?? "-"}</strong><small>{largestRegion ? `${compact.format(largestRegion.value)}명` : "데이터 없음"}</small></div>
+        <div><span>장기 증가 지역</span><strong>{number.format(growingRegions)}개</strong><small>{data.meta.startYear}년 대비</small></div>
       </section>
 
-      <section className={styles.twoColumns}>
-        <article className={`${styles.panel} ${styles.wide}`}>
-          <header className={styles.panelHeader}>
-            <div><span>경쟁 구조</span><h3>학교 집중도 변화</h3><p>HHI와 상위 10개교 점유율을 각각 확인합니다. HHI 1,000 미만은 일반적으로 분산 구조로 해석합니다.</p></div>
-          </header>
-          <div className={styles.dualCharts}>
-            <div>
-              <h4>HHI</h4>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.annual} margin={{ left: 2, right: 8 }}>
-                  <CartesianGrid stroke="#eceef3" vertical={false} />
-                  <XAxis dataKey="year" tickFormatter={(value) => String(value).slice(2)} axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} width={44} />
-                  <Tooltip formatter={(value) => Number(value).toFixed(0)} labelFormatter={(label) => `${label}년`} />
-                  <Bar dataKey="hhi" fill={palette.blue} radius={[5, 5, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div>
-              <h4>상위 10개교 점유율</h4>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.annual} margin={{ left: 2, right: 8 }}>
-                  <CartesianGrid stroke="#eceef3" vertical={false} />
-                  <XAxis dataKey="year" tickFormatter={(value) => String(value).slice(2)} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(value) => `${Math.round(value * 100)}%`} axisLine={false} tickLine={false} width={44} />
-                  <Tooltip formatter={(value) => percent.format(Number(value))} labelFormatter={(label) => `${label}년`} />
-                  <Bar dataKey="top10Share" fill={palette.teal} radius={[5, 5, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+      <article className={styles.panel}>
+          <header className={styles.panelHeader}><div><span>지역 비교</span><h3>{data.meta.startYear}년과 {data.meta.endYear}년 지역별 학생 규모</h3><p>현재 규모가 큰 10개 지역의 시작연도와 종료연도를 직접 비교합니다.</p></div><small>단위: 명</small></header>
+          <div style={{ height: chartHeight }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartRows} layout="vertical" margin={{ top: 8, right: 18, left: 6, bottom: 8 }}>
+                <CartesianGrid stroke="#eceef3" horizontal={false} />
+                <XAxis type="number" tickFormatter={(value) => compact.format(Number(value))} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" width={50} axisLine={false} tickLine={false} />
+                <Tooltip cursor={{ fill: "#f6f7fa" }} content={({ active, payload }) => {
+                  const row = payload?.[0]?.payload as MarketSegment | undefined;
+                  if (!active || !row) return null;
+                  return <div className={styles.chartTooltip}><strong>{row.name}</strong><span>{data.meta.startYear}년 {number.format(row.startValue ?? 0)}명</span><span>{data.meta.endYear}년 {number.format(row.value)}명</span><span>증감 {signedNumber(row.changeFromStart)}</span></div>;
+                }} />
+                <Legend formatter={(value) => value === "startValue" ? `${data.meta.startYear}년` : `${data.meta.endYear}년`} />
+                <Bar dataKey="startValue" fill="#b8bcc8" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="value" fill={palette.purple} radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </article>
-
-        <article className={styles.panel}>
-          <header className={styles.panelHeader}><div><span>지역 시장</span><h3>지역별 재적학생과 장기 변화</h3><p>현재 규모·점유율과 {data.meta.startYear}년 대비 증감을 비교합니다.</p></div></header>
-          <SegmentRows rows={data.regions} limit={10} showAbsoluteChange changeMode="long" startYear={data.meta.startYear} endYear={data.meta.endYear} />
-        </article>
-      </section>
+      </article>
 
       <section className={styles.moversGrid}>
         <article className={styles.panel}>

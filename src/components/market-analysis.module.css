@@ -22,12 +22,10 @@
 .panelHeader p { margin: 0; color: #898d99; font-size: 12px; line-height: 1.55; }
 .panelHeader > small { color: #8b8f9b; font-size: 11px; white-space: nowrap; }
 .chartLarge { height: 330px; }
-.trendKey { display: flex; flex-wrap: wrap; gap: 14px; margin: -7px 0 7px; color: #5f6472; font-size: 12px; font-weight: 750; }
-.trendKey span { display: inline-flex; align-items: center; gap: 6px; }
-.trendKey i { width: 25px; height: 0; border-top: 3px solid; }
-.trendKey .selectedLine { border-color: #6464d8; }
-.trendKey .comparisonLine { border-color: #158f7a; border-top-style: dashed; }
-.trendKey b { padding: 2px 5px; border-radius: 999px; color: #4d4db8; background: #ededff; font-size: 9px; }
+.publisherNotice { display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px; border: 1px solid #dfe2ea; border-radius: 14px; color: #656977; background: #fafbfc; }
+.publisherNotice svg { flex: 0 0 auto; margin-top: 1px; color: #6464c7; }
+.publisherNotice p { margin: 0; font-size: 12px; line-height: 1.6; word-break: keep-all; }
+.publisherNotice strong { margin-right: 7px; color: #3c4050; }
 .segmentRows { display: grid; gap: 12px; }
 .segmentRowHeader { display: grid; grid-template-columns: 26px minmax(80px, 1fr) 60px 70px; align-items: end; gap: 8px; padding-bottom: 7px; border-bottom: 1px solid #e8eaf0; color: #8d919e; font-size: 9px; font-weight: 750; line-height: 1.35; }
 .segmentRowHeader span:nth-child(3),
@@ -68,14 +66,8 @@
 .fieldLevelTabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; border: 1px solid #dedfe8; border-radius: 9px; padding: 0 13px; color: #656978; background: #fff; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
 .fieldLevelTabs button[aria-selected="true"] { border-color: #6b6bd4; color: #4b4bad; background: #eeeeff; }
 .fieldLevelTabs button span { display: grid; min-width: 22px; height: 20px; place-items: center; border-radius: 99px; color: #777b89; background: #eef0f4; font-size: 10px; }
-.fieldComparisonChart { overflow: hidden; margin-bottom: 16px; padding: 16px 14px 10px; border: 1px solid #e5e6ee; border-radius: 14px; background: #fbfbfe; }
-.fieldComparisonChart > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.fieldComparisonChart > header div { min-width: 0; }
-.fieldComparisonChart > header strong { color: #373a48; font-size: 14px; }
-.fieldComparisonChart > header p { margin: 4px 0 0; color: #858995; font-size: 11px; line-height: 1.45; word-break: keep-all; }
-.fieldComparisonChart > header > span { flex: 0 0 auto; color: #989ca8; font-size: 10px; }
 .fieldRankingHeader,
-.fieldRanking > button { display: grid; grid-template-columns: 34px minmax(180px, 1.5fr) repeat(4, minmax(92px, .65fr)); align-items: center; gap: 10px; }
+.fieldRanking > button { display: grid; grid-template-columns: 34px minmax(180px, 1.5fr) repeat(3, minmax(92px, .65fr)); align-items: center; gap: 10px; }
 .fieldRankingHeader { padding: 9px 12px; border-bottom: 1px solid #e7e9ef; color: #8b8f9c; font-size: 10px; font-weight: 750; }
 .fieldRankingHeader span:first-child { grid-column: 1 / 3; }
 .fieldRanking > button { position: relative; width: 100%; min-height: 54px; border: 0; border-bottom: 1px solid #eff0f4; padding: 9px 34px 9px 12px; color: #575b69; background: #fff; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
@@ -97,15 +89,11 @@
 .fieldMoverList b { font-size: 12px; }
 .fieldMoverList small { min-width: 48px; color: #7e828f; font-size: 11px; text-align: right; }
 .fieldEmpty { grid-column: 1 / -1; margin: 0; padding: 24px; color: #8b8f9b; font-size: 12px; text-align: center; }
-.competitionKpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.competitionKpis > div { display: grid; gap: 3px; padding: 20px; border: 1px solid #e2e5ec; border-radius: 16px; background: linear-gradient(135deg, #fff, #f8f8ff); }
-.competitionKpis span { color: #737784; font-size: 12px; }
-.competitionKpis strong { color: #2b2e3b; font-size: 28px; letter-spacing: -.04em; }
-.competitionKpis small { color: #6c6cc8; font-size: 11px; font-weight: 700; }
-.dualCharts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; height: 280px; }
-.dualCharts > div { min-width: 0; min-height: 0; }
-.dualCharts h4 { height: 22px; margin: 0; color: #626674; font-size: 12px; }
-.dualCharts :global(.recharts-responsive-container) { height: calc(100% - 22px) !important; }
+.regionKpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.regionKpis > div { display: grid; gap: 3px; padding: 20px; border: 1px solid #e2e5ec; border-radius: 16px; background: linear-gradient(135deg, #fff, #f8f8ff); }
+.regionKpis span { color: #737784; font-size: 12px; }
+.regionKpis strong { color: #2b2e3b; font-size: 28px; letter-spacing: -.04em; }
+.regionKpis small { color: #6c6cc8; font-size: 11px; font-weight: 700; }
 .moversGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .notes { padding: 0 16px; border: 1px solid #e6e2d4; border-radius: 14px; background: #fffdf6; color: #6f6753; }
 .notes summary { display: flex; min-height: 48px; align-items: center; gap: 8px; cursor: pointer; list-style: none; }
@@ -135,18 +123,15 @@
   .fieldRanking > button > b { grid-column: 3; grid-row: 1; text-align: right; }
   .fieldRanking > button > span:nth-of-type(2) { grid-column: 2; grid-row: 2; }
   .fieldRanking > button > span:nth-of-type(3) { grid-column: 3; grid-row: 2; text-align: right; }
-  .fieldRanking > button > span:nth-of-type(4) { grid-column: 3; grid-row: 3; text-align: right; }
   .fieldRanking b small,
   .fieldRanking > button > span small { display: inline; margin-right: 4px; color: #999da8; font-size: 9px; font-weight: 650; }
 }
 
 @media (max-width: 760px) {
-  .kpiGrid, .fieldKpiGrid, .competitionKpis, .moversGrid { grid-template-columns: 1fr; }
+  .kpiGrid, .fieldKpiGrid, .regionKpis, .moversGrid { grid-template-columns: 1fr; }
   .twoColumns { grid-template-columns: 1fr; }
   .panel, .kpiCard { padding: 17px; }
   .chartLarge { height: 300px; }
-  .dualCharts { grid-template-columns: 1fr; height: auto; }
-  .dualCharts > div { height: 230px; }
   .segmentRow { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
   .segmentRowHeader { grid-template-columns: 22px minmax(80px, 1fr) 54px 62px; gap: 6px; }
   .rateText { font-size: 10px; }
@@ -157,8 +142,6 @@
   .fieldLevelTabs button { justify-content: center; padding-inline: 7px; }
   .fieldExplorerMode { display: grid; grid-template-columns: 1fr 1fr; }
   .fieldExplorerMode button { padding-inline: 8px; }
-  .fieldComparisonChart { margin-inline: -5px; padding-inline: 7px; }
-  .fieldComparisonChart > header { flex-direction: column; }
   .fieldMoverList > div { grid-template-columns: 22px minmax(90px, 1fr) auto; }
   .fieldMoverList small { grid-column: 2 / -1; text-align: left; }
 }
@@ -174,8 +157,6 @@
 .summaryKpi span { color: #666b78; font-size: 13px; font-weight: 750; }
 .summaryKpi strong { color: #242735; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -.04em; }
 .summaryKpi small { color: #727785; font-size: 12px; line-height: 1.45; }
-.primaryCharts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.primaryCharts > .panel:only-child { grid-column: 1 / -1; }
 .panelHeader h3,
 .panelHeader p,
 .notes,
@@ -187,10 +168,6 @@
 .insight small { font-size: 11px; }
 .insight p,
 .notes p { font-size: 12px; }
-
-@media (max-width: 900px) {
-  .primaryCharts { grid-template-columns: 1fr; }
-}
 
 @media (max-width: 620px) {
   .kpiGrid { grid-template-columns: 1fr; gap: 9px; }

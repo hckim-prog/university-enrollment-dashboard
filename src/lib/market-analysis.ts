@@ -45,8 +45,6 @@ export type MarketAnalysisResponse = {
     leave: MarketValue;
     leaveRate: MarketValue;
     capacityRatio: MarketValue & { available: boolean };
-    top10Share: MarketValue;
-    hhi: MarketValue;
     schoolCount: MarketValue;
   };
   annual: Array<{
@@ -61,8 +59,6 @@ export type MarketAnalysisResponse = {
     capacityRatio: number | null;
     schoolCount: number;
     departmentCount: number;
-    top10Share: number;
-    hhi: number;
   }>;
   universityCategories: MarketSegment[];
   universityCategoryAnnual: Array<{
@@ -231,20 +227,6 @@ function schoolKey(row: EnrollmentRecord) {
   return `${row.schoolCode}\u001f${row.campus}`;
 }
 
-function concentration(rows: EnrollmentRecord[], metric: MarketMetric) {
-  const groups = groupRows(rows, schoolKey);
-  const values = [...groups.values()]
-    .map((group) => aggregate(group)[metric])
-    .filter((value) => value > 0)
-    .toSorted((left, right) => right - left);
-  const total = values.reduce((sum, value) => sum + value, 0);
-  if (total === 0) return { top10Share: 0, hhi: 0 };
-  return {
-    top10Share: values.slice(0, 10).reduce((sum, value) => sum + value, 0) / total,
-    hhi: values.reduce((sum, value) => sum + (value / total) ** 2, 0) * 10_000,
-  };
-}
-
 function activeCounts(rows: EnrollmentRecord[]) {
   const active = rows.filter((row) => row.total > 0);
   return {
@@ -327,14 +309,6 @@ function createInsights(
     });
   }
 
-  insights.push({
-    id: "concentration",
-    tone: response.kpis.hhi.value >= 1_000 ? "caution" : "neutral",
-    title: "학교 시장 집중도",
-    body: "HHI는 학교별 학생 점유율 제곱합이며, 낮을수록 시장이 여러 학교에 분산된 구조입니다.",
-    value: `HHI ${response.kpis.hhi.value.toFixed(0)} · 상위 10개교 ${formatPercent(response.kpis.top10Share.value)}`,
-  });
-
   return insights;
 }
 
@@ -370,7 +344,6 @@ export function createMarketAnalysis(
     const rows = contextRows.filter((row) => row.year === year);
     const values = aggregate(rows);
     const counts = activeCounts(rows);
-    const marketConcentration = concentration(rows, metric);
     return {
       year,
       value: values[metric],
@@ -386,7 +359,6 @@ export function createMarketAnalysis(
           : null,
       schoolCount: counts.schools,
       departmentCount: counts.departments,
-      ...marketConcentration,
     };
   });
   const currentAnnual = annual.at(-1);
@@ -431,18 +403,6 @@ export function createMarketAnalysis(
       ),
       available: current.capacityRows > 0,
     },
-    top10Share: marketValue(
-      currentAnnual?.top10Share ?? 0,
-      previousAnnual?.top10Share ?? null,
-      startAnnual?.top10Share ?? null,
-      yearSpan,
-    ),
-    hhi: marketValue(
-      currentAnnual?.hhi ?? 0,
-      previousAnnual?.hhi ?? null,
-      startAnnual?.hhi ?? null,
-      yearSpan,
-    ),
     schoolCount: marketValue(
       currentAnnual?.schoolCount ?? 0,
       previousAnnual?.schoolCount ?? null,

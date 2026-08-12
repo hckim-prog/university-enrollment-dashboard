@@ -46,11 +46,10 @@ import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
 import type { MarketMetric } from "@/lib/market-analysis";
 import { isFlatChange } from "@/lib/analysis-window";
-import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "departments" | "fields" | "schools" | "details";
+type View = "overview" | "fields" | "schools" | "details";
 type Filters = {
   startYear: string;
   endYear: string;
@@ -142,32 +141,26 @@ const navigation: {
 }[] = [
   {
     id: "overview",
-    label: "7년 시장 요약",
-    description: "장기 규모와 구조 변화",
+    label: "대학시장 요약",
+    description: "시장 규모와 주요 변화",
     icon: LayoutDashboard,
   },
   {
-    id: "departments",
-    label: "학과 변화",
-    description: "시장 학과군·개별 학과",
-    icon: BookOpen,
-  },
-  {
     id: "fields",
-    label: "계열별 시장",
-    description: "공식 대·중·소계열 분석",
+    label: "전공 시장",
+    description: "계열별 규모와 성장·축소",
     icon: Layers3,
   },
   {
     id: "schools",
     label: "지역·학교",
-    description: "지역과 학교의 장기 변화",
+    description: "지역 규모와 주요 학교",
     icon: Building2,
   },
   {
     id: "details",
-    label: "상세 데이터",
-    description: "원자료 단위 탐색",
+    label: "학교·학과 찾기",
+    description: "출판 대상 학교와 학과 탐색",
     icon: Database,
   },
 ];
@@ -257,11 +250,11 @@ function AnalysisMetricSwitch({
   return (
     <div className={styles.metricPriority}>
       <div className={styles.metricPriorityCopy}>
-        <span>우선 분석 지표</span>
+        <span>분석할 학생 수</span>
         <strong>{activeLabel} 기준으로 전체 화면을 분석합니다</strong>
-        <small>시장 분석 기본값은 재학생이며, 선택은 KPI·차트·순위·상세 데이터에 함께 적용됩니다.</small>
+        <small>기본값은 재학생이며, 선택은 핵심 수치·차트·순위·학과 목록에 함께 적용됩니다.</small>
       </div>
-      <div className={styles.metricPriorityOptions} role="radiogroup" aria-label="우선 분석 지표">
+      <div className={styles.metricPriorityOptions} role="radiogroup" aria-label="분석할 학생 수">
         <button
           type="button"
           role="radio"
@@ -762,9 +755,9 @@ function Schools({ data, baseQuery, metric }: { data: DashboardResponse; baseQue
       <article className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <span className={styles.eyebrow}>학교 시장 포지션</span>
-            <h2>{data.currentYear}년 {metricLabel} 규모와 전년 변화를 함께 보는 상위 학교</h2>
-            <p className={styles.panelDescription}>막대는 현재 {metricLabel} 규모, 오른쪽 값은 전년 대비 증감입니다. 큰 학교가 성장 중인지 축소 중인지 한 번에 비교할 수 있습니다.</p>
+            <span className={styles.eyebrow}>주요 학교</span>
+            <h2>{data.currentYear}년 {metricLabel} 규모 상위 학교</h2>
+            <p className={styles.panelDescription}>현재 학생 수와 전년 대비 증감을 함께 비교합니다.</p>
           </div>
           <span className={styles.panelNote}>현재 {metricLabel} 규모순 · 상위 {visibleSchools.length}개교</span>
         </div>
@@ -816,71 +809,41 @@ function Details({
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
         <div>
-          <span className={styles.eyebrow}>{data.currentYear}년 상세 데이터 탐색</span>
-          <h2 className={styles.helpHeading}>
-            학과별 정규화 데이터
-            <HelpTip label="정규화 데이터">
-              2019~2022년 45열과 2023~2025년 46열을 하나의 형식으로 맞추고, 대학·전문대학과 표준분류 대·중·소계열을 보존한 데이터입니다.
-            </HelpTip>
-          </h2>
+          <span className={styles.eyebrow}>{data.currentYear}년 출판 대상 탐색</span>
+          <h2>학교·학과 목록</h2>
+          <p className={styles.panelDescription}>학교와 학과를 찾고 전공 분류, 지역, 학생 규모를 함께 확인합니다.</p>
         </div>
-        <span className={styles.panelNote}>총 {fullNumber.format(data.pagination.total)}행</span>
+        <span className={styles.panelNote}>총 {fullNumber.format(data.pagination.total)}개 학과</span>
       </div>
       <div className={`${styles.tableScroller} ${styles.desktopDetails}`}>
         <table className={styles.dataTable}>
           <thead>
             <tr>
-              <th>연도</th>
-              <th>대학구분</th>
               <th>학교</th>
-              <th>단과대학</th>
               <th>학과</th>
-              <th>주야</th>
+              <th>대학구분</th>
               <th>지역</th>
               <th>설립</th>
               <th>대계열</th>
               <th>중계열</th>
               <th>소계열</th>
-              <th>학교상태</th>
-              <th className={`${styles.numberCell} ${metric === "enrolled" ? styles.selectedMetricCell : ""}`}>재학생</th>
-              <th className={styles.numberCell}>휴학생</th>
-              <th className={`${styles.numberCell} ${metric === "total" ? styles.selectedMetricCell : ""}`}>재적학생</th>
+              <th className={`${styles.numberCell} ${styles.selectedMetricCell}`}>{metricLabel}</th>
               <th>{metricLabel} 전년 대비</th>
             </tr>
           </thead>
           <tbody>
             {data.details.map((row) => (
               <tr key={`${row.year}-${row.school}-${row.sourceRow}`}>
-                <td>{row.year}</td>
-                <td>{row.universityCategory}</td>
                 <td className={styles.strongCell}>{row.school}</td>
-                <td>{row.college}</td>
                 <td><LongName name={row.department} /></td>
-                <td>{row.dayNight}</td>
+                <td>{row.universityCategory}</td>
                 <td>{row.region}</td>
                 <td>{row.establishment}</td>
                 <td>{row.field}</td>
                 <td>{row.fieldMiddle}</td>
                 <td>{row.fieldSmall}</td>
-                <td>
-                  <span
-                    className={`${styles.statusPill} ${
-                      row.schoolStatus.includes("폐")
-                        ? styles.closed
-                        : ""
-                    }`}
-                  >
-                    {row.schoolStatus}
-                  </span>
-                </td>
-                <td className={`${styles.numberCell} ${metric === "enrolled" ? styles.selectedMetricCell : ""}`}>
-                  {fullNumber.format(row.enrolled)}
-                </td>
-                <td className={styles.numberCell}>
-                  {fullNumber.format(row.leave)}
-                </td>
-                <td className={`${styles.numberCell} ${styles.strongCell} ${metric === "total" ? styles.selectedMetricCell : ""}`}>
-                  {fullNumber.format(row.total)}
+                <td className={`${styles.numberCell} ${styles.strongCell} ${styles.selectedMetricCell}`}>
+                  {fullNumber.format(row[metric])}
                 </td>
                 <td>
                   <ChangeBadge metric={row} />
@@ -915,9 +878,7 @@ function Details({
               {row.field} · {row.fieldMiddle} · {row.fieldSmall}
             </p>
             <dl className={styles.detailMetrics}>
-              <div className={metric === "enrolled" ? styles.selectedDetailMetric : ""}><dt>재학생</dt><dd>{fullNumber.format(row.enrolled)}명</dd></div>
-              <div><dt>휴학생</dt><dd>{fullNumber.format(row.leave)}명</dd></div>
-              <div className={metric === "total" ? styles.selectedDetailMetric : ""}><dt>재적학생</dt><dd>{fullNumber.format(row.total)}명</dd></div>
+              <div className={styles.selectedDetailMetric}><dt>{metricLabel}</dt><dd>{fullNumber.format(row[metric])}명</dd></div>
             </dl>
             <div className={styles.detailChange}>
               <span>{metricLabel} 전년 대비</span>
@@ -992,13 +953,8 @@ function marketHeadline(data: DashboardResponse | null, metric: MarketMetric) {
   const metricLabel = metric === "enrolled" ? "재학생" : "재적학생";
   const change = end[metric] - start[metric];
   const rate = start[metric] === 0 ? null : change / start[metric];
-  const longChangeText = change === 0
-    ? "변화가 없었으며"
-    : `${fullNumber.format(Math.abs(change))}명 ${change < 0 ? "감소" : "증가"}했으며`;
-  const recent = isFlatChange(data.metrics[metric].changeRate)
-    ? ` ${end.year}년은 전년 대비 보합이며 정확한 증감은 ${formatChange(data.metrics[metric].change)}입니다.`
-    : ` ${end.year}년은 전년 대비 ${formatChange(data.metrics[metric].change)} (${data.metrics[metric].changeRate === null ? "비교 불가" : percent.format(data.metrics[metric].changeRate)})입니다.`;
-  return `${metricLabel}은 ${start.year}년 대비 ${longChangeText} 장기 변화율은 ${rate === null ? "비교 불가" : percent.format(rate)}입니다.${recent}`;
+  const direction = change === 0 ? "변화 없음" : `${fullNumber.format(Math.abs(change))}명 ${change < 0 ? "감소" : "증가"}`;
+  return `${start.year}–${end.year}년 ${metricLabel} 시장: ${direction} (${rate === null ? "비교 불가" : percent.format(rate)})`;
 }
 
 export function EnrollmentDashboard() {
@@ -1217,10 +1173,8 @@ export function EnrollmentDashboard() {
   const basicFilterKeys = new Set(
     view === "overview"
       ? ["universityCategory", "region"]
-      : view === "departments"
-        ? ["universityCategory", "fieldMiddle", "department"]
-        : view === "fields"
-          ? ["universityCategory", "region", "field", "fieldMiddle", "fieldSmall"]
+      : view === "fields"
+        ? ["universityCategory", "region", "field", "fieldMiddle", "fieldSmall"]
         : view === "schools"
           ? ["region", "establishment", "school"]
           : [],
@@ -1240,8 +1194,8 @@ export function EnrollmentDashboard() {
             <BarChart3 size={23} />
           </div>
           <div>
-            <strong>대학 시장</strong>
-            <span>대학 시장 분석</span>
+            <strong>대학교재 시장</strong>
+            <span>학생 규모 기반 분석</span>
           </div>
           <button
             className={styles.closeNav}
@@ -1268,6 +1222,7 @@ export function EnrollmentDashboard() {
                   setView(item.id);
                   setMobileNav(false);
                   setFiltersOpen(false);
+                  window.scrollTo({ top: 0, behavior: "auto" });
                 }}
               >
                 <Icon size={19} />
@@ -1399,7 +1354,7 @@ export function EnrollmentDashboard() {
                 endYear={filters.endYear}
                 onChange={setAnalysisWindow}
               />
-              {(view === "overview" || view === "departments" || view === "fields") && (
+              {(view === "overview" || view === "fields") && (
                 <SelectFilter
                   label="대학구분"
                   value={filters.universityCategory}
@@ -1410,40 +1365,6 @@ export function EnrollmentDashboard() {
               )}
               {(view === "overview" || view === "schools" || view === "fields") && (
                 <SelectFilter label="지역" value={filters.region} options={data?.meta.regions ?? []} onChange={setRegion} />
-              )}
-              {view === "departments" && (
-                <>
-                  <SelectFilter label="학과군" value={filters.fieldMiddle} options={middleFieldOptions} onChange={setFieldMiddle} />
-                  <label className={`${styles.filterField} ${styles.searchField}`}>
-                    <span>학과 검색</span>
-                    <div><Search size={16} /><input value={filters.department} onChange={(event) => setFilter("department", event.target.value)} placeholder="예: 간호, 컴퓨터" /></div>
-                  </label>
-                </>
-              )}
-              {view === "fields" && (
-                <>
-                  <SelectFilter
-                    label="대계열"
-                    value={filters.field}
-                    options={data?.meta.fields ?? []}
-                    onChange={setField}
-                    helpText="원본 Q열의 교육부 표준분류 대계열입니다."
-                  />
-                  <SelectFilter
-                    label="중계열"
-                    value={filters.fieldMiddle}
-                    options={middleFieldOptions}
-                    onChange={setFieldMiddle}
-                    helpText="선택한 대계열 아래 원본 R열의 표준분류 중계열입니다."
-                  />
-                  <SelectFilter
-                    label="소계열"
-                    value={filters.fieldSmall}
-                    options={smallFieldOptions}
-                    onChange={(value) => setFilter("fieldSmall", value)}
-                    helpText="선택한 중계열 아래 원본 S열의 가장 세부적인 표준분류입니다."
-                  />
-                </>
               )}
               {view === "schools" && (
                 <>
@@ -1463,7 +1384,7 @@ export function EnrollmentDashboard() {
                   helpText="대학과 전문대학을 구분합니다. 학교종류보다 상위의 시장 구분입니다."
                 />
               )}
-              {(view === "departments" || view === "details") && (
+              {view === "details" && (
                 <SelectFilter label="지역" value={filters.region} options={data?.meta.regions ?? []} onChange={setRegion} />
               )}
               {view !== "schools" && (
@@ -1489,7 +1410,7 @@ export function EnrollmentDashboard() {
                 onChange={setField}
                 helpText="교육부 표준분류의 가장 큰 계열 구분입니다."
               />}
-              {view !== "departments" && view !== "fields" && (
+              {view !== "fields" && (
                 <SelectFilter
                   label="중계열"
                   value={filters.fieldMiddle}
@@ -1512,21 +1433,19 @@ export function EnrollmentDashboard() {
                 onChange={(value) => setFilter("schoolStatus", value)}
                 helpText="새 원본에는 학과상태가 없고 학교상태만 있습니다. 기존·폐교 등 원본 값을 그대로 사용합니다."
               />
-              {view !== "departments" && (
-                <label className={`${styles.filterField} ${styles.searchField}`}>
-                  <span>학과명</span>
-                  <div>
-                    <Search size={16} />
-                    <input
-                      value={filters.department}
-                      onChange={(event) =>
-                        setFilter("department", event.target.value)
-                      }
-                      placeholder="예: 간호, 컴퓨터"
-                    />
-                  </div>
-                </label>
-              )}
+              <label className={`${styles.filterField} ${styles.searchField}`}>
+                <span>학과명</span>
+                <div>
+                  <Search size={16} />
+                  <input
+                    value={filters.department}
+                    onChange={(event) =>
+                      setFilter("department", event.target.value)
+                    }
+                    placeholder="예: 간호, 컴퓨터"
+                  />
+                </div>
+              </label>
               <button
                 type="button"
                 className={styles.resetButton}
@@ -1578,7 +1497,6 @@ export function EnrollmentDashboard() {
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
               {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} />}
-              {view === "departments" && <DepartmentTrends baseQuery={baseQuery} metric={analysisMetric} />}
               {view === "fields" && (
                 <Fields
                   baseQuery={baseQuery}
@@ -1605,7 +1523,7 @@ export function EnrollmentDashboard() {
           )}
           <footer className={styles.footer}>
             <p>
-              검산을 통과한 정규화 데이터만 사용합니다. 원본 XLSX는 웹 공개 폴더에 복사하지 않습니다.
+              형식을 통일하고 검산을 통과한 데이터만 사용합니다. 원본 XLSX는 웹 공개 폴더에 복사하지 않습니다.
             </p>
             <span>
               마지막 변환 · {data?.dataset.generatedAt.slice(0, 10) ?? "—"}
