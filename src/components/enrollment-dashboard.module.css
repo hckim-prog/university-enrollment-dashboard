@@ -843,6 +843,15 @@
 .schoolComparisonRow > .changeBadge,
 .schoolComparisonRow > .mutedBadge { justify-self: end; }
 
+@media (max-width: 760px) {
+  .schoolComparisonHeader { display: none; }
+  .schoolComparisonRow { grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; min-height: 84px; padding: 10px 0; }
+  .schoolComparisonName { align-self: start; }
+  .schoolCurrentValue { grid-column: 2; grid-row: 2; justify-items: start; text-align: left; }
+  .schoolComparisonRow > .changeBadge,
+  .schoolComparisonRow > .mutedBadge { grid-column: 3; grid-row: 1 / span 2; display: inline-flex; align-self: center; }
+}
+
 .viewStack {
   display: grid;
   gap: 16px;
@@ -1015,7 +1024,7 @@
 
 .dataTable {
   width: 100%;
-  min-width: 1480px;
+  min-width: 1120px;
   border-collapse: collapse;
   font-size: 10px;
 }
@@ -1312,7 +1321,7 @@
   }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 760px) {
   .verifiedPill {
     display: none !important;
   }
@@ -1452,7 +1461,7 @@
 
   .detailMetrics {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 6px;
   }
 
@@ -1532,6 +1541,7 @@
   align-items: center;
   padding: 24px 30px;
   border-radius: 18px;
+  background: #343765;
   box-shadow: none;
 }
 
