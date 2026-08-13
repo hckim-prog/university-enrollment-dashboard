@@ -19,6 +19,7 @@ import {
   BookOpen,
   Building2,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -51,6 +52,7 @@ import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
 type View = "overview" | "fields" | "schools" | "details";
+type FieldSection = "explore" | "trends";
 type Filters = {
   startYear: string;
   endYear: string;
@@ -165,6 +167,40 @@ const navigation: {
     icon: Database,
   },
 ];
+const guideStorageKey = "university-dashboard-guide-seen-v1";
+const screenGuides: Record<View, { title: string; description: string; questions: string[]; caution: string }> = {
+  overview: {
+    title: "전체 대학시장의 크기와 장기 변화를 먼저 파악합니다",
+    description: "선택한 학생 수 기준으로 전체 규모, 증감, 계열·학교 분포를 요약해 시장의 큰 방향을 확인합니다.",
+    questions: ["전체 학생 수는 늘었을까?", "어떤 계열의 규모가 클까?", "대학과 전문대학의 흐름은 다를까?"],
+    caution: "시장 전체의 기술 통계이며 변화의 원인이나 교재 수요를 직접 설명하지는 않습니다.",
+  },
+  fields: {
+    title: "전공 분류별 규모와 최근·장기 학과 흐름을 비교합니다",
+    description: "계열 탐색에서는 대·중·소계열 시장을, 학과 동향에서는 요즘 뜨거나 줄어드는 학과군과 운영 학교 확산을 확인합니다.",
+    questions: ["컴퓨터 계열은 장기적으로 성장했을까?", "최근 커진 학과군은 무엇일까?", "운영 학교가 함께 늘어난 분야는?"],
+    caution: "학생 수 증가는 취업 전망이나 미래 유망성을 뜻하지 않습니다.",
+  },
+  schools: {
+    title: "지역별 시장 규모와 주요 학교의 변화를 확인합니다",
+    description: "지역의 시작·종료연도 규모를 비교하고, 선택 지역에서 학생 수가 큰 학교와 전년 대비 변화를 살펴봅니다.",
+    questions: ["어느 지역의 시장이 큰가?", "경기 지역의 주요 학교는?", "학생 규모가 늘어난 학교는?"],
+    caution: "학교 규모는 잠재 독자 수를 가늠하는 참고값이며 실제 교재 채택량과 같지 않습니다.",
+  },
+  details: {
+    title: "조건에 맞는 학교와 학과를 구체적으로 찾습니다",
+    description: "종료연도의 학교·학과를 지역, 설립, 전공 분류와 학과명으로 찾고 학생 규모 및 전년 대비 변화를 확인합니다.",
+    questions: ["경기 지역의 간호학과는 어디에 있을까?", "컴퓨터 관련 학과의 학생 규모는?", "특정 학교에는 어떤 학과가 있을까?"],
+    caution: "비교값 없음은 반드시 신설·폐과를 의미하지 않으며, 이 목록은 자동 영업 우선순위가 아닙니다.",
+  },
+};
+const guidePaths: { view: View; fieldSection?: FieldSection; question: string; answer: string; icon: typeof LayoutDashboard }[] = [
+  { view: "overview", question: "전체 시장이 어떻게 변했나요?", answer: "대학시장 요약", icon: LayoutDashboard },
+  { view: "fields", fieldSection: "explore", question: "특정 계열의 규모와 흐름은?", answer: "전공 시장 · 계열 탐색", icon: Layers3 },
+  { view: "fields", fieldSection: "trends", question: "요즘 뜨거나 줄어드는 학과는?", answer: "전공 시장 · 학과 동향", icon: ArrowUpRight },
+  { view: "schools", question: "어느 지역·학교의 규모가 큰가요?", answer: "지역·학교", icon: Building2 },
+  { view: "details", question: "출판 대상 학교와 학과를 찾고 싶어요", answer: "학교·학과 찾기", icon: Database },
+];
 const compactNumber = new Intl.NumberFormat("ko-KR", {
   notation: "compact",
   maximumFractionDigits: 1,
@@ -189,6 +225,91 @@ function HelpTip({ label, children }: { label: string; children: string }) {
       </summary>
       <p>{children}</p>
     </details>
+  );
+}
+
+function ScreenGuide({ view, onOpen }: { view: View; onOpen: () => void }) {
+  const guide = screenGuides[view];
+  return (
+    <details className={styles.screenGuide}>
+      <summary>
+        <span><CircleHelp size={17} /><strong>이 화면에서 알 수 있는 것</strong></span>
+        <span>{guide.title}<ChevronDown size={16} /></span>
+      </summary>
+      <div className={styles.screenGuideBody}>
+        <div>
+          <p>{guide.description}</p>
+          <div className={styles.guideQuestionChips}>{guide.questions.map((question) => <span key={question}>{question}</span>)}</div>
+        </div>
+        <aside><strong>해석 주의</strong><p>{guide.caution}</p></aside>
+        <button type="button" onClick={onOpen}>전체 사용 가이드 보기</button>
+      </div>
+    </details>
+  );
+}
+
+function UsageGuide({ onClose, onNavigate }: { onClose: () => void; onNavigate: (view: View, fieldSection?: FieldSection) => void }) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className={styles.guideOverlay} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <section className={styles.guideDrawer} role="dialog" aria-modal="true" aria-labelledby="usage-guide-title">
+        <header>
+          <div><span>대시보드 사용 가이드</span><h2 id="usage-guide-title">무엇을 알고 싶으세요?</h2><p>질문을 선택하면 알맞은 분석 화면으로 이동합니다.</p></div>
+          <button type="button" onClick={onClose} aria-label="사용 가이드 닫기"><X size={20} /></button>
+        </header>
+        <div className={styles.guideSteps}>
+          <strong>처음이라면 이렇게 보세요</strong>
+          <ol>
+            <li><b>1</b><span><strong>학생 수 기준 선택</strong><small>재학생 또는 재적학생 중 분석 기준을 정합니다.</small></span></li>
+            <li><b>2</b><span><strong>기간과 조건 설정</strong><small>기간·대학구분·지역 등 필요한 범위만 좁힙니다.</small></span></li>
+            <li><b>3</b><span><strong>결과와 주의사항 확인</strong><small>증감 방향과 규모를 함께 보고 인과관계로 단정하지 않습니다.</small></span></li>
+          </ol>
+        </div>
+        <div className={styles.guidePathList}>
+          {guidePaths.map((path) => {
+            const Icon = path.icon;
+            return (
+              <button type="button" key={`${path.view}-${path.fieldSection ?? "main"}`} onClick={() => onNavigate(path.view, path.fieldSection)}>
+                <Icon size={19} />
+                <span><strong>{path.question}</strong><small>{path.answer}에서 확인</small></span>
+                <ChevronRight size={17} />
+              </button>
+            );
+          })}
+        </div>
+        <div className={styles.guideTerms}>
+          <strong>자주 쓰는 기준</strong>
+          <dl>
+            <div><dt>재학생</dt><dd>현재 재학 중인 학생</dd></div>
+            <div><dt>재적학생</dt><dd>재학생 + 휴학생 + 학위취득유예학생</dd></div>
+            <div><dt>전년 대비</dt><dd>선택한 종료연도와 바로 이전 연도의 차이</dd></div>
+            <div><dt>대·중·소계열</dt><dd>교육부 표준분류의 큰 범주부터 세부 범주</dd></div>
+          </dl>
+        </div>
+        <footer><p>학생 규모는 시장 탐색을 위한 참고 지표이며 취업 전망·선호도·교재 판매량을 직접 뜻하지 않습니다.</p><button type="button" onClick={onClose}>가이드 닫고 시작하기</button></footer>
+      </section>
+    </div>
+  );
+}
+
+function QuickStart({ onNavigate }: { onNavigate: (view: View, fieldSection?: FieldSection) => void }) {
+  return (
+    <section className={styles.quickStart} aria-labelledby="quick-start-title">
+      <div><span className={styles.eyebrow}>빠른 시작</span><h2 id="quick-start-title">무엇을 알고 싶으세요?</h2><p>질문을 선택하면 알맞은 분석 화면으로 이동합니다.</p></div>
+      <div className={styles.quickStartGrid}>
+        {guidePaths.slice(1).map((path) => {
+          const Icon = path.icon;
+          return <button type="button" key={`${path.view}-${path.fieldSection ?? "main"}`} onClick={() => onNavigate(path.view, path.fieldSection)}><Icon size={18} /><span><strong>{path.question}</strong><small>{path.answer}</small></span><ChevronRight size={16} /></button>;
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -707,8 +828,8 @@ export function LegacyOverview({ data }: { data: DashboardResponse }) {
   );
 }
 
-function Overview({ baseQuery, metric }: { baseQuery: string; metric: MarketMetric }) {
-  return <MarketAnalysis baseQuery={baseQuery} metric={metric} view="summary" />;
+function Overview({ baseQuery, metric, onNavigate }: { baseQuery: string; metric: MarketMetric; onNavigate: (view: View, fieldSection?: FieldSection) => void }) {
+  return <div className={styles.viewStack}><QuickStart onNavigate={onNavigate} /><MarketAnalysis baseQuery={baseQuery} metric={metric} view="summary" /></div>;
 }
 
 function Fields({
@@ -718,6 +839,8 @@ function Fields({
   onFieldChange,
   onFieldMiddleChange,
   onFieldSmallChange,
+  section,
+  onSectionChange,
 }: {
   baseQuery: string;
   metric: MarketMetric;
@@ -725,19 +848,20 @@ function Fields({
   onFieldChange: (value: string) => void;
   onFieldMiddleChange: (value: string) => void;
   onFieldSmallChange: (value: string) => void;
+  section: FieldSection;
+  onSectionChange: (section: FieldSection) => void;
 }) {
-  const [section, setSection] = useState<"explore" | "trends">("explore");
   const selection = [filters.field, filters.fieldMiddle, filters.fieldSmall]
     .filter(Boolean)
     .join(" → ") || "전체 계열";
   return (
     <div className={styles.fieldViewShell}>
       <div className={styles.fieldViewTabs} role="tablist" aria-label="전공 시장 분석 화면">
-        <button type="button" role="tab" aria-selected={section === "explore"} onClick={() => setSection("explore")}>
+        <button type="button" role="tab" aria-selected={section === "explore"} onClick={() => onSectionChange("explore")}>
           <Layers3 size={17} />
           <span><strong>계열 탐색</strong><small>대·중·소계열 규모와 변화</small></span>
         </button>
-        <button type="button" role="tab" aria-selected={section === "trends"} onClick={() => setSection("trends")}>
+        <button type="button" role="tab" aria-selected={section === "trends"} onClick={() => onSectionChange("trends")}>
           <ArrowUpRight size={17} />
           <span><strong>학과 동향</strong><small>요즘 뜨고 줄어드는 학과</small></span>
         </button>
@@ -988,6 +1112,19 @@ export function EnrollmentDashboard() {
   const [mobileNav, setMobileNav] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [analysisMetric, setAnalysisMetric] = useState<MarketMetric>("enrolled");
+  const [fieldSection, setFieldSection] = useState<FieldSection>("explore");
+  const [guideOpen, setGuideOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.localStorage.getItem(guideStorageKey)) return;
+    const timer = window.setTimeout(() => setGuideOpen(true), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const closeGuide = useCallback(() => {
+    window.localStorage.setItem(guideStorageKey, "seen");
+    setGuideOpen(false);
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -1201,6 +1338,15 @@ export function EnrollmentDashboard() {
     ([key]) => !basicFilterKeys.has(key),
   ).length;
   const activeNav = navigation.find((item) => item.id === view)!;
+  const navigateTo = (nextView: View, nextFieldSection?: FieldSection) => {
+    setView(nextView);
+    if (nextFieldSection) setFieldSection(nextFieldSection);
+    setGuideOpen(false);
+    window.localStorage.setItem(guideStorageKey, "seen");
+    setMobileNav(false);
+    setFiltersOpen(false);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
 
   return (
     <div className={styles.appShell}>
@@ -1251,6 +1397,11 @@ export function EnrollmentDashboard() {
               </button>
             );
           })}
+          <span className={styles.navLabel}>도움말</span>
+          <button type="button" className={styles.guideNavButton} onClick={() => { setGuideOpen(true); setMobileNav(false); }}>
+            <CircleHelp size={19} />
+            <span><strong>사용 가이드</strong><small>질문별 메뉴와 해석법</small></span>
+          </button>
         </nav>
         <div className={styles.sidebarFoot}>
           <div className={styles.dataHealth}>
@@ -1334,6 +1485,7 @@ export function EnrollmentDashboard() {
               </div>
             )}
           </section>
+          <ScreenGuide view={view} onOpen={() => setGuideOpen(true)} />
           <section
             className={`${styles.filters} ${
               filtersOpen ? styles.filtersExpanded : ""
@@ -1514,7 +1666,7 @@ export function EnrollmentDashboard() {
             <EmptyState onReset={resetFilters} />
           ) : (
             <div className={loading ? styles.contentLoading : ""}>
-              {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} />}
+              {view === "overview" && <Overview baseQuery={baseQuery} metric={analysisMetric} onNavigate={navigateTo} />}
               {view === "fields" && (
                 <Fields
                   baseQuery={baseQuery}
@@ -1523,6 +1675,8 @@ export function EnrollmentDashboard() {
                   onFieldChange={setField}
                   onFieldMiddleChange={setFieldMiddle}
                   onFieldSmallChange={(value) => setFilter("fieldSmall", value)}
+                  section={fieldSection}
+                  onSectionChange={setFieldSection}
                 />
               )}
               {view === "schools" && <Schools data={data} baseQuery={baseQuery} metric={analysisMetric} />}
@@ -1549,6 +1703,7 @@ export function EnrollmentDashboard() {
           </footer>
         </div>
       </main>
+      {guideOpen && <UsageGuide onClose={closeGuide} onNavigate={navigateTo} />}
     </div>
   );
 }
