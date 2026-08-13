@@ -10,6 +10,93 @@
   opacity: 0.55;
 }
 
+.trendIntro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  border: 1px solid #e2e3ec;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(24, 27, 45, 0.035);
+}
+
+.trendIntro > div:first-child {
+  min-width: 0;
+}
+
+.trendIntro > div:first-child > span {
+  color: #6668ca;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.trendIntro h2 {
+  margin-top: 5px;
+  color: #292c38;
+  font-size: 20px;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+}
+
+.trendIntro p {
+  margin-top: 7px;
+  color: #747886;
+  font-size: 12px;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.periodSwitch {
+  display: grid;
+  width: min(360px, 42%);
+  flex: 0 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #f1f2f6;
+}
+
+.periodSwitch button {
+  min-width: 0;
+  min-height: 48px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 9px;
+  color: #727684;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.periodSwitch strong,
+.periodSwitch small {
+  display: block;
+}
+
+.periodSwitch strong {
+  font-size: 12px;
+}
+
+.periodSwitch small {
+  margin-top: 2px;
+  color: #9699a5;
+  font-size: 10px;
+}
+
+.periodSwitch button[aria-pressed="true"] {
+  color: #4b4bbb;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(33, 36, 58, 0.09);
+}
+
+.periodSwitch button[aria-pressed="true"] small {
+  color: #6d6dc4;
+}
+
 .methodNotice {
   display: flex;
   align-items: flex-start;
@@ -1066,6 +1153,8 @@
 }
 
 @media (max-width: 800px) {
+  .trendIntro { align-items: stretch; flex-direction: column; }
+  .periodSwitch { width: 100%; }
   .criteriaGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .criteriaHelp { grid-column: span 2; }
   .coverageStrip { grid-template-columns: repeat(2, 1fr); }
@@ -1076,6 +1165,10 @@
 
 @media (max-width: 620px) {
   .trendShell { gap: 12px; }
+  .trendIntro { gap: 14px; padding: 16px 14px; }
+  .trendIntro h2 { font-size: 17px; }
+  .trendIntro p { font-size: 11px; }
+  .periodSwitch button { min-height: 45px; padding-inline: 6px; }
   .methodNotice { font-size: 10px; }
   .tabBar button { min-height: 46px; flex-direction: column; gap: 3px; font-size: 12px; }
   .analysisFilters summary { align-items: flex-start; flex-direction: column; justify-content: center; gap: 3px; padding: 10px 13px; }
