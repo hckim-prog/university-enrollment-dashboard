@@ -133,6 +133,20 @@
   color: #999dba;
 }
 
+.sidebar nav .navLabel:not(:first-child) {
+  margin-top: 18px;
+}
+
+.sidebar nav .guideNavButton {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #d6d8e4;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.sidebar nav .guideNavButton svg {
+  color: #8edbc8;
+}
+
 .sidebarFoot {
   margin-top: auto;
 }
@@ -855,6 +869,426 @@
 .viewStack {
   display: grid;
   gap: 16px;
+}
+
+.screenGuide {
+  margin-bottom: 16px;
+  border: 1px solid #dddfee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(24, 27, 45, 0.025);
+}
+
+.screenGuide summary {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 16px;
+  color: #666a78;
+  cursor: pointer;
+  list-style: none;
+}
+
+.screenGuide summary::-webkit-details-marker {
+  display: none;
+}
+
+.screenGuide summary > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.screenGuide summary > span:first-child {
+  flex: 0 0 auto;
+  color: #5558bb;
+  font-size: 12px;
+}
+
+.screenGuide summary > span:last-child {
+  justify-content: flex-end;
+  color: #737786;
+  font-size: 12px;
+  text-align: right;
+  word-break: keep-all;
+}
+
+.screenGuide summary svg {
+  flex: 0 0 auto;
+}
+
+.screenGuide summary > span:last-child svg {
+  color: #999caa;
+  transition: transform 150ms ease;
+}
+
+.screenGuide[open] summary > span:last-child svg {
+  transform: rotate(180deg);
+}
+
+.screenGuideBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.42fr) auto;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 16px 16px;
+  border-top: 1px solid #ececf2;
+}
+
+.screenGuideBody > div > p {
+  color: #5f6371;
+  font-size: 12px;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.guideQuestionChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.guideQuestionChips span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #5c60b0;
+  background: #f0f0ff;
+  font-size: 10px;
+  word-break: keep-all;
+}
+
+.screenGuideBody aside {
+  padding: 10px 11px;
+  border-radius: 10px;
+  color: #7b6756;
+  background: #fff8ee;
+}
+
+.screenGuideBody aside strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #9a6337;
+  font-size: 10px;
+}
+
+.screenGuideBody aside p {
+  font-size: 10px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.screenGuideBody > button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d9daea;
+  border-radius: 9px;
+  color: #5558b5;
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.quickStart {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.36fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 20px 22px;
+  border: 1px solid #e2e3eb;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(24, 27, 45, 0.035);
+}
+
+.quickStart h2 {
+  margin-top: 5px;
+  color: #2c2f3b;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.quickStart > div:first-child p {
+  margin-top: 6px;
+  color: #858996;
+  font-size: 11px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.quickStartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quickStartGrid button {
+  display: grid;
+  min-width: 0;
+  min-height: 58px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: 1px solid #e4e5ec;
+  border-radius: 11px;
+  color: #606473;
+  background: #fafbfc;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quickStartGrid button:hover {
+  border-color: #c9caec;
+  color: #4e50b1;
+  background: #f4f4ff;
+}
+
+.quickStartGrid button > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.quickStartGrid button strong {
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quickStartGrid button small {
+  color: #979aa7;
+  font-size: 10px;
+}
+
+.guideOverlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(18, 20, 35, 0.46);
+  backdrop-filter: blur(2px);
+}
+
+.guideDrawer {
+  width: min(590px, 100%);
+  height: 100%;
+  padding: 26px;
+  overflow-y: auto;
+  background: #f7f8fb;
+  box-shadow: -18px 0 45px rgba(16, 18, 32, 0.18);
+}
+
+.guideDrawer > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.guideDrawer > header span {
+  color: #5d60bd;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.guideDrawer > header h2 {
+  margin-top: 6px;
+  color: #252835;
+  font-size: 25px;
+  letter-spacing: -0.045em;
+}
+
+.guideDrawer > header p {
+  margin-top: 7px;
+  color: #777b89;
+  font-size: 12px;
+}
+
+.guideDrawer > header button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #e0e2e9;
+  border-radius: 10px;
+  color: #626675;
+  background: #fff;
+}
+
+.guideSteps,
+.guideTerms {
+  margin-top: 22px;
+  padding: 17px;
+  border: 1px solid #e3e4ec;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.guideSteps > strong,
+.guideTerms > strong {
+  color: #393d49;
+  font-size: 12px;
+}
+
+.guideSteps ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+  list-style: none;
+}
+
+.guideSteps li {
+  display: flex;
+  min-width: 0;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f7f7fc;
+}
+
+.guideSteps li > b {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 7px;
+  color: #fff;
+  background: #5b5bd6;
+  font-size: 10px;
+}
+
+.guideSteps li span,
+.guideSteps li strong,
+.guideSteps li small {
+  display: block;
+}
+
+.guideSteps li strong {
+  color: #4c505d;
+  font-size: 10px;
+}
+
+.guideSteps li small {
+  margin-top: 3px;
+  color: #8d909e;
+  font-size: 9px;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.guidePathList {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.guidePathList button {
+  display: grid;
+  min-height: 63px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border: 1px solid #e1e3ea;
+  border-radius: 12px;
+  color: #5b5ec3;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.guidePathList button:hover {
+  border-color: #bfc1eb;
+  background: #f5f5ff;
+}
+
+.guidePathList button > span,
+.guidePathList button strong,
+.guidePathList button small {
+  display: block;
+}
+
+.guidePathList button strong {
+  color: #393d49;
+  font-size: 12px;
+}
+
+.guidePathList button small {
+  margin-top: 4px;
+  color: #7a7ec5;
+  font-size: 10px;
+}
+
+.guideTerms dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.guideTerms dl > div {
+  padding: 10px;
+  border-radius: 9px;
+  background: #f7f8fa;
+}
+
+.guideTerms dt {
+  color: #4d515e;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.guideTerms dd {
+  margin-top: 3px;
+  color: #888c99;
+  font-size: 9px;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.guideDrawer > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 14px 15px;
+  border-radius: 12px;
+  color: #806b59;
+  background: #fff7ec;
+}
+
+.guideDrawer > footer p {
+  max-width: 330px;
+  font-size: 10px;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.guideDrawer > footer button {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: #5555c9;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
 }
 
 .fieldViewShell {
@@ -1711,6 +2145,9 @@
 .helpTip p { font-size: 12px; }
 
 @media (max-width: 1100px) {
+  .screenGuideBody { grid-template-columns: 1fr minmax(220px, .5fr); }
+  .screenGuideBody > button { grid-column: 1 / -1; width: max-content; }
+  .quickStart { grid-template-columns: 1fr; }
   .metricPriority { align-items: stretch; flex-direction: column; gap: 10px; }
   .metricPriorityOptions { width: 100%; min-width: 0; }
   .basicFilterGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1718,6 +2155,22 @@
 }
 
 @media (max-width: 620px) {
+  .screenGuide summary { align-items: flex-start; flex-direction: column; gap: 4px; padding: 11px 13px; }
+  .screenGuide summary > span:last-child { justify-content: space-between; width: 100%; text-align: left; font-size: 11px; }
+  .screenGuideBody { grid-template-columns: 1fr; padding: 13px; }
+  .screenGuideBody > button { grid-column: auto; width: 100%; }
+  .guideQuestionChips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; }
+  .guideQuestionChips span { flex: 0 0 auto; }
+  .quickStart { gap: 13px; padding: 16px 14px; }
+  .quickStart h2 { font-size: 16px; }
+  .quickStartGrid { grid-template-columns: 1fr; }
+  .quickStartGrid button { min-height: 54px; }
+  .guideDrawer { padding: 20px 14px; }
+  .guideDrawer > header h2 { font-size: 22px; }
+  .guideSteps ol { grid-template-columns: 1fr; }
+  .guideTerms dl { grid-template-columns: 1fr; }
+  .guideDrawer > footer { align-items: stretch; flex-direction: column; }
+  .guideDrawer > footer p { max-width: none; }
   .fieldViewTabs button {
     min-height: 50px;
     padding: 7px 9px;
