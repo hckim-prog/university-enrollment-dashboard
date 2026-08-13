@@ -5,6 +5,8 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -38,6 +40,10 @@ type FieldPath = {
   field: string;
   fieldMiddle: string;
   fieldSmall: string;
+};
+type FieldTrendPoint = MarketAnalysisResponse["annual"][number] & {
+  changeFromPrevious: number | null;
+  changeFromStart: number;
 };
 
 const number = new Intl.NumberFormat("ko-KR");
@@ -284,6 +290,106 @@ function FieldMoverList({
   );
 }
 
+function FieldTrendChart({
+  data,
+  selection,
+}: {
+  data: MarketAnalysisResponse;
+  selection: string;
+}) {
+  const firstPoint = data.annual[0];
+  const lastPoint = data.annual.at(-1);
+  if (!firstPoint || !lastPoint) return null;
+
+  const trendRows: FieldTrendPoint[] = data.annual.map((row, index) => ({
+    ...row,
+    changeFromPrevious: index === 0 ? null : row.value - data.annual[index - 1].value,
+    changeFromStart: row.value - firstPoint.value,
+  }));
+  const values = trendRows.map((row) => row.value);
+  const minimum = Math.min(...values);
+  const maximum = Math.max(...values);
+  const padding = Math.max(
+    1,
+    Math.round(Math.max(maximum * 0.02, (maximum - minimum) * 0.15)),
+  );
+  const domain: [number, number] = [
+    Math.max(0, minimum - padding),
+    maximum + padding,
+  ];
+  const totalChange = lastPoint.value - firstPoint.value;
+  const totalRate = firstPoint.value === 0 ? null : totalChange / firstPoint.value;
+
+  return (
+    <section
+      className={styles.fieldTrend}
+      aria-label={`${selection} ${data.meta.startYear}년부터 ${data.meta.endYear}년까지 ${data.meta.metricLabel} 변화`}
+    >
+      <header className={styles.fieldTrendHeader}>
+        <div>
+          <span>선택 계열 추세</span>
+          <h4>{selection} {data.meta.metricLabel} 변화</h4>
+          <p>{data.meta.startYear}–{data.meta.endYear}년 · 단위: 명 · 세로축은 변화 확인을 위해 선택값에 맞춰 조정됩니다.</p>
+        </div>
+        <div className={styles.fieldTrendSummary}>
+          <span>{number.format(firstPoint.value)}명 → {number.format(lastPoint.value)}명</span>
+          <strong className={totalChange >= 0 ? styles.rateUp : styles.rateDown}>
+            {signedNumber(totalChange)} · {formatRate(totalRate)}
+          </strong>
+        </div>
+      </header>
+      <div className={styles.fieldTrendChart}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={trendRows} margin={{ top: 10, right: 14, bottom: 2, left: 4 }}>
+            <CartesianGrid stroke="#eceef3" vertical={false} />
+            <XAxis
+              dataKey="year"
+              ticks={trendRows.map((row) => row.year)}
+              tickFormatter={(value) => `${String(value).slice(2)}년`}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#838794", fontSize: 11 }}
+            />
+            <YAxis
+              domain={domain}
+              tickFormatter={(value) => compact.format(Number(value))}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#838794", fontSize: 11 }}
+              width={52}
+              allowDecimals={false}
+            />
+            <Tooltip
+              cursor={{ stroke: "#b8bad0", strokeDasharray: "3 3" }}
+              content={({ active, payload }) => {
+                const row = payload?.[0]?.payload as FieldTrendPoint | undefined;
+                if (!active || !row) return null;
+                return (
+                  <div className={styles.chartTooltip}>
+                    <strong>{row.year}년 {selection}</strong>
+                    <span>{data.meta.metricLabel} {number.format(row.value)}명</span>
+                    <span>전년 대비 {row.changeFromPrevious === null ? "기준연도" : signedNumber(row.changeFromPrevious)}</span>
+                    <span>{data.meta.startYear}년 대비 {signedNumber(row.changeFromStart)}</span>
+                  </div>
+                );
+              }}
+            />
+            <Line
+              type="linear"
+              dataKey="value"
+              name={data.meta.metricLabel}
+              stroke={palette.purple}
+              strokeWidth={3}
+              dot={{ r: 4, fill: "#fff", stroke: palette.purple, strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: palette.purple, stroke: "#fff", strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </section>
+  );
+}
+
 function FieldsView({
   data,
   selection,
@@ -392,6 +498,7 @@ function FieldsView({
           {path.fieldMiddle && <><ChevronRight size={14} /><button type="button" aria-current={!path.fieldSmall ? "page" : undefined} onClick={() => { onFieldSmallChange(""); setMode("drill"); setPage(1); }}>{path.fieldMiddle}</button></>}
           {path.fieldSmall && <><ChevronRight size={14} /><span aria-current="page">{path.fieldSmall}</span></>}
         </nav>
+        {mode === "drill" && <FieldTrendChart data={data} selection={selection} />}
         {mode === "compare" && (
           <div className={styles.fieldLevelTabs} role="tablist" aria-label="전체 계열 분류 단계 비교">
             {levels.map((item) => (
