@@ -62,6 +62,16 @@
 .fieldBreadcrumb button { border-radius: 6px; cursor: pointer; }
 .fieldBreadcrumb button:hover { color: #4f4fb7; background: #eeeeff; }
 .fieldBreadcrumb [aria-current="page"] { color: #4f4fb7; background: #eeeeff; }
+.fieldTrend { margin-bottom: 16px; padding: 17px 18px 12px; border: 1px solid #e4e5ef; border-radius: 14px; background: #fcfcff; }
+.fieldTrendHeader { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 8px; }
+.fieldTrendHeader > div:first-child { min-width: 0; }
+.fieldTrendHeader > div:first-child > span { color: #6565c9; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+.fieldTrendHeader h4 { margin: 5px 0 4px; color: #292c3a; font-size: 15px; letter-spacing: -.02em; }
+.fieldTrendHeader p { margin: 0; color: #8a8e9a; font-size: 11px; line-height: 1.5; word-break: keep-all; }
+.fieldTrendSummary { display: grid; flex: 0 0 auto; justify-items: end; gap: 4px; padding-top: 2px; text-align: right; }
+.fieldTrendSummary span { color: #555968; font-size: 12px; font-weight: 750; white-space: nowrap; }
+.fieldTrendSummary strong { font-size: 11px; }
+.fieldTrendChart { height: 245px; }
 .fieldLevelTabs { display: flex; gap: 7px; margin-bottom: 14px; }
 .fieldLevelTabs button { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; border: 1px solid #dedfe8; border-radius: 9px; padding: 0 13px; color: #656978; background: #fff; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
 .fieldLevelTabs button[aria-selected="true"] { border-color: #6b6bd4; color: #4b4bad; background: #eeeeff; }
@@ -142,6 +152,10 @@
   .fieldLevelTabs button { justify-content: center; padding-inline: 7px; }
   .fieldExplorerMode { display: grid; grid-template-columns: 1fr 1fr; }
   .fieldExplorerMode button { padding-inline: 8px; }
+  .fieldTrend { padding: 15px 10px 9px; }
+  .fieldTrendHeader { flex-direction: column; gap: 9px; padding-inline: 4px; }
+  .fieldTrendSummary { justify-items: start; text-align: left; }
+  .fieldTrendChart { height: 225px; }
   .fieldMoverList > div { grid-template-columns: 22px minmax(90px, 1fr) auto; }
   .fieldMoverList small { grid-column: 2 / -1; text-align: left; }
 }
