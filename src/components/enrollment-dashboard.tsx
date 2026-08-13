@@ -46,6 +46,7 @@ import type { AnnualPoint, EnrollmentRecord, RankedPoint } from "@/lib/types";
 import type { DashboardMetric } from "@/lib/analytics";
 import type { MarketMetric } from "@/lib/market-analysis";
 import { isFlatChange } from "@/lib/analysis-window";
+import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
 import styles from "./enrollment-dashboard.module.css";
 
@@ -725,24 +726,41 @@ function Fields({
   onFieldMiddleChange: (value: string) => void;
   onFieldSmallChange: (value: string) => void;
 }) {
+  const [section, setSection] = useState<"explore" | "trends">("explore");
   const selection = [filters.field, filters.fieldMiddle, filters.fieldSmall]
     .filter(Boolean)
     .join(" → ") || "전체 계열";
   return (
-    <MarketAnalysis
-      baseQuery={baseQuery}
-      metric={metric}
-      view="fields"
-      fieldSelection={selection}
-      fieldPath={{
-        field: filters.field,
-        fieldMiddle: filters.fieldMiddle,
-        fieldSmall: filters.fieldSmall,
-      }}
-      onFieldChange={onFieldChange}
-      onFieldMiddleChange={onFieldMiddleChange}
-      onFieldSmallChange={onFieldSmallChange}
-    />
+    <div className={styles.fieldViewShell}>
+      <div className={styles.fieldViewTabs} role="tablist" aria-label="전공 시장 분석 화면">
+        <button type="button" role="tab" aria-selected={section === "explore"} onClick={() => setSection("explore")}>
+          <Layers3 size={17} />
+          <span><strong>계열 탐색</strong><small>대·중·소계열 규모와 변화</small></span>
+        </button>
+        <button type="button" role="tab" aria-selected={section === "trends"} onClick={() => setSection("trends")}>
+          <ArrowUpRight size={17} />
+          <span><strong>학과 동향</strong><small>요즘 뜨고 줄어드는 학과</small></span>
+        </button>
+      </div>
+      {section === "explore" ? (
+        <MarketAnalysis
+          baseQuery={baseQuery}
+          metric={metric}
+          view="fields"
+          fieldSelection={selection}
+          fieldPath={{
+            field: filters.field,
+            fieldMiddle: filters.fieldMiddle,
+            fieldSmall: filters.fieldSmall,
+          }}
+          onFieldChange={onFieldChange}
+          onFieldMiddleChange={onFieldMiddleChange}
+          onFieldSmallChange={onFieldSmallChange}
+        />
+      ) : (
+        <DepartmentTrends baseQuery={baseQuery} metric={metric} />
+      )}
+    </div>
   );
 }
 

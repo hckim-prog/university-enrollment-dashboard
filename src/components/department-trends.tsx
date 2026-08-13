@@ -265,7 +265,7 @@ const lifecycleColors: Record<LifecycleEventType, string> = {
 
 export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; metric: MarketMetric }) {
   const [tab, setTab] = useState<TrendTab>("groups");
-  const [period, setPeriod] = useState("sinceStart");
+  const [period, setPeriod] = useState("recent");
   const [minimumPrevious, setMinimumPrevious] = useState(30);
   const [minimumChange, setMinimumChange] = useState(20);
   const [minimumRate, setMinimumRate] = useState(10);
@@ -349,6 +349,7 @@ export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; met
   );
   const increaseGroups = comparableGroups.filter((group) => (comparisonChange(group) ?? 0) > 0).toSorted((a, b) => (comparisonChange(b) ?? 0) - (comparisonChange(a) ?? 0)).slice(0, 5);
   const decreaseGroups = comparableGroups.filter((group) => (comparisonChange(group) ?? 0) < 0).toSorted((a, b) => (comparisonChange(a) ?? 0) - (comparisonChange(b) ?? 0)).slice(0, 5);
+  const rankingComparison = period === "sinceStart" ? "long" : "recent";
   const lineGroups = [...increaseGroups.slice(0, 3), ...decreaseGroups.slice(0, 3)];
   const lineData = data.meta.years.map((year) => ({
     year,
@@ -367,6 +368,21 @@ export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; met
 
   return (
     <section className={`${styles.trendShell} ${loading ? styles.loading : ""}`}>
+      <div className={styles.trendIntro}>
+        <div>
+          <span>학과 동향</span>
+          <h2>요즘 뜨고 있는 학과, 줄어드는 학과</h2>
+          <p>최근 3년 흐름과 최근 1년 변화, 운영 학교 확산을 함께 확인합니다. 증가가 취업 전망이나 미래 유망성을 뜻하지는 않습니다.</p>
+        </div>
+        <div className={styles.periodSwitch} role="group" aria-label="학과 동향 비교 기간">
+          <button type="button" aria-pressed={period === "recent"} onClick={() => setAnalysisFilter(setPeriod, "recent")}>
+            <strong>최근 동향</strong><small>{data.meta.previousYear ?? "전년"}→{data.meta.endYear}년</small>
+          </button>
+          <button type="button" aria-pressed={period === "sinceStart"} onClick={() => setAnalysisFilter(setPeriod, "sinceStart")}>
+            <strong>장기 동향</strong><small>{data.meta.startYear}→{data.meta.endYear}년</small>
+          </button>
+        </div>
+      </div>
       <div className={styles.methodNotice}><AlertTriangle size={17} /><p><strong>해석 주의</strong> {data.meta.methodologyNote}</p></div>
       <div className={styles.tabBar} role="tablist" aria-label="학과 트렌드 분석 탭">
         {([
@@ -377,10 +393,9 @@ export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; met
       </div>
 
       <details className={styles.analysisFilters}>
-        <summary><span><SlidersHorizontal size={17} /><strong>분석 기준</strong></span><span>{data.meta.metricLabel} · {data.meta.startYear}~{data.meta.endYear} · 시작 규모 {number.format(minimumStartValue)}명<ChevronDown size={16} /></span></summary>
+        <summary><span><SlidersHorizontal size={17} /><strong>분석 기준</strong></span><span>{data.meta.metricLabel} · {period === "recent" ? `${data.meta.previousYear ?? "전년"}~${data.meta.endYear} · 전년 규모 ${number.format(minimumPrevious)}명 이상` : `${data.meta.startYear}~${data.meta.endYear} · 시작 규모 ${number.format(minimumStartValue)}명 이상`}<ChevronDown size={16} /></span></summary>
         <div className={styles.criteriaGrid}>
           <label><span>목록 학과군</span><select value={groupId} onChange={(event) => setAnalysisFilter(setGroupId, event.target.value)}><option value="">전체 학과군</option>{data.meta.groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
-          <label><span>비교 기간</span><select value={period} onChange={(event) => setAnalysisFilter(setPeriod, event.target.value)}><option value="recent">최근 1년</option><option value="sinceStart">장기 시작연도 대비</option></select></label>
           <label><span>최소 전년도 학생 수</span><input type="number" min="0" value={minimumPrevious} onChange={(event) => { setMinimumPrevious(Number(event.target.value)); setPage(1); }} /></label>
           <label><span>최소 증감 인원</span><input type="number" min="0" value={minimumChange} onChange={(event) => { setMinimumChange(Number(event.target.value)); setPage(1); }} /></label>
           <label><span>최소 증감률</span><div className={styles.inputUnit}><input type="number" min="0" step="1" value={minimumRate} onChange={(event) => { setMinimumRate(Number(event.target.value)); setPage(1); }} /><span>%</span></div></label>
@@ -395,8 +410,8 @@ export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; met
       ) : tab === "groups" ? (
         <div className={styles.stack}>
           <div className={styles.summaryGrid}>
-            <SummaryCard eyebrow={`${data.meta.startYear}년 대비 증가 1위`} group={increaseGroups[0] ?? null} kind="change" comparison="long" />
-            <SummaryCard eyebrow={`${data.meta.startYear}년 대비 감소 1위`} group={decreaseGroups[0] ?? null} kind="change" comparison="long" />
+            <SummaryCard eyebrow={period === "sinceStart" ? `${data.meta.startYear}년 대비 증가 1위` : "최근 1년 증가 1위"} group={increaseGroups[0] ?? null} kind="change" comparison={rankingComparison} />
+            <SummaryCard eyebrow={period === "sinceStart" ? `${data.meta.startYear}년 대비 감소 1위` : "최근 1년 감소 1위"} group={decreaseGroups[0] ?? null} kind="change" comparison={rankingComparison} />
             <SummaryCard eyebrow="운영 학교 확산 1위" group={data.summaries.topSchoolExpansion} kind="schools" />
           </div>
           <article className={styles.coverageStrip}>
@@ -409,7 +424,7 @@ export function DepartmentTrends({ baseQuery, metric }: { baseQuery: string; met
             <div className={styles.largeChart}><ResponsiveContainer width="100%" height="100%"><LineChart data={lineData} margin={{ left: 8, right: 16 }}><CartesianGrid stroke="#dfe2e9" vertical={false} /><XAxis dataKey="year" tickFormatter={(value) => `${value}년`} axisLine={{ stroke: "#aeb3bf" }} tickLine={false} /><YAxis tickFormatter={(value) => compact.format(value)} axisLine={{ stroke: "#aeb3bf" }} tickLine={false} width={62} /><Tooltip formatter={(value, name) => [`${number.format(Number(value))}명`, name]} labelFormatter={(label) => `${label}년`} />{lineGroups.map((group, index) => { const series = trendSeriesStyles[index]; return <Line key={group.id} type="monotone" dataKey={group.name} stroke={series.color} strokeDasharray={series.dash} strokeLinecap="round" strokeWidth={3} dot={{ r: 3.5, fill: "#fff", stroke: series.color, strokeWidth: 2 }} activeDot={{ r: 5, fill: series.color, stroke: "#fff", strokeWidth: 2 }} connectNulls={false} isAnimationActive={false} />; })}</LineChart></ResponsiveContainer></div>
             <div className={styles.directSeriesLabels}>{lineGroups.map((group, index) => { const series = trendSeriesStyles[index]; const change = period === "sinceStart" ? group.changeFromStart : group.change; return <button type="button" key={group.id} onClick={() => focus(group.id)}><svg aria-hidden="true" width="25" height="8" viewBox="0 0 25 8"><line x1="1" y1="4" x2="24" y2="4" stroke={series.color} strokeWidth="3" strokeDasharray={series.dash} strokeLinecap="round" /></svg><span className={change !== null && change < 0 ? styles.seriesDown : styles.seriesUp} aria-hidden="true">{change !== null && change < 0 ? "↓" : "↑"}</span>{group.name}</button>; })}</div>
           </article>
-          <div className={styles.twoColumns}><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 증가 학과군`} rows={increaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /><GroupRanking title={`${period === "sinceStart" ? "장기" : "최근 1년"} 감소 학과군`} rows={decreaseGroups} onFocus={focus} comparison={period === "sinceStart" ? "long" : "recent"} /></div>
+          <div className={styles.twoColumns}><GroupRanking title={period === "sinceStart" ? "장기 증가 학과군" : "요즘 뜨는 학과군"} rows={increaseGroups} onFocus={focus} comparison={rankingComparison} /><GroupRanking title={period === "sinceStart" ? "장기 감소 학과군" : "요즘 줄어드는 학과군"} rows={decreaseGroups} onFocus={focus} comparison={rankingComparison} /></div>
           <article className={styles.panel}>
             <div className={styles.panelHeading}><div><span>확산도 사분면</span><h3>학생 변화와 운영 학교 수 변화를 함께 보기</h3></div><small>오른쪽 = 학교 증가 · 위쪽 = 학생 증가</small></div>
             <div className={styles.quadrantHowTo}>
