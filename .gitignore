@@ -28,6 +28,7 @@
 *.pem
 
 # debug
+.codex-dev*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -41,6 +42,13 @@ yarn-error.log*
 # 과거 관리자 게시 스냅샷 보관용이며 앱에서는 읽지 않음
 /data/local-store/
 *.xlsx
+*.xls
+*.xlsm
+/origin_data/
+/curriculum_input/
+/backups/
+/output/data-refresh/
+__pycache__/
 
 # vercel
 .vercel

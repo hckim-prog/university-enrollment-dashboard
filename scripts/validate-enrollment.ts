@@ -82,7 +82,7 @@ async function main() {
   const categories = [
     ...new Set(records.map((record) => record.universityCategory)),
   ].sort((left, right) => left.localeCompare(right, "ko-KR"));
-  if (years.join(",") !== "2019,2020,2021,2022,2023,2024,2025") {
+  if (years[0] !== 2019 || years.at(-1)! < 2026 || years.some((year, index) => year !== 2019 + index)) {
     throw new Error(`연도 범위 오류: ${years.join(", ")}`);
   }
   if (categories.join(",") !== "대학,전문대학") {

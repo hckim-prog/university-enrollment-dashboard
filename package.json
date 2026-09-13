@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "prebuild": "tsx scripts/prepare-build.ts",
+    "prebuild": "tsx scripts/prepare-build.ts && tsx scripts/build-curriculum-catalog.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -12,6 +12,9 @@
     "test": "vitest run",
     "data:convert": "tsx scripts/convert-enrollment.ts",
     "data:validate": "tsx scripts/validate-enrollment.ts",
+    "curriculum:probe": "python scripts/probe-inputs.py",
+    "curriculum:convert": "python scripts/convert-curriculum.py",
+    "curriculum:validate": "python scripts/validate-curriculum.py",
     "data:refresh": "pnpm data:convert && pnpm data:validate && pnpm check",
     "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },

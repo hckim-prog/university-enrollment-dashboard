@@ -554,7 +554,7 @@ async function parseWorkbook(filePath: string): Promise<ParsedWorkbook> {
 async function main() {
   const { inputDir, outputDir } = parseArgs();
   const files = (await readdir(inputDir))
-    .filter((name) => name.toLocaleLowerCase().endsWith(".xlsx"))
+    .filter((name) => name.includes("재적 학생 현황") && name.toLocaleLowerCase().endsWith(".xlsx"))
     .sort((left, right) => left.localeCompare(right, "ko-KR"));
   if (files.length !== 4) {
     throw new Error(
@@ -667,7 +667,7 @@ async function main() {
         "학생정원(2023년 이후), 재학생, 휴학생, 학사학위취득유예학생, 재적학생",
       "2019-2022":
         "45열(A:AS). 학생정원 항목이 없으며 정원 관련 분석에서 제외한다.",
-      "2023-2025":
+      "2023+":
         "46열(A:AT). 학생정원 항목이 추가되어 정원 대비 재학생 비율을 계산할 수 있다.",
       departmentStatus:
         "새 원본에는 학과상태가 없으므로 임의 추정하지 않는다. 학과 신설·이탈은 연도별 관측 여부로만 구분한다.",
@@ -682,7 +682,7 @@ async function main() {
       "원본별 실제 열 수 45/46",
     ],
     comparabilityNotes: [
-      "2019~2022와 2023~2025 파일은 학과 행 구성 방식이 달라 원본 행 수 자체를 장기 시장 지표로 비교하지 않는다.",
+      "2019~2022와 2023년 이후 파일은 학과 행 구성 방식이 달라 원본 행 수 자체를 장기 시장 지표로 비교하지 않는다.",
       "학생 수 합계는 동일 산식으로 재계산하고 연도 간 연속성을 별도 확인한다.",
       "2025년부터 광역계열이 관측되므로 일부 계열 점유율 변화에는 분류 변경 효과가 포함될 수 있다.",
       "학생정원은 2023년 이후만 제공되며 재학생에는 정원외 학생이 포함되므로 정원 대비 재학생 비율은 충원율과 동일하지 않다.",

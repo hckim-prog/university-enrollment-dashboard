@@ -1,0 +1,2916 @@
+{
+  "version": "119f258d17111a623ef18a3715cea28b6a9e71882afce63bc7cd6b825f211ee6",
+  "enrollmentVersion": "ce284cc5f820d15345cf20280d78f30aa291c46472315397ed8b604586ec0636",
+  "studentYears": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "sources": [
+    {
+      "file": "교육과정_대학(20230414).xlsx",
+      "sha256": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+      "sheet": "교육과정_대학",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "조사차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학코드",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학과특성",
+        "학과상태",
+        "교과목명",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2023,
+          "category": "대학",
+          "round": "01",
+          "rows": 407373
+        }
+      ],
+      "emptyCourses": 411,
+      "emptyExamples": [
+        {
+          "row": 1630,
+          "school": "가천대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 3990,
+          "school": "가톨릭관동대학교",
+          "department": "교직과"
+        },
+        {
+          "row": 5308,
+          "school": "가톨릭대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 7999,
+          "school": "강남대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 8531,
+          "school": "강릉원주대학교",
+          "department": "생명화학공학과"
+        }
+      ],
+      "exactDuplicateRegistrations": 186,
+      "links": {
+        "연결": 361030,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 44160,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 2183
+      },
+      "departments": 9880,
+      "linkedDepartments": 8694,
+      "unlinkedDepartments": 1186,
+      "unlinkedExamples": [
+        {
+          "key": "2023|대학|0002748|본교|0208657|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "교양학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0002748|본교|0229116|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "초등특수교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0002748|본교|0229115|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "특수체육교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0218130|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "교양과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240270|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "CG디자인전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240830|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "K-퓨전아트전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240093|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "건축공학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240092|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "건축학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240086|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "경영학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240266|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "경찰행정학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240097|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "광고홍보학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240271|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "군사학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0218191|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240829|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "다문화사회복지전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240272|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "디지털헬스케어전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240273|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "바이오메디컬전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240095|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "사회복지학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240088|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "스포츠건강관리학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240089|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "스포츠레저학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|대학|0000072|본교|0240087|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "스포츠지도학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        }
+      ],
+      "samples": [
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "사이버보안",
+          "division": "전선",
+          "credits": "3",
+          "description": "컴퓨터, 인터넷, 분산시스템 등에서 발생할 수 있는 보안 위협이나 위협제어기술에 대해 배운다. 또한 이를 방지할 수 있는 암호화의 응용, 시스템보안, 원리, 구성 시 필요한 요소를 이해하여 안전한 시스템을 구현하기 위한 방법에 대해서 익힌다.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 543,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 489,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46658,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:543",
+          "descriptionHash": "3893a87e407d46ecb37a3958c14871024db003b856c252272c13379e24d12e79"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "로봇공학",
+          "division": "전필",
+          "credits": "3",
+          "description": "로봇을 구동시키기 위한 기본 이론 및 패턴 인식에 관한 핵심 기술들을 학습한다. 또한 LEGO NXT Brick 및 다양한 종류의 센서들을 이용하여 여러 도전 과제들을 스스로 해결하는 능력을 배양한다.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 544,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 489,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46658,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:544",
+          "descriptionHash": "f6b0c3e8d591458fe0b01f9ccbc6c0151738402eee2d7a2a7dbc454ec6e93076"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "문제해결기법",
+          "division": "전필",
+          "credits": "3",
+          "description": "프로그래밍에 필수가 되는 다양한 핵심 패턴들을 C언어를 이용하여 익히고 구현해본다. 이와 함께, 프로그래밍 언어의 설계 및 구현, 소프트웨어 개발 방법에 대해 학습을 함으로써 프로그램 분석과 설계능력을 배양한다.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 545,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 489,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46658,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:545",
+          "descriptionHash": "43a17358c82b75fe54b940de93d63c8be1452df95591fdc802319f5af7f74093"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0218130",
+          "department": "교양과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "교양과",
+          "division": "미기재",
+          "credits": null,
+          "description": "",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 3444,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000072|본교|0218130|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)",
+          "studentSource": null,
+          "id": "2dea6c42b9dc:3444",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0240270",
+          "department": "CG디자인전공",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "디지털 영상 스토리보드",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "디지털 콘텐츠의 기획, 제작에 있어서 컴퓨터그래픽(CG)은 점점 더 중요한 자리를 차지하고 있다. 본 트랙에서는 실무 중심의 역량 강화 교육을 바탕으로 디지털 감각 능력과 함께 디지털 콘텐츠 제작의 핵심이라고 할 수 있는 2D 소프트웨어 활용 능력을 향상시킴으로서, 디지털 콘텐츠의 기획, 제작에 있어 첨단 기술을 적극 활용할 수 있는 미래지향적 인재 양성을 목표로 한다.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 3445,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000072|본교|0240270|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)",
+          "studentSource": null,
+          "id": "2dea6c42b9dc:3445",
+          "descriptionHash": "a3ef590820d1724a83401e9d03d297969350ed1c371913ab6948586075cb976e"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0240270",
+          "department": "CG디자인전공",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "VFX&3D디지털합성",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "디지털 콘텐츠의 기획, 제작에 있어서 9D 컴퓨터그래픽(CG)은 점점 더 중요한 자리를 차지하고 있다. 본 트랙에서는 실무 중심의 역량 강화 교육을 바탕으로 디지털 콘텐츠 제작의 핵심이라고 할 수 있는 소프트웨어 활용 능력을 향상시킴으로서, 디지털 콘텐츠의 기획, 제작에 있어 첨단 기술을 적극 활용할 수 있는 미래지향적 인재 양성을 목표로 한다.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 3446,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000072|본교|0240270|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)",
+          "studentSource": null,
+          "id": "2dea6c42b9dc:3446",
+          "descriptionHash": "76237b277e87855fb082d691736391175aea463aefd2451236662d583a3cdd7a"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "옴니버스: 삶과 죽음",
+          "division": "전공기초(인문)",
+          "credits": "1",
+          "description": "생의 말기에 이른 이들에 대한 돌봄 체험과 성찰과정을 통해 삶과 죽음에 대한 이해를 심화시킴으로써 영적 돌봄의 역량을 함양하기 위한 프로그램",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 4754,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 322,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46979,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:4754",
+          "descriptionHash": "4bf2162847acc2709c9d02a693261ee85578fb91743a405b686bd182dd30c53f"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "옴니버스: 삶의 여정",
+          "division": "교양필수",
+          "credits": "2",
+          "description": "자신의 내면에 대한 통찰을 시작으로, 인간의 삶과 죽음, 질병과 돌봄, 가치와 신념, 종교 등에 대한 인문학적 숙고를 통해 미래의 전문직 간호사에게 요구되는 생명존중의 인성과 돌봄의 소양을 함양하기 위한 프로그램.",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 4755,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 322,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46979,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:4755",
+          "descriptionHash": "12e0a492b511076602b2f44aa4900f0b1513087a06c00a7590cf63cf63cc249b"
+        },
+        {
+          "year": 2023,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "옴니버스: 소명",
+          "division": "전공기초(인문)",
+          "credits": "2",
+          "description": "현직 간호 리더의 삶을 통해 전문직 간호사로서의 확고한 소명의식과 리더십을 배우며, 돌봄 전문가로서의 성장을 위해 요구되는 자신의 내적 영성을 강화하기 위한 프로그램",
+          "sourceFile": "교육과정_대학(20230414).xlsx",
+          "sourceSheet": "교육과정_대학",
+          "sourceRow": 4756,
+          "sourceVersion": "2dea6c42b9dca382cb6c3ec4630863f15f4e9348d4c815b446572efa644d19d2",
+          "departmentKey": "2023|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 322,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 46979,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "2dea6c42b9dc:4756",
+          "descriptionHash": "bb1e1d70fbd8ef9f26e1d3c38a663b9e004210b820fc3c4ad9ba9341437e8198"
+        }
+      ],
+      "notes": [
+        "자료기준일: 2023.4.14.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로써, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2023학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있으며, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료이며,  해당 정보가 없거나 미비한 경우는 2023년 하반기 조사(2023년 7월~9월)시 자료 입력 예정입니다."
+      ]
+    },
+    {
+      "file": "교육과정_대학(20240305).xlsx",
+      "sha256": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+      "sheet": "교육과정",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "조사차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학코드",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2024,
+          "category": "대학",
+          "round": "01",
+          "rows": 423227
+        }
+      ],
+      "emptyCourses": 421,
+      "emptyExamples": [
+        {
+          "row": 1705,
+          "school": "가천대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 3107,
+          "school": "가천대학교",
+          "department": "방사선학과"
+        },
+        {
+          "row": 3108,
+          "school": "가천대학교",
+          "department": "응급구조학과"
+        },
+        {
+          "row": 3109,
+          "school": "가천대학교",
+          "department": "치위생학과"
+        },
+        {
+          "row": 3385,
+          "school": "가톨릭관동대학교",
+          "department": "교직과"
+        }
+      ],
+      "exactDuplicateRegistrations": 192,
+      "links": {
+        "연결": 365851,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 53655,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3721
+      },
+      "departments": 10434,
+      "linkedDepartments": 8911,
+      "unlinkedDepartments": 1523,
+      "unlinkedExamples": [
+        {
+          "key": "2024|대학|0002748|본교|0208657|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "교양학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0002748|본교|0229116|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "초등특수교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0002748|본교|0229115|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "특수체육교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000063|본교|0243552|주간|일반과정",
+          "school": "가천대학교",
+          "department": "국제자유전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000063|본교|0244737|주간|일반과정",
+          "school": "가천대학교",
+          "department": "금융・빅데이터학부(금융수학전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000063|본교|0243559|주간|일반과정",
+          "school": "가천대학교",
+          "department": "금융・빅데이터학부(빅데이터경영전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000063|본교|0244435|주간|일반과정",
+          "school": "가천대학교",
+          "department": "반도체・전자공학부(차세대반도체설계전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000072|본교|0218130|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "교양과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000072|본교|0218191|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000072|본교|0239593|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "트리니티자유대학",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|대학|0000072|본교|0243200|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "해양경찰학전공",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|대학|0000215|본교|0234615|주간|일반과정",
+          "school": "가톨릭꽃동네대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0218227|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "가톨릭대학교학부대학",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0010250|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "교양과정",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0010378|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "교직과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0218840|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "글로벌인문경영융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0218839|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "글로컬문화스토리텔링융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0223058|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "금융공학융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000049|제3캠퍼스|0209866|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|대학|0000046|본교|0209864|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        }
+      ],
+      "samples": [
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "클라우드컴퓨팅시스템",
+          "division": "전선",
+          "credits": "3",
+          "description": "분산시스템의 구조, 프로세스, 동기화, 복제, 에러 복구 등의 개념을 통해 분산시스템의 기본개념을 익힌다. 또한 가상머신, 클라우드 컴퓨팅, 데이터 센터 등을 통해 최근에 사용되고 있는 실제 분산시스템의 구조를 배운다.",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 454,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 505,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31604,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:454",
+          "descriptionHash": "320bd07ee19c6de3140bd84eb32ba74cbd520d2f5f18b34ac6c49513f9cd8b06"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "컴퓨터그래픽스",
+          "division": "전선",
+          "credits": "3",
+          "description": "컴퓨터에서 3D 그래픽을 실제로 구현하기 위한 기본 이론 및 비트맵 이미지 처리 기술에 대해 학습한다. 또한, OpenGL을 이용한 실습을 통해 다양한 형태의 그래픽 프로그램 작성 기법을 공부한다.",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 455,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 505,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31604,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:455",
+          "descriptionHash": "5ac7c875739f919eb249fc75a3984662306df1952719e91ed2603e8f99e4767c"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0228422",
+          "department": "AI・소프트웨어학부(소프트웨어전공)",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "드론과 로보틱스",
+          "division": "전선",
+          "credits": "3",
+          "description": "본 과목에서는 미래성장동력 산업으로 주목 받는 드론과 로봇 산업에 대한 기본 개념과 관련 기술들을 익힌다. 드론 및 로봇의 지능 구현을 위해 설계, 관련 구현 API, SDK 이용한 구현을 해보며, 관련 제어 기법 및 알고리즘, 분산 로봇, 드론 공학 등에 대해 학습한다.",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 456,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000063|본교|0228422|주간|일반과정",
+          "enrolled": 505,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31604,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:456",
+          "descriptionHash": "6620128d68da1647b8d256899f18b9a6938537997bdfa6cd4c0804cf3c3765c4"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0218130",
+          "department": "교양과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "교양과",
+          "division": "미기재",
+          "credits": null,
+          "description": "",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3382,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000072|본교|0218130|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)",
+          "studentSource": null,
+          "id": "27c1ba1b47db:3382",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0218191",
+          "department": "기타모집단위",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "-",
+          "division": "미기재",
+          "credits": null,
+          "description": "",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3383,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000072|본교|0218191|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)",
+          "studentSource": null,
+          "id": "27c1ba1b47db:3383",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0239593",
+          "department": "트리니티자유대학",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "-",
+          "division": "-",
+          "credits": "0",
+          "description": "-",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3384,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000072|본교|0239593|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)",
+          "studentSource": null,
+          "id": "27c1ba1b47db:3384",
+          "descriptionHash": "3973e022e93220f9212c18d0d0c543ae7c309e46640da93a4a0314de999f5112"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "성인간호학 III",
+          "division": "전공필수",
+          "credits": "3",
+          "description": "",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 4737,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 349,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31964,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:4737",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "임상실습입문(ICN)",
+          "division": "전공필수",
+          "credits": "1",
+          "description": "",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 4738,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 349,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31964,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:4738",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2024,
+          "round": "01",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0010148",
+          "department": "간호학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "임상검사와 간호",
+          "division": "전공선택",
+          "credits": "2",
+          "description": "",
+          "sourceFile": "교육과정_대학(20240305).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 4739,
+          "sourceVersion": "27c1ba1b47db7c45fcf1910df1b138beafef4f34614aaee8fcf3289ab2a3aa85",
+          "departmentKey": "2024|대학|0000048|제2캠퍼스|0010148|주간|일반과정",
+          "enrolled": 349,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 31964,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "27c1ba1b47db:4739",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "notes": [
+        "자료기준일: 2024.03.05.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2024학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    },
+    {
+      "file": "교육과정_대학(20251020).xlsx",
+      "sha256": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+      "sheet": "Sheet0",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "차수",
+        "학교코드",
+        "학교명",
+        "학교구분",
+        "본분교명",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2025,
+          "category": "대학",
+          "round": "02",
+          "rows": 430201
+        }
+      ],
+      "emptyCourses": 426,
+      "emptyExamples": [
+        {
+          "row": 41,
+          "school": "LH토지주택대학교",
+          "department": "건설기술학"
+        },
+        {
+          "row": 3459,
+          "school": "가천대학교",
+          "department": "AI인문대학"
+        },
+        {
+          "row": 3500,
+          "school": "가천대학교",
+          "department": "국제학부(국제자유전공)"
+        },
+        {
+          "row": 3501,
+          "school": "가천대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 3502,
+          "school": "가천대학교",
+          "department": "반도체대학"
+        }
+      ],
+      "exactDuplicateRegistrations": 190,
+      "links": {
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 59721,
+        "연결": 365001,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 5479
+      },
+      "departments": 10855,
+      "linkedDepartments": 9074,
+      "unlinkedDepartments": 1781,
+      "unlinkedExamples": [
+        {
+          "key": "2025|대학|0002698|본교|0224991|주간|일반과정",
+          "school": "KDB금융대학교",
+          "department": "금융학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0002699|본교|0238009|주간|일반과정",
+          "school": "LH토지주택대학교",
+          "department": "부동산경영학",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0002748|본교|0208657|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "교양학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0002748|본교|0229116|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "초등특수교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0002748|본교|0229115|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "특수체육교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248300|주간|일반과정",
+          "school": "가천대학교",
+          "department": "반도체공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248304|주간|일반과정",
+          "school": "가천대학교",
+          "department": "기계공학부(기계공학전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248303|주간|일반과정",
+          "school": "가천대학교",
+          "department": "기계공학부(산업공학전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248302|주간|일반과정",
+          "school": "가천대학교",
+          "department": "기계공학부(설비・소방공학전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248301|주간|일반과정",
+          "school": "가천대학교",
+          "department": "전자공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0248298|주간|일반과정",
+          "school": "가천대학교",
+          "department": "스타트업칼리지(창업융합전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0246259|주간|일반과정",
+          "school": "가천대학교",
+          "department": "영미어문학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0246261|주간|일반과정",
+          "school": "가천대학교",
+          "department": "유럽어문학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0247531|주간|일반과정",
+          "school": "가천대학교",
+          "department": "일본어문학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0247532|주간|일반과정",
+          "school": "가천대학교",
+          "department": "중국어문학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0246262|주간|일반과정",
+          "school": "가천대학교",
+          "department": "한국어문학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|대학|0000063|본교|0243456|주간|일반과정",
+          "school": "가천대학교",
+          "department": "화공생명배터리공학부(화공생명공학전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000072|본교|0218130|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "교양과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000215|본교|0234615|주간|일반과정",
+          "school": "가톨릭꽃동네대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|대학|0000046|본교|0251301|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "바이오로직스공학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        }
+      ],
+      "samples": [
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0235471",
+          "department": "약학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "약무행정심화실습",
+          "division": "전공선택",
+          "credits": "0",
+          "description": "약무행정심화실무실습에서는 공공기관에서 수행하는 약사의 업무 중 허가후안전관리, 의약품 부작용 모니터링, 건강보험 의약품등재,포괄적 약물관리서비스 등과 관련된 보다 심화된 지식을 함양하고 실무적용능력을갖추도록 한다",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 472,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000063|본교|0235471|주간|일반과정",
+          "enrolled": 135,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 15946,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:472",
+          "descriptionHash": "4e80dbc7a02274344124b0b79233722d174c783ed801e0e06af6ca6ed0a00939"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0235471",
+          "department": "약학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "의료기관심화실습",
+          "division": "전공선택",
+          "credits": "0",
+          "description": "약사 임상업무의 전문성을 바탕으로, 최적의 환자치료 및 국민보건 향상을 위한 의사결정과정의 참여하는 일원으로서 자질을 갖추기 위한 지식, 기술 및 태도 등 전문 능력을 배양한다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 473,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000063|본교|0235471|주간|일반과정",
+          "enrolled": 135,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 15946,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:473",
+          "descriptionHash": "735bad341b8a0d7e0187b6ff6aaa7c2110bbb3ab3b0493a51e3f73b5b770d4cc"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0235471",
+          "department": "약학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "제약산업심화실습",
+          "division": "전공선택",
+          "credits": "0",
+          "description": "의약품 개발과 관련한 제약산업에서 다루는 심화 이론에 대해 실습을 통해 체득한다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 474,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000063|본교|0235471|주간|일반과정",
+          "enrolled": 135,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 15946,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:474",
+          "descriptionHash": "1af8e07047af11e30ea7e1891e55343378c6e6978eb42d4640d9be4146c1eecb"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0009704",
+          "department": "의학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "영성과건강(P/F)",
+          "division": "전공필수",
+          "credits": "0",
+          "description": "영성이 건강에 미치는 영향을 이해하고 헬스케어에서 영적 돌봄을 적용할 수 있는 방법을 배우는 과정이다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 3504,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000072|본교|0009704|주간|일반과정",
+          "enrolled": 192,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16146,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:3504",
+          "descriptionHash": "69b839ff283d28209f24bcdff6f89eccffa4bb8d4ec82dcd5004ac1a936ac148"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0243838",
+          "department": "건축공학전공",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "현장실습(공과대)*",
+          "division": "교직",
+          "credits": "0",
+          "description": "학생들이 건축시공, 설계, 구조, 인테리어디자인 등 다양한 실무 분야를 현장 체험을 통해 학습하며, 직접적인 실무 경험을 통해 진로에 필요한 기본적인 실무 지식을 습득하도록 한다. 교과 내용은 산업체 책임자와 담당 교수의 협의로 결정되며, 실질적인 현장 경험 중심의 커리큘럼을 제공한다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 3505,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000072|본교|0243838|주간|일반과정",
+          "enrolled": 27,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16012,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:3505",
+          "descriptionHash": "69148ae46d3d19a37e116556a97e70aaa5d11596f1c47d53d6c922cbbcc8f799"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0243286",
+          "department": "경찰학부",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "-",
+          "division": "-",
+          "credits": "0",
+          "description": "-",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 3506,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000072|본교|0243286|주간|일반과정",
+          "enrolled": 164,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16031,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:3506",
+          "descriptionHash": "3973e022e93220f9212c18d0d0c543ae7c309e46640da93a4a0314de999f5112"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000046",
+          "school": "가톨릭대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0247595",
+          "department": "성악과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "졸업연주",
+          "division": "졸연",
+          "credits": "0",
+          "description": "졸업논문에 해당하는 수준의18 곡들을 15분 이상 연주한다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 4886,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000046|본교|0247595|주간|일반과정",
+          "enrolled": 20,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16253,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:4886",
+          "descriptionHash": "dd05a849b8439c5e7bf9521c43a9814032309de927ad15c9f10158971f31b22c"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0009059",
+          "department": "의학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "임상수행능력평가 II",
+          "division": "전공필수",
+          "credits": "0",
+          "description": "임상수행능력평가는 의학과 학생이 의학교육과정을 수료한 후 실제 임상상황에서 기본적인 진료 능력이 있는지를 평가하는 과정이다. 이 과정에서는 학생들이 표준화 환자를 대상으로 다양한 임상상황에서 병력청취, 신체검사, 환자교육 등을 실시해야 한다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 4887,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000048|제2캠퍼스|0009059|주간|일반과정",
+          "enrolled": 311,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16291,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:4887",
+          "descriptionHash": "fa0018f2d85831a3340fa1d8ff1b457f2d679c2fb37c4166c2cf789e7d9927db"
+        },
+        {
+          "year": 2025,
+          "round": "02",
+          "schoolCode": "0000048",
+          "school": "가톨릭대학교",
+          "campus": "제2캠퍼스",
+          "universityCategory": "대학",
+          "departmentCode": "0009059",
+          "department": "의학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "임상수행능력평가 I",
+          "division": "전공필수",
+          "credits": "0",
+          "description": "의학과 3학년 학생이 핵심필수임상실습과정을 수료한 후 임상 상황에서 기본적인 진료 면담능력과 기본 술기 시행를 시행할 수 있는 최소 수행능력을 갖추었 는지를 평가하는 총괄평가이다. 이 평가에서는 학생들이 표준화환자를 대상으로 다양한 임상상황에서 병력청취, 신체검사, 환자교육 등이 포함된 진료면담을 수행할 수 있는지 평가하고 다양한 술기 모형에 이용해 종합적인 기본 술기 시행을 의사국시 실기시험과 동일한 형태로 진행된다.",
+          "sourceFile": "교육과정_대학(20251020).xlsx",
+          "sourceSheet": "Sheet0",
+          "sourceRow": 4888,
+          "sourceVersion": "86d572a245556f008cd0d5099264ce316811d99e2af72cf1e0a0a31adb3df6c9",
+          "departmentKey": "2025|대학|0000048|제2캠퍼스|0009059|주간|일반과정",
+          "enrolled": 311,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 16291,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "86d572a24555:4888",
+          "descriptionHash": "af5288296418d7827726eb7fabb846596ec3840b669cdcad159fe45b57b0b3e1"
+        }
+      ],
+      "notes": [
+        "자료기준일: 2025.10.20.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2025학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    },
+    {
+      "file": "교육과정_대학(20260304).xlsx",
+      "sha256": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+      "sheet": "교육과정",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2026,
+          "category": "대학",
+          "round": "01",
+          "rows": 439768
+        }
+      ],
+      "emptyCourses": 427,
+      "emptyExamples": [
+        {
+          "row": 41,
+          "school": "LH토지주택대학교",
+          "department": "건설기술학"
+        },
+        {
+          "row": 524,
+          "school": "가천대학교",
+          "department": "AI인문대학"
+        },
+        {
+          "row": 1810,
+          "school": "가천대학교",
+          "department": "국제학부(국제자유전공)"
+        },
+        {
+          "row": 1915,
+          "school": "가천대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 2176,
+          "school": "가천대학교",
+          "department": "반도체대학"
+        }
+      ],
+      "exactDuplicateRegistrations": 185,
+      "links": {
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 58258,
+        "연결": 378170,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3340
+      },
+      "departments": 11175,
+      "linkedDepartments": 9433,
+      "unlinkedDepartments": 1742,
+      "unlinkedExamples": [
+        {
+          "key": "2026|대학|0002698|본교|0224991|주간|일반과정",
+          "school": "KDB금융대학교",
+          "department": "금융학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0002699|본교|0238009|주간|일반과정",
+          "school": "LH토지주택대학교",
+          "department": "부동산경영학",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0002748|본교|0208657|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "교양학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0002748|본교|0254099|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "글로벌학부",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0002748|본교|0229116|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "초등특수교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0002748|본교|0229115|주간|일반과정",
+          "school": "가야대학교(김해)",
+          "department": "특수체육교육학전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000063|본교|0248300|주간|일반과정",
+          "school": "가천대학교",
+          "department": "반도체공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000063|본교|0248301|주간|일반과정",
+          "school": "가천대학교",
+          "department": "전자공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000063|본교|0248298|주간|일반과정",
+          "school": "가천대학교",
+          "department": "스타트업칼리지(창업융합전공)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000072|본교|0218130|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "교양과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000072|본교|0218191|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000072|본교|0254006|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "AI헬스케어전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000072|본교|0253268|주간|일반과정",
+          "school": "가톨릭관동대학교",
+          "department": "컴퓨터소프트웨어전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000215|본교|0234615|주간|일반과정",
+          "school": "가톨릭꽃동네대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000046|본교|0010378|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "교직과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000046|본교|0218840|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "글로벌인문경영융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000046|본교|0218839|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "글로컬문화스토리텔링융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000046|본교|0223058|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "금융공학융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000049|제3캠퍼스|0209866|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|대학|0000046|본교|0115550|주간|일반과정",
+          "school": "가톨릭대학교",
+          "department": "모바일유비쿼터스융복합전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        }
+      ],
+      "samples": [
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0246259",
+          "department": "영미어문학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "인공지능과 언어학(AI인문응용)",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "인공지능 기술 및 테크놀로지가 언어학 연구에 어떻게 활용되는지 탐구하고, 다양한 분야에서의 응용 사례를 살펴본다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 525,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000063|본교|0246259|주간|일반과정",
+          "enrolled": 70,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 108,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:525",
+          "descriptionHash": "27cad1252a4be5794813ab1fef27c75b84f5986ae05aaf1197a886e27f2e1b56"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0246259",
+          "department": "영미어문학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "영미시",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "영미 주요 시인들의 주요 시를 읽으면서 현대시의 주요 경향을 이해하는 것을 목표로 한다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 526,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000063|본교|0246259|주간|일반과정",
+          "enrolled": 70,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 108,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:526",
+          "descriptionHash": "265f898c2d51e96e55743a1e54ded010227c8a94020e5a7e7a430e9e3921e1ae"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000063",
+          "school": "가천대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0246259",
+          "department": "영미어문학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "영미에세이",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "다양한 주제의 영미 산문을 학습함에 의해 독해력 향상 및 영작의 초석이 되는 품격높은 영어문장 구조를 습득하고 영미권 문화에 대한 이해를 높인다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 527,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000063|본교|0246259|주간|일반과정",
+          "enrolled": 70,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 108,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:527",
+          "descriptionHash": "25a510160b9fb8cf79e87441e5dbb6e7fd90d28df56d20963e03d3266589725f"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0218130",
+          "department": "교양과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "교양과",
+          "division": "미기재",
+          "credits": null,
+          "description": "",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3560,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000072|본교|0218130|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)",
+          "studentSource": null,
+          "id": "6510b762f1cc:3560",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0218191",
+          "department": "기타모집단위",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "-",
+          "division": "미기재",
+          "credits": null,
+          "description": "",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3561,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000072|본교|0218191|주간|일반과정",
+          "enrolled": null,
+          "linkStatus": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)",
+          "studentSource": null,
+          "id": "6510b762f1cc:3561",
+          "descriptionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000072",
+          "school": "가톨릭관동대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0013131",
+          "department": "국어교육과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "기존",
+          "course": "문학비평론",
+          "division": "전공심화",
+          "credits": "3",
+          "description": "문학 비평의 기본 개념을 파악하고 시대별로 나타나는 비평의 다양한 양상을 살펴보는 교과목이다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 3563,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000072|본교|0013131|주간|일반과정",
+          "enrolled": 116,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 201,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:3563",
+          "descriptionHash": "1958e291ebf623d91b30b8e8896163f7740754820023ee8a9ed5fde61391d065"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000046",
+          "school": "가톨릭대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0254629",
+          "department": "데이터사이언스학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "음성인식및합성",
+          "division": "전공선택",
+          "credits": "3",
+          "description": ".",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 5048,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000046|본교|0254629|주간|일반과정",
+          "enrolled": 152,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 350,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:5048",
+          "descriptionHash": "cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000046",
+          "school": "가톨릭대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0254629",
+          "department": "데이터사이언스학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "정보검색",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "본 과목에서는 검색 엔진의 주요 이론, 설계, 핵심 기술 구현을 설명한다. 주요 학습 주제로 검색 엔진 플랫폼 기술 (inverted index, 분산 인덱싱, 인덱스 압축), 텍스트 표현 기법 (TF-IDF, word embedding, deep learning-based document representation), 질의 확장, 정보 요구 표현, 중요 검색 모델 (PageRank, vector space, Bayesian 검색), 검색 엔진 평가 방법 등이 있다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 5049,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000046|본교|0254629|주간|일반과정",
+          "enrolled": 152,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 350,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:5049",
+          "descriptionHash": "37aa48d9fa207c517a8a37a87026ea5ee9d7f90be6f81e4209fc88828be8a3f9"
+        },
+        {
+          "year": 2026,
+          "round": "01",
+          "schoolCode": "0000046",
+          "school": "가톨릭대학교",
+          "campus": "본교",
+          "universityCategory": "대학",
+          "departmentCode": "0254629",
+          "department": "데이터사이언스학과",
+          "dayNight": "주간",
+          "departmentFeature": "일반과정",
+          "departmentStatus": "변경[신설]",
+          "course": "데이터사이언스학현장실습I",
+          "division": "전공선택",
+          "credits": "3",
+          "description": "데이터 사이언스 전공 학생들이 학교에서 배운 지식을 현장에서 활용할 수 있는 기회를 제공하여, 현장 실무능력을 배양하고자 한다. 학생들은 데이터를 활용한 기업의 시장 문제 해결에 대한 능력을 간접적으로 함양할 수 있으며, 기업 구성원들과의 소통을 통해 협력, 커뮤니케이션 등 소프트 스킬을 증진시킬 수 있다.",
+          "sourceFile": "교육과정_대학(20260304).xlsx",
+          "sourceSheet": "교육과정",
+          "sourceRow": 5050,
+          "sourceVersion": "6510b762f1ccbaff0e51cc9d4ac84ddf9bc4e6631df635727667ebce305272de",
+          "departmentKey": "2026|대학|0000046|본교|0254629|주간|일반과정",
+          "enrolled": 152,
+          "linkStatus": "연결",
+          "studentSource": {
+            "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+            "sheet": "Sheet 1",
+            "row": 350,
+            "version": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+          },
+          "id": "6510b762f1cc:5050",
+          "descriptionHash": "048961d39e0bbed75a887b3797033e4e6f3c19ee96039c39c7ae613eca106d7e"
+        }
+      ],
+      "notes": [
+        "자료기준일: 2026.03.04.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2025학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    },
+    {
+      "file": "교육과정_전문대학(20230414).xlsx",
+      "sha256": "b94535862a99f020a41b94d0704a80066bcf6f295113cc9f9a5ecefd876c3abf",
+      "sheet": "교육과정_전문대학",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학코드",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분코드",
+        "주야구분명",
+        "학부특성코드",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2023,
+          "category": "전문대학",
+          "round": "01",
+          "rows": 132014
+        }
+      ],
+      "emptyCourses": 48,
+      "emptyExamples": [
+        {
+          "row": 1346,
+          "school": "강동대학교",
+          "department": "소방전기에너지학부"
+        },
+        {
+          "row": 1813,
+          "school": "강동대학교",
+          "department": "평생직업스마트학부"
+        },
+        {
+          "row": 3430,
+          "school": "거제대학교",
+          "department": "조선해양공학과"
+        },
+        {
+          "row": 3431,
+          "school": "거제대학교",
+          "department": "평생직업교육학부"
+        },
+        {
+          "row": 3432,
+          "school": "거제대학교",
+          "department": "평생직업산업학부"
+        }
+      ],
+      "exactDuplicateRegistrations": 40,
+      "links": {
+        "연결": 126192,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 1918,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3904
+      },
+      "departments": 4461,
+      "linkedDepartments": 4233,
+      "unlinkedDepartments": 228,
+      "unlinkedExamples": [
+        {
+          "key": "2023|전문대학|0000433|본교|0036501|주간|일반과정",
+          "school": "강동대학교",
+          "department": "교양과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240192|주간|일반과정",
+          "school": "강동대학교",
+          "department": "노인복지전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0241658|주간|일반과정",
+          "school": "강동대학교",
+          "department": "부동산금융전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0236908|주간|일반과정",
+          "school": "강동대학교",
+          "department": "뷰티미용전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0236904|주간|일반과정",
+          "school": "강동대학교",
+          "department": "사회복지전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240191|주간|일반과정",
+          "school": "강동대학교",
+          "department": "생활스포츠전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0233124|주간|일반과정",
+          "school": "강동대학교",
+          "department": "소방안전전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240193|주간|일반과정",
+          "school": "강동대학교",
+          "department": "수소에너지전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240186|주간|일반과정",
+          "school": "강동대학교",
+          "department": "온라인영상홍보전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240190|주간|일반과정",
+          "school": "강동대학교",
+          "department": "웰빙테라피전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240189|주간|일반과정",
+          "school": "강동대학교",
+          "department": "인테리어디자인전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0235745|주간|일반과정",
+          "school": "강동대학교",
+          "department": "전기전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000433|본교|0240188|주간|일반과정",
+          "school": "강동대학교",
+          "department": "호텔조리제빵전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000514|본교|0241360|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "마인드스포츠과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0238168|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "게임콘텐츠학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0240040|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "군사학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0240035|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "디자인공학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0240022|주간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "미래전기자동차과(e-MU)",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0209805|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "시각정보디자인과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2023|전문대학|0000560|본교|0238167|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "웹툰일러스트학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        }
+      ],
+      "samples": [],
+      "notes": [
+        "자료기준일: 2023.4.14.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로써, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2023학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있으며, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료이며, 해당 정보가 없거나 미비한 경우는 2023년 하반기 조사(2023년 7월~9월)시 자료 입력 예정입니다."
+      ]
+    },
+    {
+      "file": "교육과정_전문대학(20240305).xlsx",
+      "sha256": "f9abb3b7d46e87302d65d56a37838e421e86cbe71fde465cdd2a69854143bb0d",
+      "sheet": "교육과정",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "조사차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학코드",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2024,
+          "category": "전문대학",
+          "round": "01",
+          "rows": 130553
+        }
+      ],
+      "emptyCourses": 48,
+      "emptyExamples": [
+        {
+          "row": 1000,
+          "school": "강동대학교",
+          "department": "교양과"
+        },
+        {
+          "row": 1748,
+          "school": "강동대학교",
+          "department": "평생직업스마트학부"
+        },
+        {
+          "row": 3891,
+          "school": "경기과학기술대학교",
+          "department": "기초교양과"
+        },
+        {
+          "row": 3892,
+          "school": "경기과학기술대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 10125,
+          "school": "경민대학교",
+          "department": "호텔조리과"
+        }
+      ],
+      "exactDuplicateRegistrations": 37,
+      "links": {
+        "연결": 123861,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 2798,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3872,
+        "검토: 본분교·주야·학과특성 불일치": 22
+      },
+      "departments": 4519,
+      "linkedDepartments": 4258,
+      "unlinkedDepartments": 261,
+      "unlinkedExamples": [
+        {
+          "key": "2024|전문대학|0000433|본교|0236908|주간|일반과정",
+          "school": "강동대학교",
+          "department": "뷰티미용전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000433|본교|0244559|주간|일반과정",
+          "school": "강동대학교",
+          "department": "산업안전관리전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000433|본교|0233124|주간|일반과정",
+          "school": "강동대학교",
+          "department": "소방안전전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000433|본교|0240186|주간|일반과정",
+          "school": "강동대학교",
+          "department": "온라인영상홍보전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000433|본교|0235745|주간|일반과정",
+          "school": "강동대학교",
+          "department": "전기전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000433|본교|0240188|주간|일반과정",
+          "school": "강동대학교",
+          "department": "호텔조리제빵전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000514|본교|0244501|야간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "고향사랑경영학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000514|본교|0244490|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "레저스포츠전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000514|본교|0243478|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "제과제빵바리스타전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000514|본교|0243481|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "호텔관광전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000412|본교|0243089|야간|일반과정",
+          "school": "거제대학교",
+          "department": "평생직업산업학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0238168|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "게임콘텐츠학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0240040|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "군사학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0240035|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "디자인공학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0244677|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "모빌리티공학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0243850|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "소방방재학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0243852|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "시각정보디자인학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0245840|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "영상디자인과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0238167|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "웹툰일러스트학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2024|전문대학|0000560|본교|0243845|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "웹툰일러스트학과(3년제)",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        }
+      ],
+      "samples": [],
+      "notes": [
+        "자료기준일: 2024.03.05.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2024학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    },
+    {
+      "file": "교육과정_전문대학(20250523).xlsx",
+      "sha256": "883788c0895fa1df721dea8b65dff08a149df16ea866d64201a64cf7ed7b6fb4",
+      "sheet": "교육과정",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학코드",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분코드",
+        "주야구분명",
+        "학부특성코드",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2025,
+          "category": "전문대학",
+          "round": "01",
+          "rows": 136529
+        }
+      ],
+      "emptyCourses": 56,
+      "emptyExamples": [
+        {
+          "row": 1026,
+          "school": "강동대학교",
+          "department": "교양과"
+        },
+        {
+          "row": 3327,
+          "school": "거제대학교",
+          "department": "평생직업산업학과"
+        },
+        {
+          "row": 3777,
+          "school": "경기과학기술대학교",
+          "department": "기초교양과"
+        },
+        {
+          "row": 3778,
+          "school": "경기과학기술대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 9763,
+          "school": "경민대학교",
+          "department": "호텔조리과"
+        }
+      ],
+      "exactDuplicateRegistrations": 18,
+      "links": {
+        "연결": 126487,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 6730,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3312
+      },
+      "departments": 4759,
+      "linkedDepartments": 4374,
+      "unlinkedDepartments": 385,
+      "unlinkedExamples": [
+        {
+          "key": "2025|전문대학|0000389|본교|0206127|주간|일반과정",
+          "school": "SPC식품과학대학",
+          "department": "베이커리학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0249448|야간|일반과정",
+          "school": "강동대학교",
+          "department": "ESG창업경영학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0248313|주간|일반과정",
+          "school": "강동대학교",
+          "department": "K-푸드창업학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0249447|주간|일반과정",
+          "school": "강동대학교",
+          "department": "로컬창업콘텐츠학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0248311|주간|일반과정",
+          "school": "강동대학교",
+          "department": "뷰티미용학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0248309|주간|일반과정",
+          "school": "강동대학교",
+          "department": "산업디자인학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0248022|주간|일반과정",
+          "school": "강동대학교",
+          "department": "산업안전관리학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0249451|주간|일반과정",
+          "school": "강동대학교",
+          "department": "소방안전학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0248312|주간|일반과정",
+          "school": "강동대학교",
+          "department": "스포츠재활학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000433|본교|0249452|주간|일반과정",
+          "school": "강동대학교",
+          "department": "전기공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000514|본교|0244501|야간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "고향사랑경영학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000514|본교|0243855|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "국제마인드스포츠과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000548|본교|0227127|주간|일반과정",
+          "school": "강원관광대학교",
+          "department": "간호학과(4년제)",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0238168|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "게임콘텐츠학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0246050|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "군사학과(인문사회)",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0240035|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "디자인공학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0244677|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "모빌리티공학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0243852|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "시각정보디자인학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0245840|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "영상디자인과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2025|전문대학|0000560|본교|0243845|야간|산업체위탁",
+          "school": "경기과학기술대학교",
+          "department": "웹툰일러스트학과(3년제)",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        }
+      ],
+      "samples": [],
+      "notes": [
+        "자료기준일: 2025.05.23.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2024학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    },
+    {
+      "file": "교육과정_전문대학(20260304).xlsx",
+      "sha256": "f612fd04c60c79ff2b6f146b68450a442bac771bda294a58f3940625177c1102",
+      "sheet": "교육과정",
+      "headerRow": 9,
+      "headers": [
+        "조사년도",
+        "차수",
+        "학교코드",
+        "학교명",
+        "본분교명",
+        "학교구분",
+        "단과대학명",
+        "학부·과(전공)코드",
+        "학부·과(전공)명",
+        "주야구분명",
+        "학부특성명",
+        "학과상태",
+        "교육과정",
+        "이수구분",
+        "학점",
+        "교과목해설"
+      ],
+      "ranges": [
+        {
+          "year": 2026,
+          "category": "전문대학",
+          "round": "01",
+          "rows": 137018
+        }
+      ],
+      "emptyCourses": 49,
+      "emptyExamples": [
+        {
+          "row": 1059,
+          "school": "강동대학교",
+          "department": "교양과"
+        },
+        {
+          "row": 3451,
+          "school": "거제대학교",
+          "department": "평생직업산업학과"
+        },
+        {
+          "row": 3900,
+          "school": "경기과학기술대학교",
+          "department": "기초교양과"
+        },
+        {
+          "row": 3901,
+          "school": "경기과학기술대학교",
+          "department": "기타모집단위"
+        },
+        {
+          "row": 9069,
+          "school": "경민대학교",
+          "department": "호텔조리과"
+        }
+      ],
+      "exactDuplicateRegistrations": 18,
+      "links": {
+        "연결": 125585,
+        "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)": 8407,
+        "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)": 3026
+      },
+      "departments": 4845,
+      "linkedDepartments": 4391,
+      "unlinkedDepartments": 454,
+      "unlinkedExamples": [
+        {
+          "key": "2026|전문대학|0000389|본교|0206127|주간|일반과정",
+          "school": "SPC식품과학대학",
+          "department": "베이커리학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000410|본교|0251549|주간|일반과정",
+          "school": "가톨릭상지대학교",
+          "department": "기타모집단위",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0248313|주간|일반과정",
+          "school": "강동대학교",
+          "department": "K-푸드창업학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254732|주간|일반과정",
+          "school": "강동대학교",
+          "department": "글로컬사회복지학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254739|주간|일반과정",
+          "school": "강동대학교",
+          "department": "드림라이프사회복지학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0249447|주간|일반과정",
+          "school": "강동대학교",
+          "department": "로컬창업콘텐츠학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0248022|주간|일반과정",
+          "school": "강동대학교",
+          "department": "산업안전관리학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0249451|주간|일반과정",
+          "school": "강동대학교",
+          "department": "소방안전학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254735|주간|일반과정",
+          "school": "강동대학교",
+          "department": "실용무용학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254734|주간|일반과정",
+          "school": "강동대학교",
+          "department": "실용음악학과",
+          "enrolled": null,
+          "status": "검토: 같은 학과명에 다른 코드 관측(자동 연결 안 함)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254736|주간|일반과정",
+          "school": "강동대학교",
+          "department": "전기전자공학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000433|본교|0254744|주간|일반과정",
+          "school": "강동대학교",
+          "department": "파크골프창업경영학과",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253476|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "K-관광전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253472|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "K-뷰티전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253470|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "글로벌에너지신소재전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0254230|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "디지털창업특화전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253549|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "마인드스포츠전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0254229|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "스포츠레저전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253469|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "시니어헬스케어전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        },
+        {
+          "key": "2026|전문대학|0000514|본교|0253498|주간|일반과정",
+          "school": "강릉영동대학교",
+          "department": "식품영양전공",
+          "enrolled": null,
+          "status": "미연결: 해당 연도 학과코드 미관측(개편·조사범위 확인 필요)"
+        }
+      ],
+      "samples": [],
+      "notes": [
+        "자료기준일: 2026.03.04.",
+        "※ 해당 자료의 학부·과(전공)명 리스트는 대학알리미 상에서 통계목적으로 사용되고 있는 정보로서, 실제 대학에서 모집 및 운영하고 있는 학부·과(전공)명과 다를 수 있습니다.",
+        "※ 교과목명은 해당 학부·과(전공)에서 2025학년도 기준 신입생이 수업연한 동안 학습할 전공 교과목을 의미하며, 실제 개설 및 설강되는 교과목과 차이가 발생할 수 있고, 학교의 상황에 따라 교과목이 변경될 수 있습니다.",
+        "※ 학부(혹은 학과) 내에 여러 전공이 존재하고, 전공의 교육과정이 각각 존재하는 경우, 학교마다 ① '학부(혹은 학과)' 하위에 생성되는 '전공'의 교과목을 입력하거나, ② '전공'에 직접 교과목을 입력한 경우가 있을 수 있습니다.",
+        "- ②의 경우로 입력한 경우, 모집단위인 '학부(혹은 학과)' 자체의 고유한 교육과정은 존재하지 않으므로, '학부(혹은 학과)'명이 본 데이터에 나타나지 않을 수 있습니다.",
+        "※ 이수구분, 학점, 교과목해설 정보는 2023년도 상반기부터 조사한 자료입니다."
+      ]
+    }
+  ],
+  "years": [
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "sample": false,
+  "warnings": [
+    "교육과정_대학(20260304).xlsx: 상단 학년도 설명과 행 조사년도 불일치; 행 조사년도 사용",
+    "교육과정_전문대학(20250523).xlsx: 상단 학년도 설명과 행 조사년도 불일치; 행 조사년도 사용",
+    "교육과정_전문대학(20260304).xlsx: 상단 학년도 설명과 행 조사년도 불일치; 행 조사년도 사용"
+  ],
+  "joinRule": "조사년도=기준연도 + 학교구분 + 학교코드 + 본분교명 + 학과코드 + 주야 + 학과특성 완전일치; 이름 유사 연결 없음",
+  "generatedAt": "2026-09-10T04:17:12.178347+00:00"
+}

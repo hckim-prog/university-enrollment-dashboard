@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "build": {
+    "env": {
+      "VERCEL_SUPPORT_LARGE_FUNCTIONS": "1"
+    }
+  },
+  "functions": {
+    "src/app/api/curriculum/route.ts": { "maxDuration": 300 },
+    "src/app/api/curriculum/evidence/route.ts": { "maxDuration": 300 }
+  }
+}

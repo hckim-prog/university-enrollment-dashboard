@@ -1,5 +1,10 @@
 # Local-only source and historical data
 origin_data/
+curriculum_input/
+backups/
+__pycache__/
+*.xls
+*.xlsm
 data/local-store/
 data/raw/
 *.xlsx

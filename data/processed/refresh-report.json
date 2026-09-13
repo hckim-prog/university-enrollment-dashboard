@@ -1,0 +1,211 @@
+{
+  "backup": "C:\\Project\\university-enrollment-dashboard\\backups\\2026-09-10_123150",
+  "files": [
+    {
+      "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2019~2022.xlsx",
+      "action": "replaced",
+      "sha256": "e08cd208c084d98c02f36dfa30880b21274505a2338ebc06188ad59e127c168f"
+    },
+    {
+      "file": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
+      "action": "replaced",
+      "sha256": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd"
+    },
+    {
+      "file": "(원자료) 4-마. 재적 학생 현황_전문대학_학과별_2019~2022.xlsx",
+      "action": "replaced",
+      "sha256": "a4a9ca8142c843b4caf3bd1376f0ecc41ee7d046f23b82e5499d94f6b8220330"
+    },
+    {
+      "file": "(원자료) 4-마. 재적 학생 현황_전문대학_학과별_2023~.xlsx",
+      "action": "replaced",
+      "sha256": "f7d41e9b3468f020d1bda7622b9e3478744c26e4a50a606b71e8ba74f200f445"
+    }
+  ],
+  "years": [
+    {
+      "year": 2019,
+      "oldRows": 28482,
+      "newRows": 28482,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2020,
+      "oldRows": 29115,
+      "newRows": 29115,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2021,
+      "oldRows": 30088,
+      "newRows": 30088,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2022,
+      "oldRows": 31108,
+      "newRows": 31108,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2023,
+      "oldRows": 21540,
+      "newRows": 21540,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2024,
+      "oldRows": 22209,
+      "newRows": 22209,
+      "added": 0,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 0,
+      "examples": []
+    },
+    {
+      "year": 2025,
+      "oldRows": 22988,
+      "newRows": 22990,
+      "added": 2,
+      "removed": 0,
+      "numericChanged": 7,
+      "enrolledDelta": 0,
+      "examples": [
+        {
+          "key": [
+            2025,
+            "0000254",
+            "본교",
+            "0014525",
+            "주간",
+            "일반과정"
+          ],
+          "school": "부산교육대학교",
+          "department": "유아교육과",
+          "old": 113,
+          "new": 0
+        },
+        {
+          "key": [
+            2025,
+            "0000239",
+            "본교",
+            "0245669",
+            "주간",
+            "일반과정"
+          ],
+          "school": "중원대학교",
+          "department": "생명과학과",
+          "old": 97,
+          "new": 46
+        },
+        {
+          "key": [
+            2025,
+            "0000239",
+            "본교",
+            "0249660",
+            "주간",
+            "일반과정"
+          ],
+          "school": "중원대학교",
+          "department": "스포츠경영학부",
+          "old": 0,
+          "new": 51
+        },
+        {
+          "key": [
+            2025,
+            "0000121",
+            "본교",
+            "0240601",
+            "주간",
+            "계약학과"
+          ],
+          "school": "서경대학교",
+          "department": "물류유통경영학과",
+          "old": 22,
+          "new": 13
+        },
+        {
+          "key": [
+            2025,
+            "0000121",
+            "본교",
+            "0019291",
+            "주간",
+            "계약학과"
+          ],
+          "school": "서경대학교",
+          "department": "물류유통경영학과",
+          "old": 7,
+          "new": 10
+        },
+        {
+          "key": [
+            2025,
+            "0000254",
+            "본교",
+            "0250492",
+            "주간",
+            "일반과정"
+          ],
+          "school": "부산교육대학교",
+          "department": "초등교육학부",
+          "old": 0,
+          "new": 0
+        },
+        {
+          "key": [
+            2025,
+            "0000254",
+            "본교",
+            "0222579",
+            "주간",
+            "일반과정"
+          ],
+          "school": "부산교육대학교",
+          "department": "초등교육과",
+          "old": 0,
+          "new": 0
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "oldRows": 0,
+      "newRows": 23010,
+      "added": 23010,
+      "removed": 0,
+      "numericChanged": 0,
+      "enrolledDelta": 2079695,
+      "examples": []
+    }
+  ],
+  "dimensionChanges": {
+    "years": {},
+    "fields": {},
+    "examples": []
+  }
+}

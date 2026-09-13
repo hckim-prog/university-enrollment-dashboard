@@ -49,9 +49,10 @@ import type { MarketMetric } from "@/lib/market-analysis";
 import { isFlatChange } from "@/lib/analysis-window";
 import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
+import { CurriculumExplorer } from "./curriculum-explorer";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "fields" | "schools" | "details";
+type View = "overview" | "fields" | "schools" | "details" | "curriculum";
 type FieldSection = "explore" | "trends";
 type Filters = {
   startYear: string;
@@ -166,9 +167,11 @@ const navigation: {
     description: "출판 대상 학교와 학과 탐색",
     icon: Database,
   },
+  { id: "curriculum", label: "과목별 시장 탐색", description: "교육과정 검색과 수업 후보 기획", icon: BookOpen },
 ];
 const guideStorageKey = "university-dashboard-guide-seen-v1";
 const screenGuides: Record<View, { title: string; description: string; questions: string[]; caution: string }> = {
+  curriculum: { title: "주제에 맞는 교육과정과 학과 규모를 탐색합니다", description: "연도별 교육과정과 학생 현황을 연결해 기획 후보를 선택합니다.", questions: ["관련 과목이 있는 학교는?"], caution: "교육과정 등록과 학과 재학생은 실제 강좌 수와 수강인원이 아닙니다." },
   overview: {
     title: "전체 대학시장의 크기와 장기 변화를 먼저 파악합니다",
     description: "선택한 학생 수 기준으로 전체 규모, 증감, 계열·학교 분포를 요약해 시장의 큰 방향을 확인합니다.",
@@ -1485,6 +1488,7 @@ export function EnrollmentDashboard() {
               </div>
             )}
           </section>
+          {view === "curriculum" ? <CurriculumExplorer /> : <>
           <ScreenGuide view={view} onOpen={() => setGuideOpen(true)} />
           <section
             className={`${styles.filters} ${
@@ -1660,7 +1664,7 @@ export function EnrollmentDashboard() {
           ) : !data ? (
             <div className={styles.loadingState}>
               <span className={styles.loader} />
-              <p>18만여 행을 분석하고 있습니다…</p>
+              <p>학생 현황을 분석하고 있습니다…</p>
             </div>
           ) : data.rowCount === 0 ? (
             <EmptyState onReset={resetFilters} />
@@ -1693,6 +1697,7 @@ export function EnrollmentDashboard() {
               )}
             </div>
           )}
+          </>}
           <footer className={styles.footer}>
             <p>
               형식을 통일하고 검산을 통과한 데이터만 사용합니다. 원본 XLSX는 웹 공개 폴더에 복사하지 않습니다.

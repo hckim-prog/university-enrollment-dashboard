@@ -1,11 +1,11 @@
 {
   "title": "대학·전문대학 재적학생 장기 트렌드 데이터 변환 명세",
-  "generatedAt": "2026-08-03T05:40:52.185Z",
-  "sourceDirectory": "C:\\Project\\university-enrollment-dashboard\\origin_data",
+  "generatedAt": "2026-09-10T03:31:00.337Z",
+  "sourceDirectory": "C:\\Users\\user\\Downloads",
   "sourceFiles": [
     {
       "sourceFile": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2019~2022.xlsx",
-      "sha256": "cddca8416dfa6a10eeb7daec3848a28718a5c2ddedead3f405214b502613ad95",
+      "sha256": "e08cd208c084d98c02f36dfa30880b21274505a2338ebc06188ad59e127c168f",
       "columnCount": 45,
       "normalizedRows": 82904,
       "years": [
@@ -20,13 +20,14 @@
     },
     {
       "sourceFile": "(원자료) 4-마. 재적 학생 현황_대학_학과별_2023~.xlsx",
-      "sha256": "f148d38b4f80c15e686a656e5b8bbb14033666f72d84c3195ee22b8ec95a1e49",
+      "sha256": "849779052b3cf784ce55f3c0e5a2c6127e90308e51cdb325dd239f0bca1099fd",
       "columnCount": 46,
-      "normalizedRows": 45263,
+      "normalizedRows": 61117,
       "years": [
         2023,
         2024,
-        2025
+        2025,
+        2026
       ],
       "universityCategories": [
         "대학"
@@ -34,7 +35,7 @@
     },
     {
       "sourceFile": "(원자료) 4-마. 재적 학생 현황_전문대학_학과별_2019~2022.xlsx",
-      "sha256": "2c4b4aec4575598a8f34b2b14d16c7c1201b3be3bb928545d5a30bc65fa2748e",
+      "sha256": "a4a9ca8142c843b4caf3bd1376f0ecc41ee7d046f23b82e5499d94f6b8220330",
       "columnCount": 45,
       "normalizedRows": 35889,
       "years": [
@@ -49,13 +50,14 @@
     },
     {
       "sourceFile": "(원자료) 4-마. 재적 학생 현황_전문대학_학과별_2023~.xlsx",
-      "sha256": "a06307f22b937174b078f15c9dd2be9890d41ca753a0533e07e06b45a1e1833f",
+      "sha256": "f7d41e9b3468f020d1bda7622b9e3478744c26e4a50a606b71e8ba74f200f445",
       "columnCount": 46,
-      "normalizedRows": 21474,
+      "normalizedRows": 28632,
       "years": [
         2023,
         2024,
-        2025
+        2025,
+        2026
       ],
       "universityCategories": [
         "전문대학"
@@ -70,13 +72,14 @@
       2022,
       2023,
       2024,
-      2025
+      2025,
+      2026
     ],
     "universityCategories": [
       "대학",
       "전문대학"
     ],
-    "normalizedRows": 185530
+    "normalizedRows": 208542
   },
   "nonStandardFormat": "worksheet dimension이 A1로 기록된 비표준 XLSX이므로 ZIP 내부 sheet1.xml을 스트리밍 SAX 방식으로 직접 읽는다. 새 원본은 행마다 차원이 완성되어 있어 병합 셀 보정은 하지 않는다.",
   "schema": {

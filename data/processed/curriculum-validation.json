@@ -1,0 +1,130 @@
+{
+  "valid": true,
+  "version": "119f258d17111a623ef18a3715cea28b6a9e71882afce63bc7cd6b825f211ee6",
+  "years": [
+    {
+      "year": 2023,
+      "registrations": 539387,
+      "departments": 14341,
+      "linkedDepartments": 12927,
+      "unlinkedDepartments": 1414,
+      "enrolled": 1800874,
+      "sampleSchools": {
+        "가천대학교": {
+          "departments": 78,
+          "linked": 78,
+          "unlinked": 0,
+          "enrolled": 16549
+        },
+        "가톨릭관동대학교": {
+          "departments": 47,
+          "linked": 17,
+          "unlinked": 30,
+          "enrolled": 2010
+        },
+        "가톨릭대학교": {
+          "departments": 74,
+          "linked": 55,
+          "unlinked": 19,
+          "enrolled": 8335
+        }
+      }
+    },
+    {
+      "year": 2024,
+      "registrations": 553780,
+      "departments": 14953,
+      "linkedDepartments": 13169,
+      "unlinkedDepartments": 1784,
+      "enrolled": 1782315,
+      "sampleSchools": {
+        "가천대학교": {
+          "departments": 84,
+          "linked": 80,
+          "unlinked": 4,
+          "enrolled": 18624
+        },
+        "가톨릭관동대학교": {
+          "departments": 46,
+          "linked": 42,
+          "unlinked": 4,
+          "enrolled": 2471
+        },
+        "가톨릭대학교": {
+          "departments": 76,
+          "linked": 57,
+          "unlinked": 19,
+          "enrolled": 8251
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "registrations": 566730,
+      "departments": 15614,
+      "linkedDepartments": 13448,
+      "unlinkedDepartments": 2166,
+      "enrolled": 1796384,
+      "sampleSchools": {
+        "가천대학교": {
+          "departments": 91,
+          "linked": 79,
+          "unlinked": 12,
+          "enrolled": 12558
+        },
+        "가톨릭관동대학교": {
+          "departments": 45,
+          "linked": 44,
+          "unlinked": 1,
+          "enrolled": 3513
+        },
+        "가톨릭대학교": {
+          "departments": 68,
+          "linked": 50,
+          "unlinked": 18,
+          "enrolled": 8670
+        }
+      }
+    },
+    {
+      "year": 2026,
+      "registrations": 576786,
+      "departments": 16020,
+      "linkedDepartments": 13824,
+      "unlinkedDepartments": 2196,
+      "enrolled": 1873028,
+      "sampleSchools": {
+        "가천대학교": {
+          "departments": 91,
+          "linked": 88,
+          "unlinked": 3,
+          "enrolled": 15659
+        },
+        "가톨릭관동대학교": {
+          "departments": 48,
+          "linked": 44,
+          "unlinked": 4,
+          "enrolled": 4887
+        },
+        "가톨릭대학교": {
+          "departments": 68,
+          "linked": 53,
+          "unlinked": 15,
+          "enrolled": 9634
+        }
+      }
+    }
+  ],
+  "totalRows": 2236683,
+  "sourceSampleRowsChecked": 48,
+  "checks": [
+    "전체 학생 복합키·재학생·근거 행 일치",
+    "학교·학과 코드 문자열 보존",
+    "행 ID 중복 없음",
+    "과목명·이수구분 비어 있지 않음",
+    "원본별·연도별 등록 건수 일치",
+    "해설 SHA256 일치",
+    "Downloads와 복사본 SHA256 일치",
+    "엑셀 표본 행 대조"
+  ]
+}
