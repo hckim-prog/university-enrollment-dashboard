@@ -30,11 +30,13 @@ import {
   GraduationCap,
   LayoutDashboard,
   Layers3,
+  Link,
   Menu,
   RefreshCw,
   Search,
   SlidersHorizontal,
   Users,
+  ClipboardList,
   X,
 } from "lucide-react";
 import {
@@ -50,9 +52,11 @@ import { isFlatChange } from "@/lib/analysis-window";
 import { DepartmentTrends } from "./department-trends";
 import { MarketAnalysis } from "./market-analysis";
 import { CurriculumExplorer } from "./curriculum-explorer";
+import { ResearchWorkspace } from "./research-workspace";
+import { appliedFilterEntries, urlForView, viewFromUrl } from "@/lib/research-workspace";
 import styles from "./enrollment-dashboard.module.css";
 
-type View = "overview" | "fields" | "schools" | "details" | "curriculum";
+type View = "overview" | "fields" | "schools" | "details" | "curriculum" | "research";
 type FieldSection = "explore" | "trends";
 type Filters = {
   startYear: string;
@@ -168,9 +172,11 @@ const navigation: {
     icon: Database,
   },
   { id: "curriculum", label: "과목별 시장 탐색", description: "교육과정 검색과 수업 후보 기획", icon: BookOpen },
+  { id: "research", label: "시장조사", description: "주제 비교·후보 관리·회의 보고서", icon: ClipboardList },
 ];
 const guideStorageKey = "university-dashboard-guide-seen-v1";
 const screenGuides: Record<View, { title: string; description: string; questions: string[]; caution: string }> = {
+  research: { title: "시장조사 워크스페이스", description: "교재 주제를 나란히 비교하고, 과목별 시장 탐색에서 고른 후보를 검토해 회의용 보고서로 정리합니다.", questions: ["어떤 주제가 더 넓고 성장했을까?", "우선 검토할 학교·학과·과목은?", "회의에서 공유할 근거와 유의사항은?"], caution: "교육과정 등록과 학과 재학생은 실제 강좌 수·수강인원·판매 수요가 아닙니다." },
   curriculum: { title: "주제에 맞는 교육과정과 학과 규모를 탐색합니다", description: "연도별 교육과정과 학생 현황을 연결해 기획 후보를 선택합니다.", questions: ["관련 과목이 있는 학교는?"], caution: "교육과정 등록과 학과 재학생은 실제 강좌 수와 수강인원이 아닙니다." },
   overview: {
     title: "전체 대학시장의 크기와 장기 변화를 먼저 파악합니다",
@@ -1117,6 +1123,16 @@ export function EnrollmentDashboard() {
   const [analysisMetric, setAnalysisMetric] = useState<MarketMetric>("enrolled");
   const [fieldSection, setFieldSection] = useState<FieldSection>("explore");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
+
+  useEffect(() => {
+    const restoreView = () => {
+      setView(viewFromUrl(window.location.href));
+    };
+    restoreView();
+    window.addEventListener("popstate", restoreView);
+    return () => window.removeEventListener("popstate", restoreView);
+  }, []);
 
   useEffect(() => {
     if (window.localStorage.getItem(guideStorageKey)) return;
@@ -1314,9 +1330,7 @@ export function EnrollmentDashboard() {
           ),
         )].sort((left, right) => left.localeCompare(right, "ko-KR"))
       : (data?.meta.fieldSmalls ?? []);
-  const dimensionFilterEntries = Object.entries(filters).filter(
-    ([key, value]) => key !== "startYear" && key !== "endYear" && Boolean(value),
-  );
+  const dimensionFilterEntries = appliedFilterEntries(filters, appliedDepartment);
   const availableYears = data?.meta.years ?? [];
   const defaultStartYear = availableYears[0];
   const defaultEndYear = availableYears.at(-1);
@@ -1343,12 +1357,23 @@ export function EnrollmentDashboard() {
   const activeNav = navigation.find((item) => item.id === view)!;
   const navigateTo = (nextView: View, nextFieldSection?: FieldSection) => {
     setView(nextView);
+    window.history.pushState({}, "", urlForView(window.location.href, nextView));
     if (nextFieldSection) setFieldSection(nextFieldSection);
     setGuideOpen(false);
     window.localStorage.setItem(guideStorageKey, "seen");
     setMobileNav(false);
     setFiltersOpen(false);
     window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareStatus("공유 링크를 복사했습니다.");
+    } catch {
+      setShareStatus("링크를 복사하지 못했습니다. 주소창의 URL을 복사해 주세요.");
+    }
+    window.setTimeout(() => setShareStatus(""), 3000);
   };
 
   return (
@@ -1385,12 +1410,7 @@ export function EnrollmentDashboard() {
                 type="button"
                 key={item.id}
                 className={view === item.id ? styles.activeNav : ""}
-                onClick={() => {
-                  setView(item.id);
-                  setMobileNav(false);
-                  setFiltersOpen(false);
-                  window.scrollTo({ top: 0, behavior: "auto" });
-                }}
+                onClick={() => navigateTo(item.id)}
               >
                 <Icon size={19} />
                 <span>
@@ -1446,6 +1466,14 @@ export function EnrollmentDashboard() {
             <strong>{data?.dataset.dataYearRange ?? "데이터 확인 중"} 대학알리미</strong>
           </div>
           <div className={styles.topbarRight}>
+            <button
+              type="button"
+              className={styles.shareButton}
+              onClick={copyShareLink}
+              aria-label="현재 화면 공유 링크 복사"
+            >
+              <Link size={15} /> 링크 복사
+            </button>
             <span className={styles.verifiedPill}>
               <CheckCircle2 size={15} /> 검산 완료
             </span>
@@ -1458,6 +1486,7 @@ export function EnrollmentDashboard() {
               <RefreshCw size={17} className={loading ? styles.spinning : ""} />
             </button>
           </div>
+          <span className={styles.shareStatus} role="status" aria-live="polite">{shareStatus}</span>
         </header>
         <div className={styles.content}>
           <section className={`${styles.hero} ${view === "overview" ? styles.summaryHero : styles.pageHero}`}>
@@ -1488,7 +1517,10 @@ export function EnrollmentDashboard() {
               </div>
             )}
           </section>
-          {view === "curriculum" ? <CurriculumExplorer /> : <>
+          {view === "curriculum" ? <CurriculumExplorer /> : view === "research" ? <>
+            <ScreenGuide view={view} onOpen={() => setGuideOpen(true)} />
+            <ResearchWorkspace />
+          </> : <>
           <ScreenGuide view={view} onOpen={() => setGuideOpen(true)} />
           <section
             className={`${styles.filters} ${
